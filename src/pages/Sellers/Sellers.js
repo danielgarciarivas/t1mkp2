@@ -76,7 +76,7 @@ const Sellers = () => {
         }
         
         // Auto-suspensión por inactividad prolongada
-        if (daysSinceLastSale >= 180) {
+        if (daysSinceLastSale >= 1680) {
           return {
             ...seller,
             estado: 'suspendido',
