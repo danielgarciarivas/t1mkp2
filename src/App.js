@@ -11,6 +11,12 @@ import ProductDetail from './pages/ProductDetail';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Payments from './pages/Payments/Payments';
+import Configuracion from './pages/Configuracion/Configuracion';
+import Contratos from './pages/Configuracion/Contratos/Contratos';
+import Categorias from './pages/Configuracion/Categorias/Categorias';
+import Reglas from './pages/Configuracion/Reglas/Reglas';
+import Comisiones from './pages/Configuracion/Comisiones/Comisiones';
+import Facturacion from './pages/Configuracion/Facturacion/Facturacion';
 import './App.css';
 
 function App() {
@@ -30,7 +36,12 @@ function App() {
             <Route path="pedidos" element={<Orders />} />
             <Route path="pedidos/:id" element={<OrderDetail />} />
             <Route path="pagos" element={<Payments />} />
-            <Route path="configuracion" element={<div className="module"><div className="module-header"><div className="module-title-section"><h1 className="module-title">Configuración y Reglas</h1><p className="module-subtitle">Motor de reglas de negocio y configuración general</p></div></div><div className="content-placeholder"><h3>Módulo de Configuración</h3><p>Gestión de contratos, taxonomías de categorías, reglas de negocio y configuración general de la plataforma.</p></div></div>} />
+            <Route path="configuracion" element={<Configuracion />} />
+            <Route path="configuracion/contratos" element={<Contratos />} />
+            <Route path="configuracion/categorias" element={<Categorias />} />
+            <Route path="configuracion/reglas" element={<Reglas />} />
+            <Route path="configuracion/comisiones" element={<Comisiones />} />
+            <Route path="configuracion/facturacion" element={<Facturacion />} />
           </Route>
         </Routes>
       </div>

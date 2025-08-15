@@ -26,7 +26,19 @@ const menuItems = [
   },
   { id: 'pedidos', icon: '📋', label: 'Pedidos', path: '/pedidos' },
   { id: 'pagos', icon: '💳', label: 'Pagos y Liquidaciones', path: '/pagos' },
-  { id: 'configuracion', icon: '⚙️', label: 'Configuración y Reglas', path: '/configuracion' }
+  { 
+    id: 'configuracion', 
+    icon: '⚙️', 
+    label: 'Configuración y Reglas', 
+    hasSubmenu: true,
+    submenu: [
+      { id: 'contratos', label: 'Gestión de Contratos', path: '/configuracion/contratos' },
+      { id: 'categorias', label: 'Árbol de Categorías', path: '/configuracion/categorias' },
+      { id: 'reglas', label: 'Motor de Reglas', path: '/configuracion/reglas' },
+      { id: 'comisiones', label: 'Configuración de Comisiones', path: '/configuracion/comisiones' },
+      { id: 'facturacion', label: 'Facturación Automática', path: '/configuracion/facturacion' }
+    ]
+  }
 ];
 
 const Sidebar = () => {

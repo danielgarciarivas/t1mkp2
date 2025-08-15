@@ -1,0 +1,139 @@
+/* Estilos para el módulo de Configuración y Reglas */
+.config-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.config-module-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.config-module-card:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.module-card-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.module-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  padding: 8px;
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.module-card-title h3 {
+  margin: 0 0 8px 0;
+  color: #212529;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.module-card-title p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.module-features {
+  margin-bottom: 24px;
+}
+
+.module-features h4 {
+  margin: 0 0 12px 0;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.module-features ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.module-features li {
+  margin-bottom: 8px;
+  color: #6c757d;
+  font-size: 13px;
+  position: relative;
+  padding-left: 16px;
+}
+
+.module-features li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.module-card-footer {
+  border-top: 1px solid #f1f3f4;
+  padding-top: 16px;
+}
+
+.access-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 8px 0;
+  transition: color 0.2s;
+}
+
+.access-button:hover {
+  color: #0056b3;
+}
+
+.config-module-card:hover .access-button {
+  color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .config-modules-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .config-module-card {
+    padding: 20px;
+  }
+  
+  .module-card-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .module-icon {
+    margin: 0 auto;
+  }
+}
