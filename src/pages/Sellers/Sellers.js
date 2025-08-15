@@ -258,6 +258,9 @@ const Sellers = () => {
   const applyFilters = () => {
     let filtered = [...sellers];
 
+    // Excluir sellers pendientes - esos van al módulo "Por Autorizar"
+    filtered = filtered.filter(seller => seller.estado !== 'pendiente');
+
     // Filtro de búsqueda
     if (searchTerm) {
       const search = searchTerm.toLowerCase();

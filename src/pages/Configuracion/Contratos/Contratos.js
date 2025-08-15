@@ -57,24 +57,7 @@ const Contratos = () => {
             exclusividad: true
           }
         },
-        {
-          id: 3,
-          nombre: 'Contrato Electrónicos',
-          descripcion: 'Contrato específico para categoría de electrónicos',
-          tipo: 'categoria',
-          version: '1.3',
-          fechaCreacion: '2024-02-01T14:00:00Z',
-          fechaActualizacion: '2024-02-12T16:30:00Z',
-          estado: 'borrador',
-          marketplaces: ['Sears'],
-          clausulas: {
-            comisiones: true,
-            terminos_pago: true,
-            politicas_devolucion: true,
-            responsabilidades: true,
-            garantias_especiales: true
-          }
-        }
+       
       ];
       
       setContratos(mockContratos);

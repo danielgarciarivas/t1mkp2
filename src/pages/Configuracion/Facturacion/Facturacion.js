@@ -134,7 +134,7 @@ const Facturacion = () => {
         <div className="module-title-section">
           <h1 className="module-title">Facturación Automática</h1>
           <p className="module-subtitle">
-            Configuración del servicio de facturación electrónica automática
+            Configuración del servicio de facturación electrónica automática de las transacciones de los sellers de su Marketplace
           </p>
         </div>
         
@@ -149,55 +149,12 @@ const Facturacion = () => {
             </span>
           </div>
           
-          {!configuracion.servicioActivo ? (
-            <Button 
-              variant="primary"
-              onClick={activarServicio}
-              disabled={activandoServicio}
-            >
-              {activandoServicio ? 'Activando...' : '🚀 Activar Servicio'}
-            </Button>
-          ) : (
-            <Button 
-              variant="danger"
-              onClick={desactivarServicio}
-            >
-              ⏹️ Desactivar Servicio
-            </Button>
-          )}
         </div>
       </div>
 
       <div className="facturacion-section">
         {/* Panel de Estado General */}
-        <div className="status-panel">
-          <h2>Estado del Servicio</h2>
-          <div className="status-grid">
-            <div className={`status-card ${configuracion.servicioActivo ? 'active' : 'inactive'}`}>
-              <div className="status-icon">🔧</div>
-              <div className="status-info">
-                <h3>Servicio de Facturación</h3>
-                <p>{configuracion.servicioActivo ? 'Funcionando correctamente' : 'Inactivo'}</p>
-              </div>
-            </div>
-            
-            <div className={`status-card ${configuracion.pacConfigurado ? 'active' : 'inactive'}`}>
-              <div className="status-icon">🏢</div>
-              <div className="status-info">
-                <h3>PAC Configurado</h3>
-                <p>{configuracion.pacConfigurado ? 'Configuración válida' : 'Pendiente configuración'}</p>
-              </div>
-            </div>
-            
-            <div className={`status-card ${configuracion.certificadosValidos ? 'active' : 'inactive'}`}>
-              <div className="status-icon">🔐</div>
-              <div className="status-info">
-                <h3>Certificados</h3>
-                <p>{configuracion.certificadosValidos ? 'Certificados válidos' : 'Certificados pendientes'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Estadísticas */}
         {configuracion.servicioActivo && (
@@ -227,116 +184,75 @@ const Facturacion = () => {
           </div>
         )}
 
-        {/* Panel de Configuración */}
-        <div className="config-panels">
-          {/* Configuración PAC */}
-          <div className="config-panel">
-            <div className="panel-header">
-              <h3>Configuración de PAC</h3>
-              <Button 
-                variant="outline" 
-                size="small"
-                onClick={() => setShowPacConfig(true)}
-              >
-                {configuracion.pacConfigurado ? 'Editar' : 'Configurar'}
-              </Button>
-            </div>
-            <div className="panel-content">
-              {configuracion.pacConfigurado ? (
-                <div className="config-summary">
-                  <div className="summary-item">
-                    <span className="label">Proveedor:</span>
-                    <span className="value">{configuracion.pac.proveedor || 'No configurado'}</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="label">Usuario:</span>
-                    <span className="value">{configuracion.pac.usuario || 'No configurado'}</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="label">Estado:</span>
-                    <span className={`status-badge ${configuracion.pac.activo ? 'active' : 'inactive'}`}>
-                      {configuracion.pac.activo ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
+        {/* Opciones de Configuración de Facturación */}
+        <div className="billing-methods-section">
+          <h2>Método de Facturación</h2>
+          <p className="section-description">Seleccione una de las 2 opciones disponibles para configurar el sistema de facturación</p>
+          
+          <div className="billing-options">
+            {/* Opción 1: PAC de Terceros */}
+            <div className="billing-option-card">
+              <div className="option-header">
+                <div className="option-icon">🏛️</div>
+                <div className="option-info">
+                  <h3>PAC de Terceros</h3>
+                  <p>Configure las credenciales de un proveedor PAC autorizado</p>
                 </div>
-              ) : (
-                <div className="empty-config">
-                  <p>No hay configuración de PAC establecida</p>
-                  <small>Un PAC (Proveedor Autorizado de Certificación) es requerido para el timbrado de facturas.</small>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Gestión de Certificados */}
-          <div className="config-panel">
-            <div className="panel-header">
-              <h3>Certificados Digitales</h3>
-              <Button 
-                variant="outline" 
-                size="small"
-                onClick={() => setShowCertConfig(true)}
-              >
-                {configuracion.certificadosValidos ? 'Gestionar' : 'Cargar'}
-              </Button>
-            </div>
-            <div className="panel-content">
-              {configuracion.certificadosValidos ? (
-                <div className="config-summary">
-                  <div className="summary-item">
-                    <span className="label">Emisor:</span>
-                    <span className="value">{configuracion.certificados.emisor || 'No disponible'}</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="label">Vigencia:</span>
-                    <span className="value">{configuracion.certificados.vigencia || 'No disponible'}</span>
-                  </div>
-                  <div className="summary-item">
-                    <span className="label">Estado:</span>
-                    <span className={`status-badge ${configuracion.certificados.valido ? 'active' : 'inactive'}`}>
-                      {configuracion.certificados.valido ? 'Válido' : 'Inválido'}
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="empty-config">
-                  <p>No hay certificados cargados</p>
-                  <small>Se requieren certificados digitales (.cer y .key) para firmar las facturas electrónicamente.</small>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Configuración Fiscal */}
-          <div className="config-panel">
-            <div className="panel-header">
-              <h3>Información Fiscal</h3>
-              <Button 
-                variant="outline" 
-                size="small"
-                onClick={() => {
-                  // Abrir modal de configuración fiscal
-                  alert('Función de configuración fiscal próximamente');
-                }}
-              >
-                Configurar
-              </Button>
-            </div>
-            <div className="panel-content">
-              <div className="config-summary">
-                <div className="summary-item">
-                  <span className="label">RFC:</span>
-                  <span className="value">{configuracion.configuracionFiscal.rfc || 'No configurado'}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Razón Social:</span>
-                  <span className="value">{configuracion.configuracionFiscal.razonSocial || 'No configurada'}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Uso CFDI:</span>
-                  <span className="value">{configuracion.configuracionFiscal.usoCFDI}</span>
-                </div>
+                <Button 
+                  variant="primary" 
+                  onClick={() => setShowPacConfig(true)}
+                >
+                  {configuracion.pacConfigurado ? 'Configurado' : 'Configurar'}
+                </Button>
               </div>
+              <div className="option-details">
+                <p>Seleccione su proveedor PAC e ingrese sus credenciales de acceso. Los certificados y llaves se manejan directamente por el proveedor PAC.</p>
+                {configuracion.pacConfigurado && (
+                  <div className="config-preview">
+                    <span className="preview-label">Proveedor:</span>
+                    <span className="preview-value">{configuracion.pac.proveedor || 'No configurado'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Opción 2: ERP con PAC Integrado */}
+            <div className="billing-option-card">
+              <div className="option-header">
+                <div className="option-icon">🏢</div>
+                <div className="option-info">
+                  <h3>ERP con PAC Integrado</h3>
+                  <p>Conecte con su sistema ERP que tiene un proveedor PAC integrado</p>
+                </div>
+                <Button 
+                  variant="primary" 
+                  onClick={() => setShowCertConfig(true)}
+                >
+                  {configuracion.certificadosValidos ? 'Configurado' : 'Configurar'}
+                </Button>
+              </div>
+              <div className="option-details">
+                <p>Proporcione los endpoints de timbrado y cancelación de su ERP. Su sistema ya debe tener configurado un proveedor PAC.</p>
+                {configuracion.certificadosValidos && (
+                  <div className="config-preview">
+                    <span className="preview-label">Estado:</span>
+                    <span className="preview-value">Endpoints configurados</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Información sobre PAC */}
+          <div className="pac-info-section">
+            <div className="info-card">
+              <h4>📋 Información sobre PAC</h4>
+              <ul>
+                <li>Un PAC (Proveedor Autorizado de Certificación) es una entidad autorizada por el SAT</li>
+                <li>Es necesario para el timbrado digital de facturas electrónicas</li>
+                <li>Los certificados y llaves privadas se manejan directamente por el proveedor PAC</li>
+                <li>No es necesario cargar certificados localmente - el PAC se encarga de esto</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -449,12 +365,12 @@ const Facturacion = () => {
         </div>
       )}
 
-      {/* Modal de Certificados */}
+      {/* Modal de Configuración ERP */}
       {showCertConfig && (
         <div className="modal-overlay">
-          <div className="modal-content cert-config-modal">
+          <div className="modal-content erp-config-modal">
             <div className="modal-header">
-              <h2>Gestión de Certificados Digitales</h2>
+              <h2>Configuración de ERP con PAC Integrado</h2>
               <button 
                 className="close-button" 
                 onClick={() => setShowCertConfig(false)}
@@ -463,40 +379,54 @@ const Facturacion = () => {
               </button>
             </div>
             <div className="modal-body">
-              <div className="cert-form">
+              <div className="erp-form">
                 <div className="form-group">
-                  <label>Archivo de Certificado (.cer)</label>
-                  <div className="file-upload">
-                    <input type="file" accept=".cer" />
-                    <Button variant="outline" size="small">Seleccionar Archivo</Button>
-                  </div>
+                  <label>Endpoint de Timbrado</label>
+                  <input 
+                    type="url" 
+                    placeholder="https://mi-erp.com/api/timbrar"
+                    defaultValue={configuracion.pac.urlTimbrado}
+                  />
+                  <small>URL donde su ERP procesa las solicitudes de timbrado</small>
                 </div>
                 
                 <div className="form-group">
-                  <label>Archivo de Llave Privada (.key)</label>
-                  <div className="file-upload">
-                    <input type="file" accept=".key" />
-                    <Button variant="outline" size="small">Seleccionar Archivo</Button>
-                  </div>
+                  <label>Endpoint de Cancelación</label>
+                  <input 
+                    type="url" 
+                    placeholder="https://mi-erp.com/api/cancelar"
+                    defaultValue={configuracion.pac.urlCancelacion}
+                  />
+                  <small>URL donde su ERP procesa las cancelaciones de facturas</small>
                 </div>
                 
                 <div className="form-group">
-                  <label>Password de la Llave Privada</label>
+                  <label>API Key / Token</label>
                   <input 
                     type="password" 
-                    placeholder="Password de la llave privada"
+                    placeholder="Token de autenticación para su ERP"
                   />
+                  <small>Token o API Key para autenticarse con su ERP</small>
+                </div>
+
+                <div className="form-group">
+                  <label>Formato de Respuesta</label>
+                  <select defaultValue="json">
+                    <option value="json">JSON</option>
+                    <option value="xml">XML</option>
+                  </select>
+                  <small>Formato en que su ERP devuelve las respuestas</small>
                 </div>
               </div>
               
-              <div className="cert-info">
-                <h4>Información sobre Certificados:</h4>
+              <div className="erp-info">
+                <h4>Información sobre ERP con PAC:</h4>
                 <ul>
-                  <li>Los certificados digitales son emitidos por el SAT</li>
-                  <li>Se requieren tanto el archivo .cer como el .key</li>
-                  <li>La llave privada debe estar protegida con password</li>
-                  <li>Los certificados tienen una vigencia limitada (generalmente 4 años)</li>
-                  <li>Son necesarios para la firma digital de las facturas</li>
+                  <li>Su ERP debe tener ya configurado un proveedor PAC</li>
+                  <li>Los certificados y credenciales PAC se manejan en su ERP</li>
+                  <li>Solo necesita proporcionar los endpoints de timbrado y cancelación</li>
+                  <li>Su ERP se encarga de la comunicación con el PAC</li>
+                  <li>Asegúrese de que los endpoints estén disponibles y seguros</li>
                 </ul>
               </div>
             </div>
@@ -504,10 +434,10 @@ const Facturacion = () => {
               <Button 
                 variant="outline" 
                 onClick={() => {
-                  alert('Validando certificados...');
+                  alert('Probando conexión con ERP...');
                 }}
               >
-                Validar Certificados
+                Probar Conexión
               </Button>
               <Button 
                 variant="secondary" 
@@ -524,14 +454,14 @@ const Facturacion = () => {
                     certificados: { 
                       ...prev.certificados, 
                       valido: true,
-                      emisor: 'EMPRESA EJEMPLO SA DE CV',
-                      vigencia: '2025-12-31'
+                      emisor: 'ERP CONFIGURADO',
+                      vigencia: 'Manejado por ERP'
                     }
                   }));
                   setShowCertConfig(false);
                 }}
               >
-                Cargar Certificados
+                Guardar Configuración
               </Button>
             </div>
           </div>
