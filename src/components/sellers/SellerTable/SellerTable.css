@@ -293,7 +293,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
+  max-width: 300px;
 }
 
 /* Estado suspendido automático */

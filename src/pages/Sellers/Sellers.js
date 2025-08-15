@@ -101,8 +101,8 @@ const Sellers = () => {
           rfc: 'TSP980312ABC',
           rfcValidado: true,
           estado: 'activo',
-          fechaSolicitud: '2024-01-15T10:30:00Z',
-          ultimaVenta: '2024-02-10T14:30:00Z',
+          fechaSolicitud: '2025-01-15T10:30:00Z',
+          ultimaVenta: '2025-05-10T14:30:00Z',
           ventasMes: 45,
           categorias: [
             { id: 1, nombre: 'Electrónicos' },
@@ -122,7 +122,7 @@ const Sellers = () => {
           rfcValidado: true,
           estado: 'activo',
           fechaSolicitud: '2024-01-20T14:15:00Z',
-          ultimaVenta: '2023-10-15T10:00:00Z', // Más de 4 meses sin ventas
+          ultimaVenta: '2025-02-15T10:00:00Z', // Más de 4 meses sin ventas
           ventasMes: 2,
           categorias: [
             { id: 2, nombre: 'Ropa y Moda' }
@@ -178,7 +178,7 @@ const Sellers = () => {
           rfcValidado: true,
           estado: 'bloqueado',
           fechaSolicitud: '2024-01-10T11:20:00Z',
-          ultimaVenta: '2024-01-25T14:00:00Z',
+          ultimaVenta: '2025-06-25T14:00:00Z',
           ventasMes: 15,
           categorias: [
             { id: 5, nombre: 'Salud y Belleza' }
@@ -197,7 +197,7 @@ const Sellers = () => {
           rfcValidado: false,
           estado: 'inactivo',
           fechaSolicitud: '2024-02-08T13:30:00Z',
-          ultimaVenta: '2023-11-20T10:00:00Z', // Seller marcado como inactivo
+          ultimaVenta: '2025-04-20T10:00:00Z', // Seller marcado como inactivo
           ventasMes: 0,
           categorias: [
             { id: 1, nombre: 'Electrónicos' }

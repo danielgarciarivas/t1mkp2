@@ -28,56 +28,17 @@ const ProductsPending = () => {
     // Simular carga de datos - solo productos pendientes
     setTimeout(() => {
       const mockProducts = [
-        {
-          id: 7,
-          nombre: 'MacBook Pro M3 14"',
-          sku: 'MBP14M3001',
-          seller: 'TechWorld Premium',
-          precio: 45999,
+       {
+          id: 1,
+          nombre: 'iPhone 15 Pro Max 256GB',
+          sku: 'IPH15PM256',
+          seller: 'TechnoMax SA',
+          precio: 24999,
           categoria: 'electronicos',
           estado: 'pendiente',
-          fechaCreacion: '2024-02-13T10:30:00Z'
+          fechaCreacion: '2024-01-15T10:30:00Z'
         },
-        {
-          id: 8,
-          nombre: 'Samsung Galaxy S24 Ultra',
-          sku: 'SGS24U256',
-          seller: 'Nueva Tienda Fashion',
-          precio: 28999,
-          categoria: 'electronicos',
-          estado: 'pendiente',
-          fechaCreacion: '2024-02-13T14:15:00Z'
-        },
-        {
-          id: 9,
-          nombre: 'Sofá Esquinero Premium',
-          sku: 'SOFESP001',
-          seller: 'Home Deco Plus',
-          precio: 22999,
-          categoria: 'hogar',
-          estado: 'pendiente',
-          fechaCreacion: '2024-02-14T09:00:00Z'
-        },
-        {
-          id: 10,
-          nombre: 'Vestido Formal Elegante',
-          sku: 'VESFOR001',
-          seller: 'Nueva Tienda Fashion',
-          precio: 1899,
-          categoria: 'ropa',
-          estado: 'pendiente',
-          fechaCreacion: '2024-02-14T16:45:00Z'
-        },
-        {
-          id: 11,
-          nombre: 'Monitor Gaming 4K 32"',
-          sku: 'MON4K32001',
-          seller: 'TechWorld Premium',
-          precio: 12999,
-          categoria: 'electronicos',
-          estado: 'pendiente',
-          fechaCreacion: '2024-02-15T11:30:00Z'
-        }
+       
       ];
       
       setProducts(mockProducts);

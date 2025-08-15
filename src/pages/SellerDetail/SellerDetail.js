@@ -192,7 +192,7 @@ const SellerDetail = () => {
         3: 'pendiente',
         4: 'suspendido',
         5: 'bloqueado',
-        6: 'inactivo',
+        6: 'suspendido',
         7: 'pendiente',
         8: 'activo'
       };
