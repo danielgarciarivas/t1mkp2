@@ -380,29 +380,29 @@
 
 /* Billing config form */
 .billing-config-form {
-  padding: 24px;
+  padding: var(--t1-space-6);
 }
 
 .checkbox-label {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
+  gap: var(--t1-space-3);
+  padding: var(--t1-space-4);
+  border: 1px solid var(--t1-border-default);
+  border-radius: var(--t1-radius-lg);
   cursor: pointer;
   margin: 0;
-  transition: all 0.2s;
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
 }
 
 .checkbox-label:hover {
-  border-color: #007bff;
-  background: #f8f9fa;
+  border-color: var(--t1-brand-primary);
+  background: var(--t1-surface-hover);
 }
 
 .checkbox-label input[type="checkbox"] {
-  margin: 4px 0 0 0;
-  accent-color: #007bff;
+  margin: var(--t1-space-1) 0 0 0;
+  accent-color: var(--t1-brand-primary);
   width: 16px;
   height: 16px;
 }
@@ -415,35 +415,35 @@
 }
 
 .billing-options {
-  margin-top: 16px;
-  padding-left: 20px;
-  border-left: 3px solid #e9ecef;
+  margin-top: var(--t1-space-4);
+  padding-left: var(--t1-space-5);
+  border-left: 3px solid var(--t1-border-subtle);
 }
 
 .billing-info {
-  margin-top: 20px;
+  margin-top: var(--t1-space-5);
 }
 
 .info-box {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  background: #e8f4f8;
-  border: 1px solid #bee5eb;
-  border-radius: 8px;
+  gap: var(--t1-space-3);
+  padding: var(--t1-space-4);
+  background: var(--t1-brand-primary-lighter);
+  border: 1px solid var(--t1-brand-primary-light);
+  border-radius: var(--t1-radius-lg);
 }
 
 .info-icon {
-  font-size: 16px;
-  color: #17a2b8;
-  margin-top: 2px;
+  font-size: var(--t1-text-sm);
+  color: var(--t1-brand-primary);
+  margin-top: var(--t1-space-1);
   flex-shrink: 0;
 }
 
 .info-text {
-  color: #0c5460;
-  font-size: 14px;
+  color: var(--t1-text-primary);
+  font-size: var(--t1-text-xs);
   line-height: 1.5;
 }
 

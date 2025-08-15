@@ -1,3 +1,6 @@
+/* Import T1 Ecosystem Styles */
+@import url('./styles/t1-ecosystem-styles.css');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,9 +9,10 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f8f9fa;
-  color: #333;
+  background: var(--t1-surface-secondary);
+  color: var(--t1-text-primary);
   line-height: 1.6;
+  font-size: var(--t1-text-sm);
 }
 
 .App {
@@ -21,16 +25,16 @@ body {
   border-radius: 0;
   max-width: none;
   width: 100%;
-  padding: 20px;
+  padding: var(--t1-space-6);
 }
 
 .module-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 2px solid #e9ecef;
+  margin-bottom: var(--t1-space-8);
+  padding-bottom: var(--t1-space-6);
+  border-bottom: 2px solid var(--t1-border-subtle);
 }
 
 .module-title-section {
@@ -38,15 +42,15 @@ body {
 }
 
 .module-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 8px 0;
+  font-size: var(--t1-text-xl);
+  font-weight: var(--t1-font-weight-bold);
+  color: var(--t1-text-primary);
+  margin: 0 0 var(--t1-space-2) 0;
 }
 
 .module-subtitle {
-  font-size: 16px;
-  color: #6c757d;
+  font-size: var(--t1-text-sm);
+  color: var(--t1-text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -98,9 +102,9 @@ body {
 }
 
 .modal-content {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  background: var(--t1-surface-primary);
+  border-radius: var(--t1-radius-xl);
+  box-shadow: var(--t1-shadow-xl);
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
@@ -113,23 +117,23 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e9ecef;
-  background: #f8f9fa;
+  padding: var(--t1-space-5) var(--t1-space-6);
+  border-bottom: 1px solid var(--t1-border-subtle);
+  background: var(--t1-surface-secondary);
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #212529;
-  font-size: 18px;
-  font-weight: 600;
+  color: var(--t1-text-primary);
+  font-size: var(--t1-text-base);
+  font-weight: var(--t1-font-weight-semibold);
 }
 
 .close-button {
   background: none;
   border: none;
-  font-size: 24px;
-  color: #6c757d;
+  font-size: var(--t1-text-lg);
+  color: var(--t1-text-secondary);
   cursor: pointer;
   padding: 0;
   width: 30px;
@@ -137,28 +141,28 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: var(--t1-radius-full);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
 }
 
 .close-button:hover {
-  background: #e9ecef;
-  color: #495057;
+  background: var(--t1-surface-hover);
+  color: var(--t1-text-primary);
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--t1-space-6);
   overflow-y: auto;
   flex: 1;
 }
 
 .modal-footer {
   display: flex;
-  gap: 12px;
+  gap: var(--t1-space-3);
   justify-content: flex-end;
-  padding: 16px 24px;
-  border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
+  padding: var(--t1-space-4) var(--t1-space-6);
+  border-top: 1px solid var(--t1-border-subtle);
+  background: var(--t1-surface-secondary);
 }
 
 /* Asegurar que las tablas no se desborden */
@@ -174,15 +178,95 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: var(--t1-surface-tertiary);
+  border-radius: var(--t1-radius-sm);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: var(--t1-neutral-400);
+  border-radius: var(--t1-radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--t1-neutral-500);
+}
+
+/* ========================================================================
+ * T1 GLOBAL FORM ELEMENTS
+ * ======================================================================== */
+
+/* Global input styling with T1 variables */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+input[type="tel"],
+select,
+textarea {
+  font-family: inherit;
+  font-size: var(--t1-text-xs);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--t1-brand-primary) !important;
+  box-shadow: 0 0 0 3px var(--t1-brand-primary-light) !important;
+}
+
+/* Global button focus */
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--t1-shadow-focus);
+}
+
+/* Global card styling */
+.card,
+.config-section,
+.section {
+  background: var(--t1-surface-primary);
+  border-radius: var(--t1-radius-xl);
+  box-shadow: var(--t1-shadow-sm);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
+}
+
+/* Global typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--t1-text-primary);
+  font-weight: var(--t1-font-weight-semibold);
+}
+
+p {
+  color: var(--t1-text-primary);
+  font-size: var(--t1-text-sm);
+  line-height: 1.6;
+}
+
+small {
+  color: var(--t1-text-secondary);
+  font-size: var(--t1-text-xs);
+}
+
+/* Global loading spinner with T1 colors */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--t1-border-default);
+  border-top-color: var(--t1-brand-primary);
+  border-radius: 50%;
+  animation: t1-spin 1s linear infinite;
+}
+
+@keyframes t1-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -95,6 +95,14 @@ const Sidebar = () => {
 
   return (
     <nav className="sidebar">
+      {/* T1MKP Logo Header */}
+      <div className="sidebar-header">
+        <div className="logo-container">
+          <div className="logo-icon">T1</div>
+          <span className="logo-text">MKP</span>
+        </div>
+      </div>
+      
       <div className="sidebar-menu">
         {menuItems.map((item) => (
           <div key={item.id} className="menu-group">

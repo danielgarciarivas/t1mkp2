@@ -1,22 +1,59 @@
 .sidebar {
   position: fixed;
-  top: 70px;
+  top: 0;
   left: 0;
-  width: 280px;
-  height: calc(100vh - 70px);
-  background: white;
-  border-right: 1px solid #e5e5e5;
+  width: var(--t1-sidebar-width);
+  height: 100vh;
+  background: var(--t1-surface-primary);
+  border-right: 1px solid var(--t1-border-subtle);
   overflow-y: auto;
   z-index: 999;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--t1-shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sidebar Header with T1MKP Logo */
+.sidebar-header {
+  padding: var(--t1-space-6);
+  border-bottom: 1px solid var(--t1-border-subtle);
+  background: var(--t1-surface-primary);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: var(--t1-space-2);
+}
+
+.logo-icon {
+  background: var(--t1-brand-primary);
+  color: var(--t1-text-inverse);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--t1-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--t1-text-sm);
+  font-weight: var(--t1-font-weight-bold);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: var(--t1-text-base);
+  font-weight: var(--t1-font-weight-bold);
+  color: var(--t1-text-primary);
+  letter-spacing: -0.5px;
 }
 
 .sidebar-menu {
-  padding: 20px 0;
+  padding: var(--t1-space-5) 0;
+  flex: 1;
 }
 
 .menu-group {
-  margin-bottom: 4px;
+  margin-bottom: var(--t1-space-1);
 }
 
 .menu-item {
@@ -24,16 +61,20 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 16px 24px;
+  padding: var(--t1-space-3) var(--t1-space-6);
+  margin: 0 var(--t1-space-2);
   border: none;
   background: none;
-  color: #6c757d;
-  font-size: 14px;
+  color: var(--t1-text-secondary);
+  font-size: var(--t1-text-xs);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
   text-align: left;
   position: relative;
-  font-weight: 500;
+  font-weight: var(--t1-font-weight-medium);
+  border-radius: var(--t1-radius-lg);
+  font-family: inherit;
+  min-height: var(--t1-menu-item-height);
 }
 
 .menu-item-content {
@@ -44,9 +85,9 @@
 }
 
 .submenu-arrow {
-  font-size: 10px;
-  transition: transform 0.2s ease;
-  color: #6c757d;
+  font-size: var(--t1-text-xs);
+  transition: transform var(--t1-duration-normal) var(--t1-ease-smooth);
+  color: var(--t1-text-secondary);
 }
 
 .submenu-arrow.expanded {
@@ -54,19 +95,19 @@
 }
 
 .menu-item.has-submenu.active .submenu-arrow {
-  color: white;
+  color: var(--t1-text-inverse);
 }
 
 .menu-item:hover {
-  background: #f8f9fa;
-  color: #495057;
+  background: var(--t1-surface-hover);
+  color: var(--t1-text-primary);
 }
 
 .menu-item.active {
-  background: linear-gradient(90deg, #DB3B2B, #E26153);
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(219, 59, 43, 0.2);
+  background: var(--t1-brand-primary);
+  color: var(--t1-text-inverse);
+  font-weight: var(--t1-font-weight-semibold);
+  box-shadow: var(--t1-shadow-md);
 }
 
 .menu-item.active::before {
@@ -76,14 +117,16 @@
   top: 0;
   width: 4px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--t1-text-inverse);
+  opacity: 0.3;
 }
 
 .menu-icon {
-  font-size: 18px;
+  font-size: var(--t1-text-base);
   width: 24px;
   text-align: center;
   flex-shrink: 0;
+  color: inherit;
 }
 
 .menu-label {
@@ -95,36 +138,38 @@
 
 /* Submenu Styles */
 .submenu {
-  background: #f8f9fa;
-  border-left: 3px solid #DB3B2B;
-  animation: slideDown 0.2s ease-out;
+  background: var(--t1-surface-secondary);
+  border-left: 3px solid var(--t1-brand-primary);
+  animation: slideDown var(--t1-duration-normal) var(--t1-ease-smooth);
 }
 
 .submenu-item {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 12px 24px 12px 48px;
+  padding: var(--t1-space-3) var(--t1-space-6) var(--t1-space-3) var(--t1-space-12);
   border: none;
   background: none;
-  color: #6c757d;
-  font-size: 13px;
+  color: var(--t1-text-secondary);
+  font-size: var(--t1-text-xs);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
   text-align: left;
-  font-weight: 500;
+  font-weight: var(--t1-font-weight-medium);
   position: relative;
+  font-family: inherit;
+  min-height: var(--t1-menu-item-height);
 }
 
 .submenu-item:hover {
-  background: #e9ecef;
-  color: #495057;
+  background: var(--t1-surface-hover);
+  color: var(--t1-text-primary);
 }
 
 .submenu-item.active {
-  background: #DB3B2B;
-  color: white;
-  font-weight: 600;
+  background: var(--t1-brand-primary);
+  color: var(--t1-text-inverse);
+  font-weight: var(--t1-font-weight-semibold);
 }
 
 .submenu-item.active::before {
@@ -134,7 +179,8 @@
   top: 0;
   width: 3px;
   height: 100%;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--t1-text-inverse);
+  opacity: 0.5;
 }
 
 .submenu-label {
@@ -165,7 +211,7 @@
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform var(--t1-duration-slow) var(--t1-ease-smooth);
   }
   
   .sidebar.mobile-open {
@@ -173,12 +219,16 @@
   }
   
   .menu-item {
-    padding: 14px 20px;
-    font-size: 13px;
+    padding: var(--t1-space-4) var(--t1-space-5);
+    font-size: var(--t1-text-xs);
   }
   
   .menu-icon {
-    font-size: 16px;
+    font-size: var(--t1-text-sm);
     width: 20px;
+  }
+  
+  .submenu-item {
+    padding: var(--t1-space-3) var(--t1-space-5) var(--t1-space-3) var(--t1-space-10);
   }
 }

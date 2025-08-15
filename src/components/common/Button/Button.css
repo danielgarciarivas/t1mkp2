@@ -1,36 +1,46 @@
 .btn {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--t1-radius-lg);
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-weight: var(--t1-font-weight-bold);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   border: 1px solid transparent;
+  font-family: inherit;
+  min-height: 2.5rem;
+  gap: var(--t1-space-2);
 }
 
 .btn--primary {
-  background-color: #e74c3c;
-  color: white;
-  border-color: #e74c3c;
+  background-color: var(--t1-brand-primary);
+  color: var(--t1-text-inverse);
+  border-color: var(--t1-brand-primary);
+  box-shadow: none;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: #c0392b;
-  border-color: #c0392b;
+  background-color: var(--t1-brand-primary-hover);
+  border-color: var(--t1-brand-primary-hover);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
+}
+
+.btn--primary:active:not(:disabled) {
+  background-color: var(--t1-brand-primary-active);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
 }
 
 .btn--secondary {
-  background-color: #6c757d;
-  color: white;
-  border-color: #6c757d;
+  background-color: var(--t1-surface-primary);
+  color: var(--t1-text-primary);
+  border-color: var(--t1-border-default);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background-color: #5a6268;
-  border-color: #5a6268;
+  background-color: var(--t1-surface-hover);
+  border-color: var(--t1-border-default);
 }
 
 .btn--success {
@@ -68,28 +78,31 @@
 
 .btn--outline {
   background-color: transparent;
-  color: #e74c3c;
-  border-color: #e74c3c;
+  color: var(--t1-brand-primary);
+  border-color: var(--t1-brand-primary);
 }
 
 .btn--outline:hover:not(:disabled) {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--t1-brand-primary);
+  color: var(--t1-text-inverse);
 }
 
 .btn--small {
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: var(--t1-space-1) var(--t1-space-3);
+  font-size: var(--t1-text-xs);
+  min-height: 2rem;
 }
 
 .btn--medium {
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: var(--t1-space-2) var(--t1-space-4);
+  font-size: var(--t1-text-xs);
+  min-height: 2.5rem;
 }
 
 .btn--large {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: var(--t1-space-3) var(--t1-space-6);
+  font-size: var(--t1-text-sm);
+  min-height: 3rem;
 }
 
 .btn:hover:not(:disabled) {
@@ -107,4 +120,9 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--t1-shadow-focus);
 }

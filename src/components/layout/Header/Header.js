@@ -8,9 +8,9 @@ const Header = () => {
     <header className="header">
       <div className="header-content">
         <div className="header-left">
-          <div className="logo">
-            <span>Ⓜ</span>
-            <span>T1MKP</span>
+          <div className="logo-container">
+            <div className="logo-icon">T1</div>
+            <span className="logo-text">MARKETPLACE</span>
           </div>
         </div>
         
