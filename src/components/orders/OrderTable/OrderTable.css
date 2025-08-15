@@ -408,6 +408,17 @@
   color: white;
 }
 
+.action-buttons button.cancel-btn {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.action-buttons button.cancel-btn:hover {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;

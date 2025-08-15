@@ -10,7 +10,8 @@ const SellerTable = ({
   selectedSellers = [],
   filters,
   onFiltersChange,
-  onSearch
+  onSearch,
+  pendingOnly = false
 }) => {
   const [sortField, setSortField] = useState('fechaSolicitud');
   const [sortDirection, setSortDirection] = useState('desc');
@@ -296,6 +297,18 @@ const SellerTable = ({
                             <span className="seller-phone">• {seller.telefono}</span>
                           )}
                         </div>
+                        {seller.alerts && seller.alerts.length > 0 && (
+                          <div className="seller-alerts">
+                            {seller.alerts.slice(0, 2).map((alert, index) => (
+                              <div key={index} className={`alert-badge alert-${alert.severity}`} title={alert.message}>
+                                {alert.severity === 'critical' && '🚨'}
+                                {alert.severity === 'warning' && '⚠️'}
+                                {alert.severity === 'info' && 'ℹ️'}
+                                <span className="alert-text">{alert.message}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -303,9 +316,9 @@ const SellerTable = ({
                   
                   <td>
                     <div className="categories-list">
-                      {seller.categorias.slice(0, 2).map(cat => (
-                        <span key={cat.id} className="category-pill">
-                          {cat.nombre}
+                      {seller.categorias.slice(0, 2).map((cat, index) => (
+                        <span key={cat.id || index} className="category-pill">
+                          {cat.nombre || cat}
                         </span>
                       ))}
                       {seller.categorias.length > 2 && (
@@ -318,8 +331,8 @@ const SellerTable = ({
                   
                   <td>
                     <div className="date-info">
-                      <span className="date-text">{formatDate(seller.fechaSolicitud)}</span>
-                      <span className="date-full">{new Date(seller.fechaSolicitud).toLocaleDateString('es-ES')}</span>
+                      <span className="date-text">{formatDate(seller.fechaSolicitud || seller.fechaRegistro)}</span>
+                      <span className="date-full">{new Date(seller.fechaSolicitud || seller.fechaRegistro).toLocaleDateString('es-ES')}</span>
                     </div>
                   </td>
                   

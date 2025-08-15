@@ -1,0 +1,191 @@
+/* Modal de confirmación */
+.confirmation-modal {
+  max-width: 500px;
+  width: 90vw;
+}
+
+.confirmation-modal.confirmation-warning {
+  border-top: 4px solid #ffc107;
+}
+
+.confirmation-modal.confirmation-danger {
+  border-top: 4px solid #dc3545;
+}
+
+.confirmation-modal.confirmation-default {
+  border-top: 4px solid #007bff;
+}
+
+.confirmation-message {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #212529;
+  margin-bottom: 20px;
+}
+
+.liquidation-details {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+}
+
+.liquidation-details h4 {
+  margin: 0 0 16px 0;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.single-liquidation .liquidation-item {
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seller-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.seller-info strong {
+  font-size: 14px;
+  color: #212529;
+}
+
+.seller-info span {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.amount-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.date {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.liquidations-summary {
+  background: #fff;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.total-amount {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.liquidations-list {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.liquidation-item.small {
+  background: #fff;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.liquidation-item.small .seller {
+  font-weight: 500;
+  color: #495057;
+}
+
+.liquidation-item.small .amount {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.more-items {
+  text-align: center;
+  padding: 8px;
+  color: #6c757d;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.confirmation-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.warning-text {
+  font-size: 14px;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .confirmation-modal {
+    width: 95vw;
+  }
+  
+  .single-liquidation .liquidation-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .amount-info {
+    align-items: flex-start;
+  }
+  
+  .confirmation-warning {
+    flex-direction: column;
+    text-align: center;
+  }
+}

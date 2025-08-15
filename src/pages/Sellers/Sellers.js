@@ -35,7 +35,64 @@ const Sellers = () => {
     setLoading(true);
     // Simular carga de datos
     setTimeout(() => {
-      const mockSellers = [
+      // Función para calcular alertas automáticas
+      const calculateAlerts = (seller) => {
+        const alerts = [];
+        const now = new Date();
+        
+        // Calcular días desde última venta
+        const daysSinceLastSale = seller.ultimaVenta ? 
+          Math.floor((now - new Date(seller.ultimaVenta)) / (1000 * 60 * 60 * 24)) : 
+          Math.floor((now - new Date(seller.fechaSolicitud)) / (1000 * 60 * 60 * 24));
+        
+        // Alertas por inactividad
+        if (daysSinceLastSale >= 180) { // 6 meses
+          alerts.push({
+            type: 'suspension_risk',
+            severity: 'critical',
+            message: `Sin ventas por ${daysSinceLastSale} días. Riesgo de suspensión automática.`
+          });
+        } else if (daysSinceLastSale >= 120) { // 4 meses
+          alerts.push({
+            type: 'low_activity',
+            severity: 'warning',
+            message: `Sin ventas por ${daysSinceLastSale} días. Actividad muy baja.`
+          });
+        } else if (daysSinceLastSale >= 60) { // 2 meses
+          alerts.push({
+            type: 'inactive',
+            severity: 'info',
+            message: `Sin ventas por ${daysSinceLastSale} días. Considerar contacto.`
+          });
+        }
+        
+        // Alertas por rendimiento bajo
+        if (seller.ventasMes < 5 && daysSinceLastSale < 60) {
+          alerts.push({
+            type: 'low_performance',
+            severity: 'warning',
+            message: `Solo ${seller.ventasMes} ventas este mes. Rendimiento bajo.`
+          });
+        }
+        
+        // Auto-suspensión por inactividad prolongada
+        if (daysSinceLastSale >= 180) {
+          return {
+            ...seller,
+            estado: 'suspendido',
+            motivoSuspension: 'inactividad_automatica',
+            fechaSuspension: new Date(Date.now() - (daysSinceLastSale - 180) * 24 * 60 * 60 * 1000).toISOString(),
+            alerts: alerts
+          };
+        }
+        
+        return {
+          ...seller,
+          alerts: alerts
+        };
+      };
+
+      const baseSellers = [
         {
           id: 1,
           nombre: 'TechStore Pro',
@@ -45,6 +102,8 @@ const Sellers = () => {
           rfcValidado: true,
           estado: 'activo',
           fechaSolicitud: '2024-01-15T10:30:00Z',
+          ultimaVenta: '2024-02-10T14:30:00Z',
+          ventasMes: 45,
           categorias: [
             { id: 1, nombre: 'Electrónicos' },
             { id: 4, nombre: 'Deportes' }
@@ -63,6 +122,8 @@ const Sellers = () => {
           rfcValidado: true,
           estado: 'activo',
           fechaSolicitud: '2024-01-20T14:15:00Z',
+          ultimaVenta: '2023-10-15T10:00:00Z', // Más de 4 meses sin ventas
+          ventasMes: 2,
           categorias: [
             { id: 2, nombre: 'Ropa y Moda' }
           ],
@@ -96,7 +157,9 @@ const Sellers = () => {
           rfc: 'SPW750630JKL',
           rfcValidado: true,
           estado: 'suspendido',
-          fechaSolicitud: '2024-02-05T16:45:00Z',
+          fechaSolicitud: '2023-08-10T16:45:00Z', // 6+ meses sin ventas - auto suspendido
+          ultimaVenta: null,
+          ventasMes: 0,
           categorias: [
             { id: 4, nombre: 'Deportes' },
             { id: 5, nombre: 'Salud y Belleza' }
@@ -115,6 +178,8 @@ const Sellers = () => {
           rfcValidado: true,
           estado: 'bloqueado',
           fechaSolicitud: '2024-01-10T11:20:00Z',
+          ultimaVenta: '2024-01-25T14:00:00Z',
+          ventasMes: 15,
           categorias: [
             { id: 5, nombre: 'Salud y Belleza' }
           ],
@@ -130,19 +195,24 @@ const Sellers = () => {
           telefono: '+52 55 6789 0123',
           rfc: 'ELH940710PQR',
           rfcValidado: false,
-          estado: 'inactivo',
+          estado: 'activo',
           fechaSolicitud: '2024-02-08T13:30:00Z',
+          ultimaVenta: '2023-11-20T10:00:00Z', // 3+ meses sin ventas
+          ventasMes: 1,
           categorias: [
             { id: 1, nombre: 'Electrónicos' }
           ],
-          rating: null,
-          odr: null,
+          rating: 3.8,
+          odr: 3.2,
           urgente: false,
           validationState: null
         }
       ];
       
-      setSellers(mockSellers);
+      // Aplicar cálculo de alertas a todos los sellers
+      const sellersWithAlerts = baseSellers.map(calculateAlerts);
+      
+      setSellers(sellersWithAlerts);
       setLoading(false);
     }, 1000);
   };

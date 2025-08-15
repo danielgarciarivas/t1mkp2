@@ -2,7 +2,7 @@ import React from 'react';
 import MetricCard from '../../common/MetricCard';
 import './SellerStats.css';
 
-const SellerStats = ({ loading = false }) => {
+const SellerStats = ({ loading = false, pendingOnly = false }) => {
   const stats = {
     sellersTotal: { value: '342', change: '+23', changeType: 'positive' },
     pendientesAprobacion: { value: '15', change: '8 urgentes', changeType: 'neutral' },

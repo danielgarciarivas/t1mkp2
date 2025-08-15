@@ -4,6 +4,164 @@ import MetricCard from '../../components/common/MetricCard';
 import Button from '../../components/common/Button';
 import './SellerDetail.css';
 
+// Taxonomía de categorías del ecosistema T1
+const T1_CATEGORY_TAXONOMY = [
+  {
+    id: 'electronica',
+    name: 'Electrónicos y Tecnología',
+    icon: '📱',
+    children: [
+      {
+        id: 'smartphones',
+        name: 'Smartphones y Celulares',
+        children: [
+          { id: 'iphone', name: 'iPhone' },
+          { id: 'samsung', name: 'Samsung' },
+          { id: 'xiaomi', name: 'Xiaomi' },
+          { id: 'huawei', name: 'Huawei' }
+        ]
+      },
+      {
+        id: 'computadoras',
+        name: 'Computadoras y Laptops',
+        children: [
+          { id: 'laptops', name: 'Laptops' },
+          { id: 'desktops', name: 'Computadoras de Escritorio' },
+          { id: 'tablets', name: 'Tablets' }
+        ]
+      },
+      {
+        id: 'audio',
+        name: 'Audio y Sonido',
+        children: [
+          { id: 'audifonos', name: 'Audífonos' },
+          { id: 'bocinas', name: 'Bocinas' },
+          { id: 'sistemas-audio', name: 'Sistemas de Audio' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hogar',
+    name: 'Hogar y Jardín',
+    icon: '🏠',
+    children: [
+      {
+        id: 'muebles',
+        name: 'Muebles',
+        children: [
+          { id: 'sala', name: 'Muebles de Sala' },
+          { id: 'recamara', name: 'Muebles de Recámara' },
+          { id: 'comedor', name: 'Muebles de Comedor' },
+          { id: 'oficina', name: 'Muebles de Oficina' }
+        ]
+      },
+      {
+        id: 'decoracion',
+        name: 'Decoración',
+        children: [
+          { id: 'cuadros', name: 'Cuadros y Arte' },
+          { id: 'plantas', name: 'Plantas y Macetas' },
+          { id: 'textiles', name: 'Textiles para el Hogar' }
+        ]
+      },
+      {
+        id: 'jardin',
+        name: 'Jardín y Exterior',
+        children: [
+          { id: 'herramientas-jardin', name: 'Herramientas de Jardín' },
+          { id: 'muebles-exterior', name: 'Muebles de Exterior' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'moda',
+    name: 'Moda y Accesorios',
+    icon: '👗',
+    children: [
+      {
+        id: 'ropa-dama',
+        name: 'Ropa para Dama',
+        children: [
+          { id: 'vestidos', name: 'Vestidos' },
+          { id: 'blusas', name: 'Blusas y Tops' },
+          { id: 'pantalones-dama', name: 'Pantalones' },
+          { id: 'faldas', name: 'Faldas' }
+        ]
+      },
+      {
+        id: 'ropa-caballero',
+        name: 'Ropa para Caballero',
+        children: [
+          { id: 'camisas', name: 'Camisas' },
+          { id: 'pantalones-caballero', name: 'Pantalones' },
+          { id: 'trajes', name: 'Trajes' },
+          { id: 'playeras', name: 'Playeras y Polos' }
+        ]
+      },
+      {
+        id: 'calzado',
+        name: 'Calzado',
+        children: [
+          { id: 'zapatos-dama', name: 'Zapatos para Dama' },
+          { id: 'zapatos-caballero', name: 'Zapatos para Caballero' },
+          { id: 'deportivos', name: 'Calzado Deportivo' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'deportes',
+    name: 'Deportes y Fitness',
+    icon: '⚽',
+    children: [
+      {
+        id: 'fitness',
+        name: 'Fitness y Gimnasio',
+        children: [
+          { id: 'pesas', name: 'Pesas y Equipos' },
+          { id: 'cardio', name: 'Equipos de Cardio' },
+          { id: 'yoga', name: 'Yoga y Pilates' }
+        ]
+      },
+      {
+        id: 'deportes-acuaticos',
+        name: 'Deportes Acuáticos',
+        children: [
+          { id: 'natacion', name: 'Natación' },
+          { id: 'surf', name: 'Surf y Paddle' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'belleza',
+    name: 'Belleza y Cuidado Personal',
+    icon: '💄',
+    children: [
+      {
+        id: 'maquillaje',
+        name: 'Maquillaje',
+        children: [
+          { id: 'rostro', name: 'Maquillaje para Rostro' },
+          { id: 'ojos', name: 'Maquillaje para Ojos' },
+          { id: 'labios', name: 'Maquillaje para Labios' }
+        ]
+      },
+      {
+        id: 'cuidado-piel',
+        name: 'Cuidado de la Piel',
+        children: [
+          { id: 'limpieza', name: 'Limpieza Facial' },
+          { id: 'hidratacion', name: 'Hidratación' },
+          { id: 'tratamientos', name: 'Tratamientos Especiales' }
+        ]
+      }
+    ]
+  }
+];
+
 const SellerDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,6 +170,11 @@ const SellerDetail = () => {
   const [activeTab, setActiveTab] = useState('datos-identidad');
   const [showContractModal, setShowContractModal] = useState(false);
   const [commission, setCommission] = useState(0);
+  const [freepassEnabled, setFreepassEnabled] = useState(false);
+  const [liquidationMode, setLiquidationMode] = useState('automatic'); // 'automatic' | 'manual'
+  const [allowedCategories, setAllowedCategories] = useState(new Set());
+  const [canSellInAllCategories, setCanSellInAllCategories] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
 
   useEffect(() => {
     loadSellerDetail();
@@ -82,6 +245,8 @@ const SellerDetail = () => {
         // Estado del contrato
         contratoFirmado: true,
         contratoMarketplace: false,
+        freepassEnabled: parseInt(id) === 1 || parseInt(id) === 2, // Solo algunos sellers tienen freepass activo por defecto
+        liquidationMode: parseInt(id) === 1 ? 'manual' : 'automatic', // Seller 1 usa modo manual por defecto
         documentos: {
           actaConstitutiva: { verificado: true },
           contratoSears: { verificado: true },
@@ -91,6 +256,8 @@ const SellerDetail = () => {
       
       setSeller(mockSeller);
       setCommission(3.5); // Comisión por defecto
+      setFreepassEnabled(mockSeller.freepassEnabled);
+      setLiquidationMode(mockSeller.liquidationMode);
       setLoading(false);
     }, 1000);
   };
@@ -98,6 +265,25 @@ const SellerDetail = () => {
   const handleCommissionSave = () => {
     console.log(`Guardando comisión ${commission}% para seller ${id}`);
     // Implementar guardado de comisión
+  };
+
+  const handleFreepassToggle = () => {
+    const newFreepassState = !freepassEnabled;
+    setFreepassEnabled(newFreepassState);
+    setSeller(prev => ({
+      ...prev,
+      freepassEnabled: newFreepassState
+    }));
+    console.log(`Freepass ${newFreepassState ? 'activado' : 'desactivado'} para seller ${id}`);
+  };
+
+  const handleLiquidationModeChange = (mode) => {
+    setLiquidationMode(mode);
+    setSeller(prev => ({
+      ...prev,
+      liquidationMode: mode
+    }));
+    console.log(`Modo de liquidación cambiado a ${mode === 'automatic' ? 'automático' : 'manual'} para seller ${id}`);
   };
 
   const handleContractSign = () => {
@@ -137,6 +323,93 @@ const SellerDetail = () => {
     }
   };
 
+  const handleCategoryToggle = (categoryId) => {
+    if (canSellInAllCategories) return;
+    
+    const newAllowedCategories = new Set(allowedCategories);
+    if (newAllowedCategories.has(categoryId)) {
+      newAllowedCategories.delete(categoryId);
+    } else {
+      newAllowedCategories.add(categoryId);
+    }
+    setAllowedCategories(newAllowedCategories);
+  };
+
+  const handleExpandCategory = (categoryId) => {
+    const newExpandedCategories = new Set(expandedCategories);
+    if (newExpandedCategories.has(categoryId)) {
+      newExpandedCategories.delete(categoryId);
+    } else {
+      newExpandedCategories.add(categoryId);
+    }
+    setExpandedCategories(newExpandedCategories);
+  };
+
+  const handleAllCategoriesToggle = () => {
+    setCanSellInAllCategories(!canSellInAllCategories);
+    if (!canSellInAllCategories) {
+      setAllowedCategories(new Set());
+    }
+  };
+
+  const saveCategorySettings = () => {
+    console.log('Guardando configuración de categorías:', {
+      canSellInAllCategories,
+      allowedCategories: Array.from(allowedCategories)
+    });
+  };
+
+  const renderCategoryTree = (categories, level = 0) => {
+    return categories.map(category => {
+      const isExpanded = expandedCategories.has(category.id);
+      const isSelected = allowedCategories.has(category.id);
+      const hasChildren = category.children && category.children.length > 0;
+      const isParentLevel = level === 0;
+      
+      return (
+        <div key={category.id} className={`category-item level-${level}`}>
+          <div className="category-row">
+            <div className="category-content">
+              {hasChildren && (
+                <button
+                  className={`expand-button ${isExpanded ? 'expanded' : ''}`}
+                  onClick={() => handleExpandCategory(category.id)}
+                >
+                  {isExpanded ? '▼' : '▶'}
+                </button>
+              )}
+              
+              {!hasChildren && <div className="expand-spacer"></div>}
+              
+              <span className="category-icon">{category.icon || '📁'}</span>
+              <span className="category-name">{category.name}</span>
+            </div>
+            
+            {isParentLevel && (
+              <div className="category-selection">
+                <label className="category-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleCategoryToggle(category.id)}
+                    disabled={canSellInAllCategories}
+                  />
+                  <span className="checkmark"></span>
+                </label>
+              </div>
+            )}
+          </div>
+          
+          {hasChildren && isExpanded && (
+            <div className="category-children">
+              {renderCategoryTree(category.children, level + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
   if (loading) {
     return (
       <div className="module">
@@ -163,6 +436,31 @@ const SellerDetail = () => {
 
   return (
     <div className="module">
+      {/* Cintillo de estado para tiendas suspendidas o bloqueadas */}
+      {(seller.estado === 'suspendido' || seller.estado === 'bloqueado') && (
+        <div className={`status-banner status-banner-${seller.estado}`}>
+          <div className="status-banner-content">
+            <span className="status-banner-icon">
+              {seller.estado === 'suspendido' ? '⚠️' : '🚫'}
+            </span>
+            <div className="status-banner-text">
+              <strong>
+                {seller.estado === 'suspendido' 
+                  ? 'Tienda Suspendida' 
+                  : 'Tienda Bloqueada'
+                }
+              </strong>
+              <span>
+                {seller.estado === 'suspendido' 
+                  ? 'Esta tienda ha sido suspendida temporalmente y no puede realizar ventas.' 
+                  : 'Esta tienda ha sido bloqueada y requiere revisión administrativa.'
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="module-header">
         <div className="module-title-section">
           <div className="seller-header-info">
@@ -281,6 +579,18 @@ const SellerDetail = () => {
             onClick={() => setActiveTab('contrato')}
           >
             Contrato
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'configuracion' ? 'active' : ''}`}
+            onClick={() => setActiveTab('configuracion')}
+          >
+            Configuración
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'categorias-permitidas' ? 'active' : ''}`}
+            onClick={() => setActiveTab('categorias-permitidas')}
+          >
+            Categorías Permitidas
           </button>
         </div>
 
@@ -459,6 +769,212 @@ const SellerDetail = () => {
                   onClick={() => setShowContractModal(true)}
                 >
                   Ver Contrato Completo
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'configuracion' && (
+            <div className="configuration-section">
+              <h3>Configuraciones Avanzadas</h3>
+              
+              <div className="config-item">
+                <div className="config-header">
+                  <div className="config-info">
+                    <h4>Freepass - Pase Libre</h4>
+                    <p className="config-description">
+                      Permite que los productos de esta tienda se sincronicen directamente al canal sin validaciones previas.
+                      Los productos aparecerán como activos inmediatamente después de la sincronización.
+                    </p>
+                  </div>
+                  <div className="toggle-container">
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={freepassEnabled}
+                        onChange={handleFreepassToggle}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div className={`config-status ${freepassEnabled ? 'active' : 'inactive'}`}>
+                  <span className="status-indicator">
+                    {freepassEnabled ? '✅' : '❌'}
+                  </span>
+                  <span className="status-text">
+                    {freepassEnabled 
+                      ? 'Freepass ACTIVADO - Los productos se publican sin validación' 
+                      : 'Freepass DESACTIVADO - Los productos requieren validación'
+                    }
+                  </span>
+                </div>
+
+                {freepassEnabled && (
+                  <div className="warning-notice">
+                    <span className="warning-icon">⚠️</span>
+                    <div className="warning-text">
+                      <strong>Advertencia:</strong> Con el freepass activado, los productos de esta tienda se publicarán automáticamente sin pasar por el proceso de validación. Asegúrate de que esta tienda cumple con todos los estándares de calidad.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Configuración de Modo de Liquidación */}
+              <div className="config-item">
+                <div className="config-header">
+                  <div className="config-info">
+                    <h4>Modo de Liquidación</h4>
+                    <p className="config-description">
+                      Configura si las liquidaciones para este seller se procesan automáticamente según la programación o requieren aprobación manual.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="liquidation-mode-options">
+                  <div className="mode-option-group">
+                    <label className={`mode-option ${liquidationMode === 'automatic' ? 'selected' : ''}`}>
+                      <input 
+                        type="radio" 
+                        name="liquidationMode"
+                        value="automatic"
+                        checked={liquidationMode === 'automatic'}
+                        onChange={(e) => handleLiquidationModeChange(e.target.value)}
+                      />
+                      <div className="mode-content">
+                        <div className="mode-header">
+                          <span className="mode-icon">🤖</span>
+                          <span className="mode-title">Automático</span>
+                        </div>
+                        <p className="mode-description">
+                          Las liquidaciones se procesan automáticamente según la frecuencia configurada en el sistema.
+                        </p>
+                      </div>
+                    </label>
+
+                    <label className={`mode-option ${liquidationMode === 'manual' ? 'selected' : ''}`}>
+                      <input 
+                        type="radio" 
+                        name="liquidationMode"
+                        value="manual"
+                        checked={liquidationMode === 'manual'}
+                        onChange={(e) => handleLiquidationModeChange(e.target.value)}
+                      />
+                      <div className="mode-content">
+                        <div className="mode-header">
+                          <span className="mode-icon">👤</span>
+                          <span className="mode-title">Manual por Aprobación</span>
+                        </div>
+                        <p className="mode-description">
+                          Las liquidaciones requieren aprobación manual antes de ser procesadas.
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className={`config-status ${liquidationMode === 'automatic' ? 'auto' : 'manual'}`}>
+                  <span className="status-indicator">
+                    {liquidationMode === 'automatic' ? '🤖' : '👤'}
+                  </span>
+                  <span className="status-text">
+                    {liquidationMode === 'automatic' 
+                      ? 'Modo AUTOMÁTICO - Las liquidaciones se procesan según programación' 
+                      : 'Modo MANUAL - Las liquidaciones requieren aprobación previa'
+                    }
+                  </span>
+                </div>
+
+                {liquidationMode === 'manual' && (
+                  <div className="info-notice">
+                    <span className="info-icon">ℹ️</span>
+                    <div className="info-text">
+                      <strong>Información:</strong> Con el modo manual activado, tendrás que aprobar cada liquidación individualmente desde el módulo de pagos.
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'categorias-permitidas' && (
+            <div className="categories-section">
+              <h3>Categorías Permitidas para Sincronización</h3>
+              <p className="section-description">
+                Configure qué categorías del ecosistema T1 puede utilizar este seller para sincronizar sus productos.
+                Solo las categorías padre (primer nivel) pueden ser seleccionadas.
+              </p>
+              
+              <div className="all-categories-option">
+                <label className="all-categories-toggle">
+                  <input
+                    type="checkbox"
+                    checked={canSellInAllCategories}
+                    onChange={handleAllCategoriesToggle}
+                  />
+                  <span className="toggle-text">
+                    <strong>Puede vender en todas las categorías</strong>
+                  </span>
+                </label>
+                <p className="option-description">
+                  Al activar esta opción, el seller podrá sincronizar productos en cualquier categoría del marketplace.
+                </p>
+              </div>
+
+              {!canSellInAllCategories && (
+                <div className="category-tree-container">
+                  <h4>Seleccionar Categorías Específicas</h4>
+                  <div className="category-tree">
+                    {renderCategoryTree(T1_CATEGORY_TAXONOMY)}
+                  </div>
+                </div>
+              )}
+
+              <div className="categories-summary">
+                <h4>Resumen de Configuración</h4>
+                {canSellInAllCategories ? (
+                  <div className="summary-item all-allowed">
+                    <span className="summary-icon">✅</span>
+                    <span className="summary-text">
+                      Este seller puede sincronizar productos en <strong>todas las categorías</strong> del marketplace.
+                    </span>
+                  </div>
+                ) : allowedCategories.size > 0 ? (
+                  <div className="summary-item specific-categories">
+                    <span className="summary-icon">📋</span>
+                    <div className="summary-content">
+                      <span className="summary-text">
+                        Categorías permitidas ({allowedCategories.size}):
+                      </span>
+                      <div className="allowed-categories-list">
+                        {Array.from(allowedCategories).map(categoryId => {
+                          const category = T1_CATEGORY_TAXONOMY.find(cat => cat.id === categoryId);
+                          return (
+                            <span key={categoryId} className="category-tag">
+                              {category?.icon} {category?.name}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="summary-item no-categories">
+                    <span className="summary-icon">⚠️</span>
+                    <span className="summary-text">
+                      <strong>Sin categorías permitidas:</strong> Este seller no podrá sincronizar productos hasta que se configure al menos una categoría.
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="categories-actions">
+                <Button 
+                  variant="primary"
+                  onClick={saveCategorySettings}
+                >
+                  Guardar Configuración de Categorías
                 </Button>
               </div>
             </div>

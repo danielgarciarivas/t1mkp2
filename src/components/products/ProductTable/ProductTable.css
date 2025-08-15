@@ -289,6 +289,13 @@
   border: 1px solid #c3e6cb;
 }
 
+.status-badge.status-freepass {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  font-weight: 600;
+}
+
 .status-badge.status-suspended {
   background: #f8d7da;
   color: #721c24;

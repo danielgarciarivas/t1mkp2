@@ -10,7 +10,8 @@ const ProductTable = ({
   selectedProducts = [],
   filters,
   onFiltersChange,
-  onSearch
+  onSearch,
+  pendingOnly = false
 }) => {
   const [sortField, setSortField] = useState('fechaCreacion');
   const [sortDirection, setSortDirection] = useState('desc');
@@ -102,6 +103,11 @@ const ProductTable = ({
       'activo': { 
         text: 'Activo', 
         class: 'status-active',
+        actions: ['ver', 'suspender', 'editar']
+      },
+      'freepass': { 
+        text: 'Freepass', 
+        class: 'status-freepass',
         actions: ['ver', 'suspender', 'editar']
       },
       'suspendido': { 
@@ -196,6 +202,7 @@ const ProductTable = ({
             <option value="todos">Todos los estados</option>
             <option value="pendiente">Pendiente</option>
             <option value="activo">Activo</option>
+            <option value="freepass">Freepass</option>
             <option value="suspendido">Suspendido</option>
             <option value="rechazado">Rechazado</option>
           </select>

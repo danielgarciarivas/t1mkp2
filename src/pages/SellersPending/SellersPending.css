@@ -1,0 +1,27 @@
+/* SellersPending específicos */
+.sellers-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Estilo específico para tiendas pendientes */
+.module-title {
+  color: #f39c12;
+}
+
+.module-subtitle {
+  color: #8e6a2d;
+}
+
+/* Stats personalizados para pendientes */
+.stats-pending .stat-card:first-child {
+  border-left: 4px solid #f39c12;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sellers-content {
+    gap: 16px;
+  }
+}

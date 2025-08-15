@@ -157,6 +157,35 @@ const ProductDetail = () => {
             origen: 'Corea del Sur',
             certificacion: 'Cruelty-free'
           }
+        },
+        6: {
+          id: 6,
+          nombre: 'Laptop Gaming ROG Strix',
+          sku: 'LAP001ROG',
+          seller: 'TechStore Pro',
+          precio: 35999,
+          categoria: 'Electrónicos',
+          estado: 'freepass',
+          fechaCreacion: '2024-02-10T11:20:00Z',
+          descripcion: 'Laptop gaming de alto rendimiento con procesador Intel i7, tarjeta gráfica RTX 4060 y 16GB RAM. Diseñada para gaming extremo y trabajo profesional.',
+          imagenes: [
+            'https://via.placeholder.com/600x600/FF0000/fff?text=Laptop+Gaming',
+            'https://via.placeholder.com/600x600/FF4500/fff?text=Teclado+RGB',
+            'https://via.placeholder.com/600x600/FF6347/fff?text=Pantalla',
+            'https://via.placeholder.com/600x600/FF8C00/fff?text=Conectores'
+          ],
+          especificaciones: {
+            marca: 'ASUS ROG',
+            procesador: 'Intel Core i7-12700H',
+            tarjetaGrafica: 'NVIDIA RTX 4060 8GB',
+            ram: '16GB DDR4',
+            almacenamiento: '1TB SSD NVMe',
+            pantalla: '15.6" Full HD 144Hz',
+            sistemaOperativo: 'Windows 11',
+            conectividad: 'Wi-Fi 6, Bluetooth 5.2, USB-C, HDMI',
+            bateria: '90Wh',
+            peso: '2.3 kg'
+          }
         }
       };
       
@@ -203,6 +232,7 @@ const ProductDetail = () => {
     const badges = {
       'pendiente': { text: 'Pendiente', class: 'status-pending' },
       'activo': { text: 'Activo', class: 'status-active' },
+      'freepass': { text: 'Freepass', class: 'status-freepass' },
       'suspendido': { text: 'Suspendido', class: 'status-suspended' },
       'rechazado': { text: 'Rechazado', class: 'status-rejected' }
     };
@@ -289,13 +319,25 @@ const ProductDetail = () => {
             </>
           )}
           
-          {product.estado === 'activo' && (
+          {(product.estado === 'activo' || product.estado === 'freepass') && (
             <Button 
               variant="warning"
               onClick={() => handleProductAction('suspend')}
             >
               Suspender Producto
             </Button>
+          )}
+          
+          {product.estado === 'freepass' && (
+            <div className="freepass-info">
+              <div className="freepass-badge">
+                <span className="freepass-icon">🚀</span>
+                <div className="freepass-text">
+                  <strong>Producto Freepass</strong>
+                  <p>Este producto se sincronizó automáticamente sin validación previa</p>
+                </div>
+              </div>
+            </div>
           )}
           
           {product.estado === 'suspendido' && (

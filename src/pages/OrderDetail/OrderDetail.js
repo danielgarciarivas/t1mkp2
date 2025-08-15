@@ -8,342 +8,245 @@ const OrderDetail = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelNote, setCancelNote] = useState('');
 
   useEffect(() => {
     loadOrderDetail();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // Generar cronograma realista basado en el estado del pedido
+  const generateTimelineByStatus = (estado, fechaPedido, numeroOrden) => {
+    const baseDate = new Date(fechaPedido);
+    const timeline = [];
+    
+    // Estados en orden cronológico
+    const estados = ['recibido', 'validado', 'enviado_seller', 'confirmado', 'en_proceso_envio', 'en_camino', 'entregado'];
+    const currentStateIndex = estados.indexOf(estado);
+    
+    // Generar actualizaciones para estados completados
+    estados.slice(0, currentStateIndex + 1).forEach((status, index) => {
+      const fecha = new Date(baseDate.getTime() + (index * 24 * 60 * 60 * 1000)); // Agregar días
+      
+      switch (status) {
+        case 'recibido':
+          timeline.push({
+            fecha: fecha.toISOString(),
+            estado: 'Pedido recibido',
+            descripcion: 'El pedido ha sido recibido y está siendo procesado',
+            ubicacion: 'Centro de distribución CDMX'
+          });
+          break;
+        case 'validado':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 6 * 60 * 60 * 1000).toISOString(), // 6 horas después
+            estado: 'Pedido validado',
+            descripcion: 'El pedido ha sido validado y enviado al seller',
+            ubicacion: 'Centro de distribución CDMX'
+          });
+          break;
+        case 'enviado_seller':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 12 * 60 * 60 * 1000).toISOString(), // 12 horas después
+            estado: 'Enviado al seller',
+            descripcion: 'El pedido ha sido notificado al seller para su procesamiento',
+            ubicacion: 'Sistema T1Marketplace'
+          });
+          break;
+        case 'confirmado':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 18 * 60 * 60 * 1000).toISOString(), // 18 horas después
+            estado: 'Confirmado por seller',
+            descripcion: 'El seller ha confirmado el pedido y tiene el producto disponible',
+            ubicacion: 'Almacén del seller'
+          });
+          break;
+        case 'en_proceso_envio':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 24 * 60 * 60 * 1000).toISOString(), // 1 día después
+            estado: 'En proceso de envío',
+            descripcion: 'El pedido está siendo preparado para envío',
+            ubicacion: 'Almacén del seller'
+          });
+          break;
+        case 'en_camino':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 36 * 60 * 60 * 1000).toISOString(), // 1.5 días después
+            estado: 'En camino',
+            descripcion: 'El paquete ha sido enviado y está en tránsito',
+            ubicacion: 'Centro de distribución DHL'
+          });
+          break;
+        case 'entregado':
+          timeline.push({
+            fecha: new Date(fecha.getTime() + 72 * 60 * 60 * 1000).toISOString(), // 3 días después
+            estado: 'Entregado',
+            descripcion: 'El paquete ha sido entregado exitosamente',
+            ubicacion: 'Domicilio del cliente'
+          });
+          break;
+      }
+    });
+    
+    // Casos especiales para cancelado y devuelto
+    if (estado === 'cancelado') {
+      timeline.push({
+        fecha: new Date(baseDate.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+        estado: 'Cancelado',
+        descripcion: 'El pedido ha sido cancelado',
+        ubicacion: 'Sistema'
+      });
+    }
+    
+    if (estado === 'devuelto') {
+      // Para devuelto, primero debe haber sido entregado
+      timeline.push({
+        fecha: new Date(baseDate.getTime() + 72 * 60 * 60 * 1000).toISOString(),
+        estado: 'Entregado',
+        descripcion: 'El paquete ha sido entregado exitosamente',
+        ubicacion: 'Domicilio del cliente'
+      });
+      timeline.push({
+        fecha: new Date(baseDate.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 días después
+        estado: 'Devolución solicitada',
+        descripcion: 'El cliente ha solicitado la devolución del producto',
+        ubicacion: 'Portal del cliente'
+      });
+      timeline.push({
+        fecha: new Date(baseDate.getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(), // 9 días después
+        estado: 'Devolución aprobada',
+        descripcion: 'La devolución ha sido aprobada por el seller',
+        ubicacion: 'Sistema del seller'
+      });
+      timeline.push({
+        fecha: new Date(baseDate.getTime() + 11 * 24 * 60 * 60 * 1000).toISOString(), // 11 días después
+        estado: 'Devuelto',
+        descripcion: 'El producto ha sido devuelto y el reembolso está siendo procesado',
+        ubicacion: 'Centro de devoluciones'
+      });
+    }
+    
+    return timeline;
+  };
+
   const loadOrderDetail = async () => {
     setLoading(true);
     // Simular carga de datos del pedido
     setTimeout(() => {
-      const mockOrders = {
-        1: {
-          id: 1,
-          numeroOrden: 'ORD-2024-001256',
-          estado: 'recibido',
-          fecha: '2024-02-10T14:30:00Z',
-          fechaEntregaEstimada: '2024-02-15T18:00:00Z',
-          total: 27498,
-          subtotal: 24999,
-          envio: 299,
-          impuestos: 2200,
-          cliente: {
-            nombre: 'Ana García Martínez',
-            email: 'ana.garcia@email.com',
-            telefono: '+52 55 1234 5678',
-            direccion: {
-              calle: 'Av. Insurgentes Sur 1234',
-              colonia: 'Del Valle Centro',
-              ciudad: 'Ciudad de México',
-              estado: 'CDMX',
-              codigoPostal: '03100',
-              pais: 'México'
-            }
-          },
-          seller: 'TechStore Pro',
-          productos: [
-            {
-              id: 1,
-              nombre: 'iPhone 15 Pro Max 256GB',
-              sku: 'IPH15PM256',
-              precio: 24999,
-              cantidad: 1,
-              imagen: 'https://resources.sears.com.mx/medios-plazavip/mkt/63d42f699b98a_12progrisjpg.jpg?scale=300&qlty=75'
-            }
-          ],
-          tracking: {
-            numeroGuia: '',
-            paqueteria: '',
-            actualizaciones: [
-              {
-                fecha: '2024-02-10T14:30:00Z',
-                estado: 'Pedido recibido',
-                descripcion: 'El pedido ha sido recibido y está siendo procesado',
-                ubicacion: 'Centro de distribución CDMX'
-              }
-            ]
-          },
-          metricasCancelacion: null,
-          motivoDevolucion: null
-        },
-        2: {
-          id: 2,
-          numeroOrden: 'ORD-2024-001257',
-          estado: 'validado',
-          fecha: '2024-02-08T10:15:00Z',
-          fechaEntregaEstimada: '2024-02-13T18:00:00Z',
-          total: 16298,
-          subtotal: 15999,
-          envio: 299,
-          impuestos: 0,
-          cliente: {
-            nombre: 'Carlos Rodríguez',
-            email: 'carlos.rodriguez@email.com',
-            telefono: '+52 55 2345 6789',
-            direccion: {
-              calle: 'Calle Revolución 567',
-              colonia: 'San Ángel',
-              ciudad: 'Ciudad de México',
-              estado: 'CDMX',
-              codigoPostal: '01000',
-              pais: 'México'
-            }
-          },
-          seller: 'HomeStyle México',
-          productos: [
-            {
-              id: 2,
-              nombre: 'Sofá Modular 3 Piezas',
-              sku: 'SOF3P001',
-              precio: 15999,
-              cantidad: 1,
-              imagen: 'https://via.placeholder.com/300x300/8B4513/fff?text=Sofá+Modular'
-            }
-          ],
-          tracking: {
-            numeroGuia: '',
-            paqueteria: '',
-            actualizaciones: [
-              {
-                fecha: '2024-02-08T10:15:00Z',
-                estado: 'Pedido recibido',
-                descripcion: 'El pedido ha sido recibido y está siendo procesado',
-                ubicacion: 'Centro de distribución CDMX'
-              },
-              {
-                fecha: '2024-02-08T16:45:00Z',
-                estado: 'Pedido validado',
-                descripcion: 'El pedido ha sido validado y enviado al seller',
-                ubicacion: 'Centro de distribución CDMX'
-              }
-            ]
-          },
-          metricasCancelacion: null,
-          motivoDevolucion: null
-        },
-        3: {
-          id: 3,
-          numeroOrden: 'ORD-2024-001258',
-          estado: 'entregado',
-          fecha: '2024-02-01T09:20:00Z',
-          fechaEntregaEstimada: '2024-02-05T18:00:00Z',
-          fechaEntregaReal: '2024-02-04T15:30:00Z',
-          total: 1598,
-          subtotal: 1299,
-          envio: 299,
-          impuestos: 0,
-          cliente: {
-            nombre: 'María López',
-            email: 'maria.lopez@email.com',
-            telefono: '+52 55 3456 7890',
-            direccion: {
-              calle: 'Av. Universidad 890',
-              colonia: 'Copilco',
-              ciudad: 'Ciudad de México',
-              estado: 'CDMX',
-              codigoPostal: '04360',
-              pais: 'México'
-            }
-          },
-          seller: 'FashionHub',
-          productos: [
-            {
-              id: 3,
-              nombre: 'Vestido Casual Verano',
-              sku: 'VES001',
-              precio: 1299,
-              cantidad: 1,
-              imagen: 'https://via.placeholder.com/300x300/FFB6C1/333?text=Vestido'
-            }
-          ],
-          tracking: {
-            numeroGuia: 'TRK789012345',
-            paqueteria: 'DHL Express',
-            actualizaciones: [
-              {
-                fecha: '2024-02-01T09:20:00Z',
-                estado: 'Pedido recibido',
-                descripcion: 'El pedido ha sido recibido y está siendo procesado',
-                ubicacion: 'Centro de distribución CDMX'
-              },
-              {
-                fecha: '2024-02-02T11:30:00Z',
-                estado: 'En proceso de envío',
-                descripcion: 'El pedido está siendo preparado para envío',
-                ubicacion: 'Almacén FashionHub'
-              },
-              {
-                fecha: '2024-02-03T08:15:00Z',
-                estado: 'En camino',
-                descripcion: 'El paquete ha sido enviado y está en tránsito',
-                ubicacion: 'Centro de distribución DHL'
-              },
-              {
-                fecha: '2024-02-04T15:30:00Z',
-                estado: 'Entregado',
-                descripcion: 'El paquete ha sido entregado exitosamente',
-                ubicacion: 'Domicilio del cliente'
-              }
-            ]
-          },
-          metricasCancelacion: null,
-          motivoDevolucion: null
-        },
-        4: {
-          id: 4,
-          numeroOrden: 'ORD-2024-001259',
-          estado: 'cancelado',
-          fecha: '2024-02-09T13:45:00Z',
-          fechaCancelacion: '2024-02-10T10:20:00Z',
-          total: 2798,
-          subtotal: 2499,
-          envio: 299,
-          impuestos: 0,
-          cliente: {
-            nombre: 'Roberto Sánchez',
-            email: 'roberto.sanchez@email.com',
-            telefono: '+52 55 4567 8901',
-            direccion: {
-              calle: 'Calle Madero 123',
-              colonia: 'Centro Histórico',
-              ciudad: 'Ciudad de México',
-              estado: 'CDMX',
-              codigoPostal: '06000',
-              pais: 'México'
-            }
-          },
-          seller: 'Sports World',
-          productos: [
-            {
-              id: 4,
-              nombre: 'Tenis Running Professional',
-              sku: 'TEN001',
-              precio: 2499,
-              cantidad: 1,
-              imagen: 'https://via.placeholder.com/300x300/000080/fff?text=Tenis'
-            }
-          ],
-          tracking: {
-            numeroGuia: '',
-            paqueteria: '',
-            actualizaciones: [
-              {
-                fecha: '2024-02-09T13:45:00Z',
-                estado: 'Pedido recibido',
-                descripcion: 'El pedido ha sido recibido y está siendo procesado',
-                ubicacion: 'Centro de distribución CDMX'
-              },
-              {
-                fecha: '2024-02-10T10:20:00Z',
-                estado: 'Cancelado',
-                descripcion: 'El pedido ha sido cancelado',
-                ubicacion: 'Sistema'
-              }
-            ]
-          },
-          metricasCancelacion: {
-            canceladoPor: 'cliente',
-            motivo: 'Cambio de opinión',
-            indicadores: {
-              porSeller: 12,
-              porMarketplace: 5,
-              porCliente: 23,
-              porReglasNegocio: 3
-            }
-          },
-          motivoDevolucion: null
-        },
-        5: {
-          id: 5,
-          numeroOrden: 'ORD-2024-001260',
-          estado: 'devuelto',
-          fecha: '2024-01-25T11:30:00Z',
-          fechaDevolucion: '2024-02-08T14:15:00Z',
-          total: 1198,
-          subtotal: 899,
-          envio: 299,
-          impuestos: 0,
-          cliente: {
-            nombre: 'Patricia Hernández',
-            email: 'patricia.hernandez@email.com',
-            telefono: '+52 55 5678 9012',
-            direccion: {
-              calle: 'Av. Chapultepec 456',
-              colonia: 'Roma Norte',
-              ciudad: 'Ciudad de México',
-              estado: 'CDMX',
-              codigoPostal: '06700',
-              pais: 'México'
-            }
-          },
-          seller: 'Beauty Corner',
-          productos: [
-            {
-              id: 5,
-              nombre: 'Serum Facial Anti-Edad',
-              sku: 'SER001',
-              precio: 899,
-              cantidad: 1,
-              imagen: 'https://via.placeholder.com/300x300/FFA07A/333?text=Serum'
-            }
-          ],
-          tracking: {
-            numeroGuia: 'RET456789123',
-            paqueteria: 'Estafeta',
-            actualizaciones: [
-              {
-                fecha: '2024-01-25T11:30:00Z',
-                estado: 'Pedido recibido',
-                descripcion: 'El pedido ha sido recibido y está siendo procesado',
-                ubicacion: 'Centro de distribución CDMX'
-              },
-              {
-                fecha: '2024-01-28T16:45:00Z',
-                estado: 'Entregado',
-                descripcion: 'El paquete ha sido entregado exitosamente',
-                ubicacion: 'Domicilio del cliente'
-              },
-              {
-                fecha: '2024-02-05T09:20:00Z',
-                estado: 'Devolución solicitada',
-                descripcion: 'El cliente ha solicitado la devolución del producto',
-                ubicacion: 'Portal del cliente'
-              },
-              {
-                fecha: '2024-02-07T12:30:00Z',
-                estado: 'Devolución aprobada',
-                descripcion: 'La devolución ha sido aprobada por el seller',
-                ubicacion: 'Sistema Beauty Corner'
-              },
-              {
-                fecha: '2024-02-08T14:15:00Z',
-                estado: 'Devuelto',
-                descripcion: 'El producto ha sido devuelto y el reembolso está siendo procesado',
-                ubicacion: 'Centro de devoluciones'
-              }
-            ]
-          },
-          metricasCancelacion: null,
-          motivoDevolucion: {
-            motivo: 'Producto defectuoso',
-            subEstatus: 'reembolso_procesando',
-            descripcion: 'El producto llegó con el empaque dañado y el contenido derramado',
-            solicitudPor: 'cliente',
-            fechaSolicitud: '2024-02-05T09:20:00Z',
-            estadoSeller: 'aprobada',
-            fechaAprobacion: '2024-02-07T12:30:00Z',
-            montoReembolso: 1198,
-            estadoReembolso: 'procesando'
-          }
-        }
+      // Datos base para generar pedidos dinámicamente
+      const ordersConfig = {
+        1: { estado: 'recibido', fecha: '2024-02-10T14:30:00Z', cliente: 'Ana García Martínez', email: 'ana.garcia@email.com', seller: 'TechStore Pro', producto: 'iPhone 15 Pro Max 256GB', precio: 24999 },
+        2: { estado: 'validado', fecha: '2024-02-08T10:15:00Z', cliente: 'Carlos Rodríguez', email: 'carlos.rodriguez@email.com', seller: 'HomeStyle México', producto: 'Sofá Modular 3 Piezas', precio: 15999 },
+        3: { estado: 'entregado', fecha: '2024-02-01T09:20:00Z', cliente: 'María López', email: 'maria.lopez@email.com', seller: 'FashionHub', producto: 'Vestido Casual Verano', precio: 1299 },
+        4: { estado: 'cancelado', fecha: '2024-02-09T13:45:00Z', cliente: 'Roberto Sánchez', email: 'roberto.sanchez@email.com', seller: 'Sports World', producto: 'Tenis Running Professional', precio: 2499 },
+        5: { estado: 'devuelto', fecha: '2024-01-25T11:30:00Z', cliente: 'Patricia Hernández', email: 'patricia.hernandez@email.com', seller: 'Beauty Corner', producto: 'Serum Facial Anti-Edad', precio: 899 },
+        6: { estado: 'en_camino', fecha: '2024-02-04T11:20:00Z', cliente: 'Roberto Vázquez', email: 'roberto.vazquez@email.com', seller: 'TechStore Pro', producto: 'Auriculares Bluetooth', precio: 5499 }
       };
       
-      const mockOrder = mockOrders[parseInt(id)];
+      const config = ordersConfig[parseInt(id)];
+      if (!config) {
+        setOrder(null);
+        setLoading(false);
+        return;
+      }
+
+      const timeline = generateTimelineByStatus(config.estado, config.fecha, `ORD-2024-00125${id}`);
+      
+      const mockOrder = {
+        id: parseInt(id),
+        numeroOrden: `ORD-2024-00125${id}`,
+        estado: config.estado,
+        fecha: config.fecha,
+        fechaEntregaEstimada: new Date(new Date(config.fecha).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        total: config.precio + 299,
+        subtotal: config.precio,
+        envio: 299,
+        impuestos: 0,
+        cliente: {
+          nombre: config.cliente,
+          email: config.email,
+          telefono: '+52 55 1234 5678',
+          direccion: {
+            calle: 'Av. Insurgentes Sur 1234',
+            colonia: 'Del Valle Centro',
+            ciudad: 'Ciudad de México',
+            estado: 'CDMX',
+            codigoPostal: '03100',
+            pais: 'México'
+          }
+        },
+        seller: config.seller,
+        productos: [{
+          id: parseInt(id),
+          nombre: config.producto,
+          sku: `SKU-${id}${Math.floor(Math.random() * 1000)}`,
+          precio: config.precio,
+          cantidad: 1,
+          imagen: 'https://via.placeholder.com/300x300/8B4513/fff?text=Producto'
+        }],
+        tracking: {
+          numeroGuia: (config.estado === 'en_camino' || config.estado === 'entregado' || config.estado === 'devuelto') ? `TRK${id}78901234` : '',
+          paqueteria: (config.estado === 'en_camino' || config.estado === 'entregado' || config.estado === 'devuelto') ? 'DHL Express' : '',
+          actualizaciones: timeline
+        },
+        metricasCancelacion: config.estado === 'cancelado' ? {
+          canceladoPor: 'operador',
+          motivo: cancelReason || 'Sin existencias',
+          indicadores: { porSeller: 12, porMarketplace: 5, porCliente: 23, porReglasNegocio: 3 }
+        } : null,
+        motivoDevolucion: config.estado === 'devuelto' ? {
+          motivo: 'Producto defectuoso',
+          descripcion: 'El producto llegó con el empaque dañado',
+          solicitudPor: 'cliente',
+          fechaSolicitud: new Date(new Date(config.fecha).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          estadoSeller: 'aprobada',
+          fechaAprobacion: new Date(new Date(config.fecha).getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(),
+          subEstatus: 'reembolso_procesando',
+          montoReembolso: config.precio + 299,
+          estadoReembolso: 'procesando'
+        } : null
+      };
+
       setOrder(mockOrder);
       setLoading(false);
     }, 1000);
+  };
+
+  const handleCancelOrder = () => {
+    if (!cancelReason) {
+      alert('Por favor selecciona un motivo de cancelación');
+      return;
+    }
+    
+    setOrder(prev => ({
+      ...prev,
+      estado: 'cancelado',
+      fechaCancelacion: new Date().toISOString(),
+      metricasCancelacion: {
+        canceladoPor: 'operador',
+        motivo: cancelReason,
+        nota: cancelNote,
+        indicadores: { porSeller: 12, porMarketplace: 5, porCliente: 23, porReglasNegocio: 3 }
+      },
+      tracking: {
+        ...prev.tracking,
+        actualizaciones: [
+          ...prev.tracking.actualizaciones,
+          {
+            fecha: new Date().toISOString(),
+            estado: 'Cancelado',
+            descripcion: `Pedido cancelado por operador. Motivo: ${cancelReason}`,
+            ubicacion: 'Sistema T1Marketplace'
+          }
+        ]
+      }
+    }));
+    
+    setShowCancelModal(false);
+    setCancelReason('');
+    setCancelNote('');
   };
 
   const handleOrderAction = (action) => {
@@ -369,10 +272,7 @@ const OrderDetail = () => {
         }));
         break;
       case 'cancel':
-        setOrder(prev => ({
-          ...prev,
-          estado: 'cancelado'
-        }));
+        setShowCancelModal(true);
         break;
       default:
         break;
@@ -742,6 +642,69 @@ const OrderDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de cancelación */}
+      {showCancelModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Cancelar Pedido</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowCancelModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="form-group">
+                <label htmlFor="cancelReason">Motivo de cancelación *</label>
+                <select
+                  id="cancelReason"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="form-select"
+                >
+                  <option value="">Selecciona un motivo</option>
+                  <option value="producto_dañado">Producto dañado</option>
+                  <option value="sin_existencias">Sin existencias</option>
+                  <option value="solicitud_cliente">A solicitud del cliente</option>
+                  <option value="en_aclaracion">En aclaración</option>
+                  <option value="falta_pago">Por falta de pago</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="cancelNote">Nota adicional (opcional)</label>
+                <textarea
+                  id="cancelNote"
+                  value={cancelNote}
+                  onChange={(e) => setCancelNote(e.target.value)}
+                  className="form-textarea"
+                  placeholder="Agrega información adicional sobre la cancelación..."
+                  rows="3"
+                />
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <Button 
+                variant="ghost"
+                onClick={() => setShowCancelModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="danger"
+                onClick={handleCancelOrder}
+              >
+                Confirmar Cancelación
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

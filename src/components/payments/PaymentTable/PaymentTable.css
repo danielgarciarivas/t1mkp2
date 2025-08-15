@@ -1,0 +1,419 @@
+/* Estilos para PaymentTable */
+.payment-table-container {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-header-left h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.table-count {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.table-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+}
+
+.selected-count {
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Tabla */
+.payment-table {
+  overflow-x: auto;
+}
+
+.payment-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.payment-table th,
+.payment-table td {
+  text-align: left;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: top;
+}
+
+.payment-table th {
+  background: #fafafa;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.payment-table td {
+  padding: 16px 12px;
+}
+
+/* Columnas específicas */
+.checkbox-col {
+  width: 50px;
+  text-align: center;
+}
+
+.seller-col {
+  min-width: 250px;
+}
+
+.amount-col {
+  min-width: 140px;
+  text-align: right;
+}
+
+.date-col {
+  min-width: 120px;
+}
+
+.actions-col {
+  min-width: 200px;
+  text-align: center;
+}
+
+/* Headers ordenables */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.sortable-header:hover {
+  background: #f0f0f0;
+}
+
+/* Información del seller */
+.seller-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seller-name {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.seller-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-count,
+.cycle-period,
+.transaction-id {
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.transaction-id {
+  font-family: 'Courier New', monospace;
+}
+
+/* Información de montos */
+.amount-info {
+  text-align: right;
+}
+
+.amount-value {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.net-amount {
+  text-align: right;
+}
+
+.net-value {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Desglose de comisiones */
+.commission-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.commission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.commission-label {
+  color: #6c757d;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.commission-value {
+  color: #495057;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.commission-value.adjustment {
+  color: #dc3545;
+}
+
+.commission-total {
+  padding-top: 4px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 4px;
+}
+
+.commission-total .commission-label {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.commission-total .commission-value {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Información de fecha */
+.date-info {
+  text-align: center;
+}
+
+.date-value {
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Estados */
+.status-container {
+  text-align: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status-processing {
+  background: #cce5ff;
+  color: #004085;
+  border: 1px solid #80bdff;
+}
+
+.status-completed {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-failed {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Filas */
+.payment-row {
+  transition: background-color 0.2s;
+}
+
+.payment-row:hover {
+  background: #f8f9fa;
+}
+
+.payment-row.selected {
+  background: #e3f2fd;
+}
+
+/* Skeleton loading */
+.skeleton-row {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-cell {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Estado vacío */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #495057;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Checkbox personalizado */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .table-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .table-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .bulk-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-table {
+    font-size: 12px;
+  }
+  
+  .payment-table th,
+  .payment-table td {
+    padding: 12px 8px;
+  }
+  
+  .seller-col {
+    min-width: 200px;
+  }
+  
+  .amount-col {
+    min-width: 120px;
+  }
+  
+  .actions-col {
+    min-width: 150px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .commission-breakdown {
+    font-size: 11px;
+  }
+  
+  .seller-name {
+    font-size: 13px;
+  }
+  
+  .amount-value,
+  .net-value {
+    font-size: 14px;
+  }
+}

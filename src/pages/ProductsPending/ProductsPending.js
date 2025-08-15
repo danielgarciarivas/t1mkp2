@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import ProductStats from '../../components/products/ProductStats';
-import ProductFilters from '../../components/products/ProductFilters';
 import ProductTable from '../../components/products/ProductTable';
-import './Products.css';
+import './ProductsPending.css';
 
-const Products = () => {
+const ProductsPending = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
@@ -26,68 +25,58 @@ const Products = () => {
 
   const loadProducts = async () => {
     setLoading(true);
-    // Simular carga de datos
+    // Simular carga de datos - solo productos pendientes
     setTimeout(() => {
       const mockProducts = [
         {
-          id: 1,
-          nombre: 'iPhone 15 Pro Max 256GB',
-          sku: 'IPH15PM256',
-          seller: 'TechnoMax SA',
-          precio: 24999,
+          id: 7,
+          nombre: 'MacBook Pro M3 14"',
+          sku: 'MBP14M3001',
+          seller: 'TechWorld Premium',
+          precio: 45999,
           categoria: 'electronicos',
           estado: 'pendiente',
-          fechaCreacion: '2024-01-15T10:30:00Z'
+          fechaCreacion: '2024-02-13T10:30:00Z'
         },
         {
-          id: 2,
-          nombre: 'Sofá Modular 3 Piezas',
-          sku: 'SOF3P001',
-          seller: 'HomeStyle México',
-          precio: 15999,
+          id: 8,
+          nombre: 'Samsung Galaxy S24 Ultra',
+          sku: 'SGS24U256',
+          seller: 'Nueva Tienda Fashion',
+          precio: 28999,
+          categoria: 'electronicos',
+          estado: 'pendiente',
+          fechaCreacion: '2024-02-13T14:15:00Z'
+        },
+        {
+          id: 9,
+          nombre: 'Sofá Esquinero Premium',
+          sku: 'SOFESP001',
+          seller: 'Home Deco Plus',
+          precio: 22999,
           categoria: 'hogar',
-          estado: 'activo',
-          fechaCreacion: '2024-01-20T14:15:00Z'
-        },
-        {
-          id: 3,
-          nombre: 'Vestido Casual Verano',
-          sku: 'VES001',
-          seller: 'FashionHub',
-          precio: 1299,
-          categoria: 'ropa',
-          estado: 'suspendido',
-          fechaCreacion: '2024-02-01T09:00:00Z'
-        },
-        {
-          id: 4,
-          nombre: 'Tenis Running Professional',
-          sku: 'TEN001',
-          seller: 'Sports World',
-          precio: 2499,
-          categoria: 'deportes',
-          estado: 'rechazado',
-          fechaCreacion: '2024-02-05T16:45:00Z'
-        },
-        {
-          id: 5,
-          nombre: 'Serum Facial Anti-Edad',
-          sku: 'SER001',
-          seller: 'Beauty Corner',
-          precio: 899,
-          categoria: 'salud',
           estado: 'pendiente',
-          fechaCreacion: '2024-02-08T13:30:00Z'
+          fechaCreacion: '2024-02-14T09:00:00Z'
         },
         {
-          id: 6,
-          nombre: 'Laptop Gaming ROG Strix',
-          sku: 'LAP001ROG',
-          seller: 'TechStore Pro',
-          precio: 35999,
+          id: 10,
+          nombre: 'Vestido Formal Elegante',
+          sku: 'VESFOR001',
+          seller: 'Nueva Tienda Fashion',
+          precio: 1899,
+          categoria: 'ropa',
+          estado: 'pendiente',
+          fechaCreacion: '2024-02-14T16:45:00Z'
+        },
+        {
+          id: 11,
+          nombre: 'Monitor Gaming 4K 32"',
+          sku: 'MON4K32001',
+          seller: 'TechWorld Premium',
+          precio: 12999,
           categoria: 'electronicos',
-          estado: 'freepass',
-          fechaCreacion: '2024-02-10T11:20:00Z'
+          estado: 'pendiente',
+          fechaCreacion: '2024-02-15T11:30:00Z'
         }
       ];
       
@@ -109,11 +98,6 @@ const Products = () => {
       );
     }
 
-    // Filtro de estado
-    if (filters.estado && filters.estado !== 'todos') {
-      filtered = filtered.filter(product => product.estado === filters.estado);
-    }
-
     // Filtro de categoría
     if (filters.categoria && filters.categoria !== 'todas') {
       filtered = filtered.filter(product => product.categoria === filters.categoria);
@@ -122,10 +106,9 @@ const Products = () => {
     // Filtro de seller
     if (filters.seller && filters.seller !== 'todos') {
       const sellerMap = {
-        'techstore': 'TechnoMax SA',
-        'fashion': 'FashionHub',
-        'homedecor': 'HomeStyle México',
-        'sports': 'Sports World'
+        'techworld': 'TechWorld Premium',
+        'nuevafashion': 'Nueva Tienda Fashion',
+        'homedeco': 'Home Deco Plus'
       };
       if (sellerMap[filters.seller]) {
         filtered = filtered.filter(product => product.seller === sellerMap[filters.seller]);
@@ -153,22 +136,8 @@ const Products = () => {
             : product
         ));
         break;
-      case 'suspend':
-        setProducts(prev => prev.map(product => 
-          product.id === productId 
-            ? { ...product, estado: 'suspendido' }
-            : product
-        ));
-        break;
-      case 'reactivate':
-        setProducts(prev => prev.map(product => 
-          product.id === productId 
-            ? { ...product, estado: 'activo' }
-            : product
-        ));
-        break;
       case 'view':
-        // Navegar a la página de detalle del producto
+      case 'review':
         navigate(`/productos/${productId}`);
         break;
       case 'bulk-approve':
@@ -193,7 +162,7 @@ const Products = () => {
   };
 
   const handleExportList = () => {
-    console.log('Exportar lista de productos');
+    console.log('Exportar lista de productos pendientes');
     // Implementar exportación
   };
 
@@ -201,7 +170,7 @@ const Products = () => {
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
-          <h1 className="module-title">Gestión de Productos</h1>
+          <h1 className="module-title">Productos Por Autorizar</h1>
           <p className="module-subtitle">
             Revise y apruebe productos antes de su publicación
           </p>
@@ -218,10 +187,10 @@ const Products = () => {
       </div>
 
       <div className="products-content">
-        {/* Stats de productos */}
-        <ProductStats loading={loading} />
+        {/* Stats de productos pendientes */}
+        <ProductStats loading={loading} pendingOnly={true} />
         
-        {/* Tabla de productos con filtros integrados */}
+        {/* Tabla de productos pendientes con filtros integrados */}
         <ProductTable
           products={filteredProducts}
           loading={loading}
@@ -231,10 +200,11 @@ const Products = () => {
           filters={filters}
           onFiltersChange={setFilters}
           onSearch={setSearchTerm}
+          pendingOnly={true}
         />
       </div>
     </div>
   );
 };
 
-export default Products;
+export default ProductsPending;

@@ -222,6 +222,13 @@
   border: 1px solid #c3e6cb;
 }
 
+.status-badge.status-freepass {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  font-weight: 600;
+}
+
 .status-badge.status-suspended {
   background: #fff3cd;
   color: #FF6900;
@@ -232,6 +239,46 @@
   background: #f8d7da;
   color: #DB362B;
   border: 1px solid #f5c6cb;
+}
+
+/* Freepass Info */
+.freepass-info {
+  margin-top: 16px;
+}
+
+.freepass-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.freepass-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.freepass-text {
+  flex: 1;
+}
+
+.freepass-text strong {
+  display: block;
+  color: #2ecc71;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.freepass-text p {
+  margin: 0;
+  color: #27ae60;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .loading-container,
@@ -329,5 +376,15 @@
 
   .status-badge {
     text-align: center;
+  }
+
+  .freepass-badge {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .freepass-icon {
+    font-size: 20px;
   }
 }

@@ -1,0 +1,411 @@
+/* Estilos para PaymentConfig */
+.payment-config-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.config-section {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section-header h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.section-description {
+  margin: 0;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Configuración bancaria - Display */
+.bank-config-display {
+  padding: 24px;
+}
+
+.bank-info-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.bank-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bank-status.verified {
+  color: #28a745;
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.bank-details {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.bank-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bank-item label {
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bank-item span {
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.clabe-display {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+/* Configuración bancaria - Form */
+.bank-config-form {
+  padding: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-row-scrollable {
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.form-row-scrollable .form-row {
+  min-width: 600px; /* Minimum width to ensure both columns are visible */
+}
+
+.form-row-scrollable::-webkit-scrollbar {
+  height: 6px;
+}
+
+.form-row-scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.form-row-scrollable::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.form-row-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.field-help {
+  color: #6c757d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.currency-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.currency-input:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.currency-symbol {
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 12px 16px;
+  font-weight: 600;
+  border-right: 1px solid #dee2e6;
+}
+
+.currency-input input {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.currency-input input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.currency-code {
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 12px;
+  border-left: 1px solid #dee2e6;
+}
+
+/* Opciones de frecuencia */
+.frequency-options,
+.mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.frequency-option,
+.mode-option {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.frequency-option:hover,
+.mode-option:hover {
+  border-color: #007bff;
+  background: #f8f9fa;
+}
+
+.radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.radio-option input[type="radio"] {
+  margin: 4px 0 0 0;
+  accent-color: #007bff;
+}
+
+.radio-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.option-title {
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.option-description {
+  color: #6c757d;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.frequency-info {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.info-label {
+  color: #1976d2;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-text {
+  color: #1565c0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Resumen de configuración */
+.config-summary {
+  margin-top: 32px;
+  padding: 20px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.config-summary h4 {
+  margin: 0 0 16px 0;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  color: #6c757d;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  color: #2c3e50;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-value.next-date {
+  color: #007bff;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  padding-top: 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Liquidation config form */
+.liquidation-config-form {
+  padding: 24px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .bank-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .frequency-options,
+  .mode-options {
+    gap: 8px;
+  }
+  
+  .radio-option {
+    padding: 12px;
+  }
+}

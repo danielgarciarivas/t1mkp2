@@ -338,18 +338,12 @@ const OrderTable = ({
                         >
                           Ver
                         </button>
-                        {order.estado === 'recibido' && (
+                        {order.estado !== 'en_camino' && order.estado !== 'cancelado' && (
                           <button
-                            onClick={() => onOrderAction('validate', order.id)}
+                            className="cancel-btn"
+                            onClick={() => onOrderAction('cancel', order.id)}
                           >
-                            Validar
-                          </button>
-                        )}
-                        {(order.estado === 'cancelado' || order.estado === 'devuelto') && (
-                          <button
-                            onClick={() => onOrderAction('review', order.id)}
-                          >
-                            Revisar
+                            Cancelar
                           </button>
                         )}
                       </div>
