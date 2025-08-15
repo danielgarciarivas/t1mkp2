@@ -345,10 +345,7 @@ const Categorias = () => {
             <h3>{categorias.length}</h3>
             <p>Categorías Principales</p>
           </div>
-          <div className="stat-card">
-            <h3>{categorias.reduce((acc, cat) => acc + cat.subcategorias.length, 0)}</h3>
-            <p>Subcategorías</p>
-          </div>
+         
           <div className="stat-card">
             <h3>{categorias.filter(cat => cat.activa).length}</h3>
             <p>Categorías Activas</p>

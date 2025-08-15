@@ -217,10 +217,7 @@ const Comisiones = () => {
             <h3>{(categorias.reduce((acc, c) => acc + c.comisionBase, 0) / categorias.length).toFixed(1)}%</h3>
             <p>Comisión Promedio</p>
           </div>
-          <div className="stat-card">
-            <h3>{categorias.reduce((acc, cat) => acc + cat.subcategorias.length, 0)}</h3>
-            <p>Subcategorías</p>
-          </div>
+         
         </div>
 
         <div className="categorias-grid">

@@ -9,14 +9,14 @@ const Header = () => {
       <div className="header-content">
         <div className="header-left">
           <div className="logo">
-            <span>🏪</span>
-            <span>T1Marketplace</span>
+            <span>Ⓜ</span>
+            <span>T1MKP</span>
           </div>
         </div>
         
         <div className="user-info">
           <div className="user-details">
-            <div className="user-name">Admin User</div>
+            <div className="user-name">Sears Operadora</div>
             <div className="user-role">Administrador</div>
           </div>
           <div 

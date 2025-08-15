@@ -52,10 +52,8 @@ const Facturacion = () => {
           ultimoProceso: '2024-02-15T10:30:00Z'
         },
         proveedoresPac: [
-          { id: 'finkok', nombre: 'Finkok', activo: true },
-          { id: 'sw', nombre: 'SW Sapien', activo: true },
-          { id: 'facturama', nombre: 'Facturama', activo: true },
-          { id: 'digiempresa', nombre: 'Digiempresa', activo: true }
+          { id: 'Solupac', nombre: 'Solucpac', activo: true },
+          { id: 'T1Pac', nombre: 'T1Factura', activo: true },
         ]
       };
       

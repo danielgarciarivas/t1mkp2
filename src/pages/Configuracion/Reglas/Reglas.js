@@ -63,8 +63,8 @@ const Reglas = () => {
         precios: [
           {
             id: 3,
-            nombre: 'Control de Precios Competitivos',
-            descripcion: 'Monitoreo de precios vs competencia',
+            nombre: 'Control de precios máximos',
+            descripcion: 'Monitoreo de precios grandes',
             marketplace: 'Sears',
             activa: true,
             prioridad: 1,
@@ -79,8 +79,8 @@ const Reglas = () => {
           },
           {
             id: 7,
-            nombre: 'Precios Mínimos por Categoría',
-            descripcion: 'Control de precios mínimos según categoría',
+            nombre: 'Precios máximos por Categoría',
+            descripcion: 'Control de precios máximos según categoría',
             marketplace: 'Sears',
             activa: true,
             prioridad: 2,

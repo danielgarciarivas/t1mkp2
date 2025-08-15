@@ -29,7 +29,7 @@ const Contratos = () => {
           fechaCreacion: '2024-01-15T10:30:00Z',
           fechaActualizacion: '2024-02-10T14:20:00Z',
           estado: 'activo',
-          marketplaces: ['Sears', 'Sanborns', 'Liverpool'],
+          marketplaces: ['Sears'],
           clausulas: {
             comisiones: true,
             terminos_pago: true,
@@ -47,7 +47,7 @@ const Contratos = () => {
           fechaCreacion: '2024-01-20T09:15:00Z',
           fechaActualizacion: '2024-02-15T11:45:00Z',
           estado: 'activo',
-          marketplaces: ['Liverpool', 'Palacio de Hierro'],
+          marketplaces: ['Sears'],
           clausulas: {
             comisiones: true,
             terminos_pago: true,

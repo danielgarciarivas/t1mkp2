@@ -391,7 +391,7 @@ const Payments = () => {
             className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('dashboard')}
           >
-            Dashboard
+            Resumen
           </button>
           <button 
             className={`tab-button ${activeTab === 'pending' ? 'active' : ''}`}
