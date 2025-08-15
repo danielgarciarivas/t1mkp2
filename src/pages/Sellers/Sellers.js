@@ -195,15 +195,53 @@ const Sellers = () => {
           telefono: '+52 55 6789 0123',
           rfc: 'ELH940710PQR',
           rfcValidado: false,
-          estado: 'activo',
+          estado: 'inactivo',
           fechaSolicitud: '2024-02-08T13:30:00Z',
-          ultimaVenta: '2023-11-20T10:00:00Z', // 3+ meses sin ventas
-          ventasMes: 1,
+          ultimaVenta: '2023-11-20T10:00:00Z', // Seller marcado como inactivo
+          ventasMes: 0,
           categorias: [
             { id: 1, nombre: 'Electrónicos' }
           ],
           rating: 3.8,
           odr: 3.2,
+          urgente: false,
+          validationState: null,
+          motivoInactividad: 'decision_seller'
+        },
+        {
+          id: 7,
+          nombre: 'Garden Center Plus',
+          email: 'info@gardenplus.com',
+          telefono: '+52 55 7890 1234',
+          rfc: 'GCP880901STU',
+          rfcValidado: true,
+          estado: 'pendiente',
+          fechaSolicitud: '2024-02-15T16:20:00Z',
+          ventasMes: 0,
+          categorias: [
+            { id: 3, nombre: 'Hogar y Jardín' }
+          ],
+          rating: null,
+          odr: null,
+          urgente: false,
+          validationState: 'pending'
+        },
+        {
+          id: 8,
+          nombre: 'Mega Sports Store',
+          email: 'ventas@megasports.com',
+          telefono: '+52 55 8901 2345',
+          rfc: 'MSS920415VWX',
+          rfcValidado: true,
+          estado: 'activo',
+          fechaSolicitud: '2023-12-05T12:00:00Z',
+          ultimaVenta: '2024-02-14T16:45:00Z',
+          ventasMes: 38,
+          categorias: [
+            { id: 4, nombre: 'Deportes' }
+          ],
+          rating: 4.9,
+          odr: 1.2,
           urgente: false,
           validationState: null
         }

@@ -192,7 +192,9 @@ const SellerDetail = () => {
         3: 'pendiente',
         4: 'suspendido',
         5: 'bloqueado',
-        6: 'inactivo'
+        6: 'inactivo',
+        7: 'pendiente',
+        8: 'activo'
       };
       
       const sellerNames = {
@@ -201,7 +203,9 @@ const SellerDetail = () => {
         3: 'Home Decor Plus',
         4: 'Sports World',
         5: 'Beauty Corner',
-        6: 'Electronics Hub'
+        6: 'Electronics Hub',
+        7: 'Garden Center Plus',
+        8: 'Mega Sports Store'
       };
       
       const currentState = sellerStates[parseInt(id)] || 'activo';
@@ -233,8 +237,8 @@ const SellerDetail = () => {
         // Datos de Identidad
         numeroContacto: '3310243041',
         
-        // Métricas del seller (solo para estados activo, suspendido, bloqueado)
-        metrics: ['activo', 'suspendido', 'bloqueado'].includes(currentState) ? {
+        // Métricas del seller (solo para estados activo, suspendido, bloqueado, inactivo)
+        metrics: ['activo', 'suspendido', 'bloqueado', 'inactivo'].includes(currentState) ? {
           porcentajeCancelacion: { value: '2.1%', change: '-0.5%', changeType: 'positive' },
           gmv: { value: '$45,230', change: '+15.2%', changeType: 'positive' },
           productosPublicados: { value: '156', change: '+8', changeType: 'positive' },
@@ -249,8 +253,8 @@ const SellerDetail = () => {
         liquidationMode: parseInt(id) === 1 ? 'manual' : 'automatic', // Seller 1 usa modo manual por defecto
         documentos: {
           actaConstitutiva: { verificado: true },
-          contratoSears: { verificado: true },
-          contratoSanborns: { verificado: true }
+          contratoSears: { verificado: true }
+          
         }
       };
       
@@ -437,22 +441,28 @@ const SellerDetail = () => {
   return (
     <div className="module">
       {/* Cintillo de estado para tiendas suspendidas o bloqueadas */}
-      {(seller.estado === 'suspendido' || seller.estado === 'bloqueado') && (
+      {(seller.estado === 'suspendido' || seller.estado === 'bloqueado' || seller.estado === 'inactivo') && (
         <div className={`status-banner status-banner-${seller.estado}`}>
           <div className="status-banner-content">
             <span className="status-banner-icon">
-              {seller.estado === 'suspendido' ? '⚠️' : '🚫'}
+              {seller.estado === 'suspendido' ? '⚠️' : 
+               seller.estado === 'bloqueado' ? '🚫' : 
+               seller.estado === 'inactivo' ? '😴' : '🚫'}
             </span>
             <div className="status-banner-text">
               <strong>
-                {seller.estado === 'suspendido' 
-                  ? 'Tienda Suspendida' 
-                  : 'Tienda Bloqueada'
+                {seller.estado === 'suspendido' ? 'Tienda Suspendida' : 
+                 seller.estado === 'bloqueado' ? 'Tienda Bloqueada' :
+                 seller.estado === 'inactivo' ? 'Tienda Inactiva' : 'Tienda Bloqueada'
                 }
               </strong>
               <span>
                 {seller.estado === 'suspendido' 
                   ? 'Esta tienda ha sido suspendida temporalmente y no puede realizar ventas.' 
+                  : seller.estado === 'bloqueado'
+                  ? 'Esta tienda ha sido bloqueada y requiere revisión administrativa.'
+                  : seller.estado === 'inactivo'
+                  ? 'Esta tienda está marcada como inactiva y no está operando actualmente.'
                   : 'Esta tienda ha sido bloqueada y requiere revisión administrativa.'
                 }
               </span>
@@ -499,7 +509,7 @@ const SellerDetail = () => {
         )}
       </div>
 
-      {/* Métricas del seller - Solo para estados activo, suspendido, bloqueado */}
+      {/* Métricas del seller - Solo para estados activo, suspendido, bloqueado, inactivo */}
       {seller.metrics && (
         <div className="seller-metrics">
           <div className="metrics-grid">
@@ -578,19 +588,13 @@ const SellerDetail = () => {
             className={`tab-button ${activeTab === 'contrato' ? 'active' : ''}`}
             onClick={() => setActiveTab('contrato')}
           >
-            Contrato
+            Contrato y Acta
           </button>
           <button 
             className={`tab-button ${activeTab === 'configuracion' ? 'active' : ''}`}
             onClick={() => setActiveTab('configuracion')}
           >
             Configuración
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'categorias-permitidas' ? 'active' : ''}`}
-            onClick={() => setActiveTab('categorias-permitidas')}
-          >
-            Categorías Permitidas
           </button>
         </div>
 
@@ -730,18 +734,10 @@ const SellerDetail = () => {
                   <div className="document-preview">
                     <div className="document-placeholder">📄</div>
                   </div>
-                  <h4>CONTRATO SEARS</h4>
+                  <h4>CONTRATO</h4>
                 </div>
 
-                <div className="document-item">
-                  <div className="document-status verified">
-                    <span className="status-badge">Verificado por IA</span>
-                  </div>
-                  <div className="document-preview">
-                    <div className="document-placeholder">📄</div>
-                  </div>
-                  <h4>CONTRATO SANBORNS</h4>
-                </div>
+                
               </div>
 
               <div className="contract-actions">
@@ -821,6 +817,91 @@ const SellerDetail = () => {
                 )}
               </div>
 
+              {/* Configuración de Categorías Permitidas */}
+              <div className="config-item">
+                <div className="config-header">
+                  <div className="config-info">
+                    <h4>Categorías Permitidas</h4>
+                    <p className="config-description">
+                      Configure qué categorías del ecosistema T1 puede utilizar este seller para sincronizar sus productos.
+                      Solo las categorías padre (primer nivel) pueden ser seleccionadas.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="all-categories-option">
+                  <label className="all-categories-toggle">
+                    <input
+                      type="checkbox"
+                      checked={canSellInAllCategories}
+                      onChange={handleAllCategoriesToggle}
+                    />
+                    <span className="toggle-text">
+                      <strong>Puede vender en todas las categorías</strong>
+                    </span>
+                  </label>
+                  <p className="option-description">
+                    Al activar esta opción, el seller podrá sincronizar productos en cualquier categoría del marketplace.
+                  </p>
+                </div>
+
+                {!canSellInAllCategories && (
+                  <div className="category-tree-container">
+                    <h4>Seleccionar Categorías Específicas</h4>
+                    <div className="category-tree">
+                      {renderCategoryTree(T1_CATEGORY_TAXONOMY)}
+                    </div>
+                  </div>
+                )}
+
+                <div className="categories-summary">
+                  <h4>Resumen de Configuración</h4>
+                  {canSellInAllCategories ? (
+                    <div className="summary-item all-allowed">
+                      <span className="summary-icon">✅</span>
+                      <span className="summary-text">
+                        Este seller puede sincronizar productos en <strong>todas las categorías</strong> del marketplace.
+                      </span>
+                    </div>
+                  ) : allowedCategories.size > 0 ? (
+                    <div className="summary-item specific-categories">
+                      <span className="summary-icon">📋</span>
+                      <div className="summary-content">
+                        <span className="summary-text">
+                          Categorías permitidas ({allowedCategories.size}):
+                        </span>
+                        <div className="allowed-categories-list">
+                          {Array.from(allowedCategories).map(categoryId => {
+                            const category = T1_CATEGORY_TAXONOMY.find(cat => cat.id === categoryId);
+                            return (
+                              <span key={categoryId} className="category-tag">
+                                {category?.icon} {category?.name}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="summary-item no-categories">
+                      <span className="summary-icon">⚠️</span>
+                      <span className="summary-text">
+                        <strong>Sin categorías permitidas:</strong> Este seller no podrá sincronizar productos hasta que se configure al menos una categoría.
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="categories-actions">
+                  <Button 
+                    variant="primary"
+                    onClick={saveCategorySettings}
+                  >
+                    Guardar Configuración de Categorías
+                  </Button>
+                </div>
+              </div>
+
               {/* Configuración de Modo de Liquidación */}
               <div className="config-item">
                 <div className="config-header">
@@ -898,87 +979,6 @@ const SellerDetail = () => {
             </div>
           )}
 
-          {activeTab === 'categorias-permitidas' && (
-            <div className="categories-section">
-              <h3>Categorías Permitidas para Sincronización</h3>
-              <p className="section-description">
-                Configure qué categorías del ecosistema T1 puede utilizar este seller para sincronizar sus productos.
-                Solo las categorías padre (primer nivel) pueden ser seleccionadas.
-              </p>
-              
-              <div className="all-categories-option">
-                <label className="all-categories-toggle">
-                  <input
-                    type="checkbox"
-                    checked={canSellInAllCategories}
-                    onChange={handleAllCategoriesToggle}
-                  />
-                  <span className="toggle-text">
-                    <strong>Puede vender en todas las categorías</strong>
-                  </span>
-                </label>
-                <p className="option-description">
-                  Al activar esta opción, el seller podrá sincronizar productos en cualquier categoría del marketplace.
-                </p>
-              </div>
-
-              {!canSellInAllCategories && (
-                <div className="category-tree-container">
-                  <h4>Seleccionar Categorías Específicas</h4>
-                  <div className="category-tree">
-                    {renderCategoryTree(T1_CATEGORY_TAXONOMY)}
-                  </div>
-                </div>
-              )}
-
-              <div className="categories-summary">
-                <h4>Resumen de Configuración</h4>
-                {canSellInAllCategories ? (
-                  <div className="summary-item all-allowed">
-                    <span className="summary-icon">✅</span>
-                    <span className="summary-text">
-                      Este seller puede sincronizar productos en <strong>todas las categorías</strong> del marketplace.
-                    </span>
-                  </div>
-                ) : allowedCategories.size > 0 ? (
-                  <div className="summary-item specific-categories">
-                    <span className="summary-icon">📋</span>
-                    <div className="summary-content">
-                      <span className="summary-text">
-                        Categorías permitidas ({allowedCategories.size}):
-                      </span>
-                      <div className="allowed-categories-list">
-                        {Array.from(allowedCategories).map(categoryId => {
-                          const category = T1_CATEGORY_TAXONOMY.find(cat => cat.id === categoryId);
-                          return (
-                            <span key={categoryId} className="category-tag">
-                              {category?.icon} {category?.name}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="summary-item no-categories">
-                    <span className="summary-icon">⚠️</span>
-                    <span className="summary-text">
-                      <strong>Sin categorías permitidas:</strong> Este seller no podrá sincronizar productos hasta que se configure al menos una categoría.
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="categories-actions">
-                <Button 
-                  variant="primary"
-                  onClick={saveCategorySettings}
-                >
-                  Guardar Configuración de Categorías
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

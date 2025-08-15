@@ -324,6 +324,12 @@
   border-left-color: #e74c3c;
 }
 
+.status-banner-inactivo {
+  background-color: rgba(108, 117, 125, 0.1);
+  color: #495057;
+  border-left-color: #6c757d;
+}
+
 .status-banner-content {
   display: flex;
   align-items: center;
