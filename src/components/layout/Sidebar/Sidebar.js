@@ -42,7 +42,7 @@ const menuItems = [
   }
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, isMobile, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -76,11 +76,19 @@ const Sidebar = () => {
       }));
     } else {
       navigate(item.path);
+      // Cerrar sidebar en móvil después de navegar
+      if (isMobile && onClose) {
+        onClose();
+      }
     }
   };
 
   const handleSubmenuClick = (path) => {
     navigate(path);
+    // Cerrar sidebar en móvil después de navegar
+    if (isMobile && onClose) {
+      onClose();
+    }
   };
 
   const isMenuActive = (item) => {
@@ -95,13 +103,22 @@ const Sidebar = () => {
   };
 
   return (
-    <nav className="sidebar">
+    <nav className={`sidebar ${isOpen ? 'mobile-open' : ''} ${isMobile ? 'mobile' : ''}`}>
       {/* T1MKP Logo Header */}
       <div className="sidebar-header">
         <div className="logo-container">
           <div className="logo-icon">T1</div>
           <span className="logo-text">MKP</span>
         </div>
+        {isMobile && (
+          <button 
+            className="close-sidebar-button"
+            onClick={onClose}
+            aria-label="Cerrar menú"
+          >
+            ×
+          </button>
+        )}
       </div>
       
       <div className="sidebar-menu">

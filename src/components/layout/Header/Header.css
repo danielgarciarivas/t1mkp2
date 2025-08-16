@@ -23,6 +23,7 @@
 .header-left {
   display: flex;
   align-items: center;
+  gap: var(--t1-space-3);
 }
 
 .logo-container {
@@ -144,6 +145,50 @@
   }
   
   .user-details {
+    display: none;
+  }
+}
+
+/* Botón hamburguesa */
+.hamburger-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--t1-radius-md);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
+  gap: 4px;
+  padding: 0;
+}
+
+.hamburger-button:hover {
+  background: var(--t1-surface-hover);
+}
+
+.hamburger-button:active {
+  transform: scale(0.95);
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: var(--t1-text-primary);
+  border-radius: 1px;
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
+}
+
+.hamburger-button:hover .hamburger-line {
+  background: var(--t1-brand-primary);
+}
+
+/* Responsive - solo mostrar hamburguesa en móvil */
+@media (min-width: 769px) {
+  .hamburger-button {
     display: none;
   }
 }

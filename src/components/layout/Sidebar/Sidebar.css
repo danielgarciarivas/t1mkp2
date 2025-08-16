@@ -18,6 +18,9 @@
   padding: var(--t1-space-6);
   border-bottom: 1px solid var(--t1-border-subtle);
   background: var(--t1-surface-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo-container {
@@ -208,10 +211,40 @@
   }
 }
 
+/* Botón de cerrar para móvil */
+.close-sidebar-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--t1-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--t1-radius-md);
+  transition: all var(--t1-duration-normal) var(--t1-ease-smooth);
+}
+
+.close-sidebar-button:hover {
+  background: var(--t1-surface-hover);
+  color: var(--t1-text-primary);
+}
+
+/* Desktop - botón de cerrar oculto */
+@media (min-width: 769px) {
+  .close-sidebar-button {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--t1-duration-slow) var(--t1-ease-smooth);
+    z-index: 999;
   }
   
   .sidebar.mobile-open {
@@ -230,5 +263,19 @@
   
   .submenu-item {
     padding: var(--t1-space-3) var(--t1-space-5) var(--t1-space-3) var(--t1-space-10);
+  }
+  
+  .sidebar-header {
+    padding: var(--t1-space-4) var(--t1-space-5);
+  }
+  
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: var(--t1-text-xs);
+  }
+  
+  .logo-text {
+    font-size: var(--t1-text-base);
   }
 }

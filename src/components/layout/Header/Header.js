@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ onToggleSidebar, isMobile }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
     <header className="header">
       <div className="header-content">
         <div className="header-left">
+          {isMobile && (
+            <button 
+              className="hamburger-button"
+              onClick={onToggleSidebar}
+              aria-label="Abrir menú"
+            >
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+            </button>
+          )}
           <div className="logo-container">
             <div className="logo-icon">T1</div>
             <span className="logo-text">MARKETPLACE</span>
