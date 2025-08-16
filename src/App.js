@@ -7,6 +7,7 @@ import SellersPending from './pages/SellersPending/SellersPending';
 import SellerDetail from './pages/SellerDetail';
 import Products from './pages/Products';
 import ProductsPending from './pages/ProductsPending/ProductsPending';
+import ProductsLogs from './pages/ProductsLogs';
 import ProductDetail from './pages/ProductDetail';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
@@ -32,6 +33,7 @@ function App() {
             <Route path="sellers/:id" element={<SellerDetail />} />
             <Route path="productos" element={<Products />} />
             <Route path="productos/pending" element={<ProductsPending />} />
+            <Route path="productos/logs" element={<ProductsLogs />} />
             <Route path="productos/:id" element={<ProductDetail />} />
             <Route path="pedidos" element={<Orders />} />
             <Route path="pedidos/:id" element={<OrderDetail />} />

@@ -21,7 +21,8 @@ const menuItems = [
     hasSubmenu: true,
     submenu: [
       { id: 'productos-pending', label: 'Por Autorizar', path: '/productos/pending' },
-      { id: 'productos-all', label: 'Todos los Productos', path: '/productos' }
+      { id: 'productos-all', label: 'Todos los Productos', path: '/productos' },
+      { id: 'productos-logs', label: 'Logs', path: '/productos/logs' }
     ]
   },
   { id: 'pedidos', icon: '📋', label: 'Pedidos', path: '/pedidos' },
