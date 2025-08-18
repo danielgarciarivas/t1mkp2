@@ -195,9 +195,7 @@ const OTPModal = ({
             )}
           </div>
 
-          <div className="demo-info">
-            <p><strong>Demo:</strong> Use el código <code>123456</code> para continuar</p>
-          </div>
+         
         </div>
 
         <div className="modal-footer">

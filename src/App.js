@@ -18,6 +18,7 @@ import Categorias from './pages/Configuracion/Categorias/Categorias';
 import Reglas from './pages/Configuracion/Reglas/Reglas';
 import Comisiones from './pages/Configuracion/Comisiones/Comisiones';
 import Facturacion from './pages/Configuracion/Facturacion/Facturacion';
+import RolesPermisos from './pages/RolesPermisos';
 import './App.css';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route path="configuracion/reglas" element={<Reglas />} />
             <Route path="configuracion/comisiones" element={<Comisiones />} />
             <Route path="configuracion/facturacion" element={<Facturacion />} />
+            <Route path="roles-permisos" element={<RolesPermisos />} />
           </Route>
         </Routes>
       </div>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
 const Header = ({ onToggleSidebar, isMobile }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <header className="header">
@@ -38,8 +40,8 @@ const Header = ({ onToggleSidebar, isMobile }) => {
           </div>
           {userMenuOpen && (
             <div className="user-menu">
-              <button>Perfil</button>
-              <button>Configuración</button>
+              <button onClick={() => navigate('/perfil')}>Perfil</button>
+              <button onClick={() => navigate('/roles-permisos')}>Roles y Permisos</button>
               <button>Cerrar Sesión</button>
             </div>
           )}
