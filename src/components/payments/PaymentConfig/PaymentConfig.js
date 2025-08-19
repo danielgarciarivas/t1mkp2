@@ -26,7 +26,7 @@ const PaymentConfig = ({
   const frequencyOptions = [
     { value: 'diario', label: 'Diario', description: 'Liquidaciones procesadas cada día' },
     { value: 'semanal', label: 'Semanal', description: 'Liquidaciones procesadas una vez por semana' },
-    { value: 'mensual', label: 'Mensual', description: 'Liquidaciones procesadas una vez por mes' }
+    { value: 'mensual', label: 'Último día de cada mes', description: 'Liquidaciones procesadas una vez por mes' }
   ];
 
   const weekDayOptions = [
@@ -39,10 +39,21 @@ const PaymentConfig = ({
     { value: 'domingo', label: 'Domingo' }
   ];
 
-  const monthDayOptions = Array.from({ length: 31 }, (_, i) => ({
-    value: i + 1,
-    label: `Día ${i + 1}`
-  }));
+  const getMonthDayOptions = () => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth(); // 0-11
+    const currentYear = currentDate.getFullYear();
+    
+    // Obtener último día del mes actual
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    return Array.from({ length: lastDayOfMonth }, (_, i) => ({
+      value: i + 1,
+      label: `Día ${i + 1}`
+    }));
+  };
+
+  const monthDayOptions = getMonthDayOptions();
 
 
   const bankOptions = [
@@ -223,7 +234,7 @@ const PaymentConfig = ({
                     {/* Input condicional para día específico */}
                     {config.frequency === 'semanal' && (
                       <div className="conditional-input">
-                        <label htmlFor="weekDay">Día de la semana</label>
+                        <label htmlFor="weekDay">Todos los días....</label>
                         <select
                           id="weekDay"
                           value={config.weekDay || ''}
@@ -236,22 +247,7 @@ const PaymentConfig = ({
                         </select>
                       </div>
                     )}
-                    
-                    {config.frequency === 'mensual' && (
-                      <div className="conditional-input">
-                        <label htmlFor="monthDay">Día del mes</label>
-                        <select
-                          id="monthDay"
-                          value={config.monthDay || ''}
-                          onChange={(e) => handleConfigChange('monthDay', parseInt(e.target.value))}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {monthDayOptions.map(day => (
-                            <option key={day.value} value={day.value}>{day.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
+                   
                   </div>
                 </div>
                 
@@ -431,21 +427,7 @@ const PaymentConfig = ({
                       </div>
                     )}
                     
-                    {config.frequency === 'mensual' && (
-                      <div className="conditional-input">
-                        <label htmlFor="monthDay">Día del mes</label>
-                        <select
-                          id="monthDay"
-                          value={config.monthDay || ''}
-                          onChange={(e) => handleConfigChange('monthDay', parseInt(e.target.value))}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {monthDayOptions.map(day => (
-                            <option key={day.value} value={day.value}>{day.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
+                   
                   </div>
                 </div>
                 

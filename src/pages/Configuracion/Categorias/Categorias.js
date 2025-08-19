@@ -255,17 +255,7 @@ const Categorias = () => {
               )}
             </div>
             <div className="tree-item-controls">
-              <div className="comision-control">
-                <label>Comisión:</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={categoria.comision}
-                  onChange={(e) => editarComision(categoria.id, parseFloat(e.target.value))}
-                  className="comision-input"
-                />
-                <span>%</span>
-              </div>
+            
               <div className="tree-item-actions">
                 <Button 
                   variant="outline" 
