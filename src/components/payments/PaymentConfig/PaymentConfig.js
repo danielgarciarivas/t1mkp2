@@ -21,17 +21,29 @@ const PaymentConfig = ({
   const [validationErrors, setValidationErrors] = useState({});
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [pendingBankConfig, setPendingBankConfig] = useState(null);
+  const [activeTab, setActiveTab] = useState('automatic');
 
   const frequencyOptions = [
-    { value: 'each_10_days', label: 'Cada 10 días (1, 11, 21)', description: 'Recomendado - Flujo de caja óptimo' },
-    { value: 'quincenal', label: 'Quincenal (1-15, 16-30)', description: 'Tradicional - Bueno para control' },
-    { value: 'mensual', label: 'Mensual (1-30)', description: 'Conservador - Mayor retención' }
+    { value: 'diario', label: 'Diario', description: 'Liquidaciones procesadas cada día' },
+    { value: 'semanal', label: 'Semanal', description: 'Liquidaciones procesadas una vez por semana' },
+    { value: 'mensual', label: 'Mensual', description: 'Liquidaciones procesadas una vez por mes' }
   ];
 
-  const modeOptions = [
-    { value: 'automatic', label: 'Automático', description: 'Liquidaciones procesadas automáticamente según la frecuencia configurada' },
-    { value: 'manual', label: 'Manual', description: 'Liquidaciones requieren aprobación manual antes del procesamiento' }
+  const weekDayOptions = [
+    { value: 'lunes', label: 'Lunes' },
+    { value: 'martes', label: 'Martes' },
+    { value: 'miercoles', label: 'Miércoles' },
+    { value: 'jueves', label: 'Jueves' },
+    { value: 'viernes', label: 'Viernes' },
+    { value: 'sabado', label: 'Sábado' },
+    { value: 'domingo', label: 'Domingo' }
   ];
+
+  const monthDayOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i + 1,
+    label: `Día ${i + 1}`
+  }));
+
 
   const bankOptions = [
     'BBVA',
@@ -49,6 +61,11 @@ const PaymentConfig = ({
       ...prev,
       [field]: value
     }));
+    
+    // Cambiar el tab cuando se cambie el mode
+    if (field === 'mode') {
+      setActiveTab(value);
+    }
   };
 
   const handleBankConfigChange = (field, value) => {
@@ -107,7 +124,7 @@ const PaymentConfig = ({
     }
   };
 
-  const handleOTPVerified = (otpCode) => {
+  const handleOTPVerified = () => {
     // Procesar la configuración bancaria después de la verificación OTP
     if (pendingBankConfig) {
       setBankConfig(pendingBankConfig);
@@ -123,173 +140,32 @@ const PaymentConfig = ({
     setPendingBankConfig(null);
   };
 
-  const getFrequencyDescription = () => {
-    const selected = frequencyOptions.find(opt => opt.value === config.frequency);
-    return selected ? selected.description : '';
-  };
 
   const getNextLiquidationDate = () => {
-    const today = new Date();
-    const day = today.getDate();
-    
     switch (config.frequency) {
-      case 'each_10_days':
-        if (day <= 1) return '1';
-        if (day <= 11) return '11';
-        if (day <= 21) return '21';
-        return '1 del próximo mes';
-      case 'quincenal':
-        if (day <= 1) return '1';
-        if (day <= 15) return '15';
-        return '1 del próximo mes';
+      case 'diario':
+        return 'Todos los días';
+      case 'semanal':
+        return config.weekDay ? `Todos los ${config.weekDay}` : 'Configurar día de la semana';
       case 'mensual':
-        return '1 del próximo mes';
+        return config.monthDay ? `Todos los ${config.monthDay} del mes` : 'Configurar día del mes';
       default:
         return 'No configurado';
     }
   };
 
+  const handleDownloadInterface = () => {
+    // Lógica para descargar el archivo de interfaz
+    console.log('Descargando interfaz de liquidaciones...');
+  };
+
+  const handleSendEmail = () => {
+    // Lógica para enviar por correo
+    console.log('Enviando interfaz por correo...');
+  };
+
   return (
     <div className="payment-config-container">
-      {/* Configuración de cuenta bancaria */}
-      <div className="config-section">
-        <div className="section-header">
-          <h3>Configuración de Cuenta Bancaria del Marketplace</h3>
-          <p className="section-description">
-            Configure la cuenta bancaria donde se recibirán los fondos antes de liquidar a los sellers
-          </p>
-        </div>
-
-        {marketplaceBankConfig && !showBankForm ? (
-          <div className="bank-config-display">
-            <div className="bank-info-card">
-              <div className="bank-header">
-                <div className="bank-status verified">
-                  <span className="status-icon">✅</span>
-                  <span className="status-text">Cuenta Verificada</span>
-                </div>
-                <Button 
-                  variant="secondary" 
-                  size="small"
-                  onClick={() => setShowBankForm(true)}
-                >
-                  Editar
-                </Button>
-              </div>
-              
-              <div className="bank-details">
-                <div className="bank-item">
-                  <label>Nombre de la Cuenta:</label>
-                  <span>{bankConfig.accountName}</span>
-                </div>
-                <div className="bank-item">
-                  <label>Banco:</label>
-                  <span>{bankConfig.bank}</span>
-                </div>
-                <div className="bank-item">
-                  <label>CLABE Interbancaria:</label>
-                  <span className="clabe-display">
-                    {bankConfig.clabe.replace(/(\d{3})(\d{3})(\d{11})(\d{1})/, '$1 $2 $3 $4')}
-                  </span>
-                </div>
-                <div className="bank-item">
-                  <label>Moneda:</label>
-                  <span>{bankConfig.currency}</span>
-                </div>
-                <div className="bank-item">
-                  <label>Última Actualización:</label>
-                  <span>{new Date(bankConfig.lastUpdated).toLocaleDateString('es-ES')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="bank-config-form">
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="accountName">Nombre de la Cuenta *</label>
-                <input
-                  type="text"
-                  id="accountName"
-                  value={bankConfig.accountName}
-                  onChange={(e) => handleBankConfigChange('accountName', e.target.value)}
-                  placeholder="Ej: SEARS OPERADORA MEXICO SA DE CV"
-                  className={validationErrors.accountName ? 'error' : ''}
-                />
-                {validationErrors.accountName && (
-                  <span className="error-message">{validationErrors.accountName}</span>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="bank">Banco *</label>
-                <select
-                  id="bank"
-                  value={bankConfig.bank}
-                  onChange={(e) => handleBankConfigChange('bank', e.target.value)}
-                  className={validationErrors.bank ? 'error' : ''}
-                >
-                  <option value="">Seleccione un banco</option>
-                  {bankOptions.map(bank => (
-                    <option key={bank} value={bank}>{bank}</option>
-                  ))}
-                </select>
-                {validationErrors.bank && (
-                  <span className="error-message">{validationErrors.bank}</span>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="clabe">CLABE Interbancaria *</label>
-                <input
-                  type="text"
-                  id="clabe"
-                  value={bankConfig.clabe}
-                  onChange={(e) => handleBankConfigChange('clabe', e.target.value.replace(/\D/g, '').slice(0, 18))}
-                  placeholder="18 dígitos"
-                  maxLength="18"
-                  className={validationErrors.clabe ? 'error' : ''}
-                />
-                {validationErrors.clabe && (
-                  <span className="error-message">{validationErrors.clabe}</span>
-                )}
-                <span className="field-help">
-                  Ingrese los 18 dígitos de la CLABE interbancaria
-                </span>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="currency">Moneda</label>
-                <select
-                  id="currency"
-                  value={bankConfig.currency}
-                  onChange={(e) => handleBankConfigChange('currency', e.target.value)}
-                >
-                  <option value="MXN">Peso Mexicano (MXN)</option>
-                  <option value="USD">Dólar Americano (USD)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-actions">
-              <Button 
-                variant="primary"
-                onClick={handleSaveBankConfig}
-              >
-                Guardar Configuración Bancaria
-              </Button>
-              {marketplaceBankConfig && (
-                <Button 
-                  variant="ghost"
-                  onClick={() => setShowBankForm(false)}
-                >
-                  Cancelar
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* Configuración de liquidaciones */}
       <div className="config-section">
@@ -301,55 +177,399 @@ const PaymentConfig = ({
         </div>
 
         <div className="liquidation-config-form">
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Frecuencia de Liquidaciones</label>
-              <div className="frequency-options">
-                {frequencyOptions.map(option => (
-                  <div key={option.value} className="frequency-option">
-                    <label className="radio-option">
-                      <input
-                        type="radio"
-                        value={option.value}
-                        checked={config.frequency === option.value}
-                        onChange={(e) => handleConfigChange('frequency', e.target.value)}
-                      />
-                      <span className="radio-content">
-                        <span className="option-title">{option.label}</span>
-                        <span className="option-description">{option.description}</span>
-                      </span>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <div className="frequency-info">
-                <span className="info-label">Descripción:</span>
-                <span className="info-text">{getFrequencyDescription()}</span>
-              </div>
+          {/* Selector de modalidad principal */}
+          <div className="mode-selector">
+            <div className="mode-tabs">
+              <button 
+                className={`mode-tab ${activeTab === 'automatic' ? 'active' : ''}`}
+                onClick={() => setActiveTab('automatic')}
+              >
+                <span className="tab-icon">⚡</span>
+                <span className="tab-text">Automático</span>
+                <span className="tab-description">Procesamiento automático según frecuencia</span>
+              </button>
+              <button 
+                className={`mode-tab ${activeTab === 'manual' ? 'active' : ''}`}
+                onClick={() => setActiveTab('manual')}
+              >
+                <span className="tab-icon">👤</span>
+                <span className="tab-text">Manual</span>
+                <span className="tab-description">Revisión y aprobación manual</span>
+              </button>
             </div>
+          </div>
 
-            <div className="form-group">
-              <label>Modalidad de Procesamiento</label>
-              <div className="mode-options">
-                {modeOptions.map(option => (
-                  <div key={option.value} className="mode-option">
-                    <label className="radio-option">
-                      <input
-                        type="radio"
-                        value={option.value}
-                        checked={config.mode === option.value}
-                        onChange={(e) => handleConfigChange('mode', e.target.value)}
-                      />
-                      <span className="radio-content">
-                        <span className="option-title">{option.label}</span>
-                        <span className="option-description">{option.description}</span>
-                      </span>
-                    </label>
+          {/* Contenido según modo seleccionado */}
+          <div className="mode-content">
+            {activeTab === 'automatic' && (
+              <div className="automatic-mode">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label>Frecuencia de Liquidaciones</label>
+                    <div className="frequency-compact">
+                      {frequencyOptions.map(option => (
+                        <label key={option.value} className="frequency-compact-option">
+                          <input
+                            type="radio"
+                            value={option.value}
+                            checked={config.frequency === option.value}
+                            onChange={(e) => handleConfigChange('frequency', e.target.value)}
+                          />
+                          <span className="option-label">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    
+                    {/* Input condicional para día específico */}
+                    {config.frequency === 'semanal' && (
+                      <div className="conditional-input">
+                        <label htmlFor="weekDay">Día de la semana</label>
+                        <select
+                          id="weekDay"
+                          value={config.weekDay || ''}
+                          onChange={(e) => handleConfigChange('weekDay', e.target.value)}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {weekDayOptions.map(day => (
+                            <option key={day.value} value={day.value}>{day.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    
+                    {config.frequency === 'mensual' && (
+                      <div className="conditional-input">
+                        <label htmlFor="monthDay">Día del mes</label>
+                        <select
+                          id="monthDay"
+                          value={config.monthDay || ''}
+                          onChange={(e) => handleConfigChange('monthDay', parseInt(e.target.value))}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {monthDayOptions.map(day => (
+                            <option key={day.value} value={day.value}>{day.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+                
+                {/* Configuración de cuenta bancaria - Solo en modo automático */}
+                <div className="bank-config-section">
+                  <h4>Configuración de Cuenta Bancaria del Marketplace</h4>
+                  <p className="bank-description">
+                    Configure la cuenta bancaria desde donde se realizarán las liquidaciones automáticas a los sellers
+                  </p>
 
+                  {marketplaceBankConfig && !showBankForm ? (
+                    <div className="bank-config-display">
+                      <div className="bank-info-card">
+                        <div className="bank-header">
+                          <div className="bank-status verified">
+                            <span className="status-icon">✅</span>
+                            <span className="status-text">Cuenta Verificada</span>
+                          </div>
+                          <Button 
+                            variant="secondary" 
+                            size="small"
+                            onClick={() => setShowBankForm(true)}
+                          >
+                            Editar
+                          </Button>
+                        </div>
+                        
+                        <div className="bank-details">
+                          <div className="bank-item">
+                            <label>Nombre de la Cuenta:</label>
+                            <span>{bankConfig.accountName}</span>
+                          </div>
+                          <div className="bank-item">
+                            <label>Banco:</label>
+                            <span>{bankConfig.bank}</span>
+                          </div>
+                          <div className="bank-item">
+                            <label>CLABE Interbancaria:</label>
+                            <span className="clabe-display">
+                              {bankConfig.clabe.replace(/(\d{3})(\d{3})(\d{11})(\d{1})/, '$1 $2 $3 $4')}
+                            </span>
+                          </div>
+                          <div className="bank-item">
+                            <label>Moneda:</label>
+                            <span>{bankConfig.currency}</span>
+                          </div>
+                          <div className="bank-item">
+                            <label>Última Actualización:</label>
+                            <span>{new Date(bankConfig.lastUpdated).toLocaleDateString('es-ES')}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bank-config-form">
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label htmlFor="accountName">Nombre de la Cuenta *</label>
+                          <input
+                            type="text"
+                            id="accountName"
+                            value={bankConfig.accountName}
+                            onChange={(e) => handleBankConfigChange('accountName', e.target.value)}
+                            placeholder="Ej: SEARS OPERADORA MEXICO SA DE CV"
+                            className={validationErrors.accountName ? 'error' : ''}
+                          />
+                          {validationErrors.accountName && (
+                            <span className="error-message">{validationErrors.accountName}</span>
+                          )}
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="bank">Banco *</label>
+                          <select
+                            id="bank"
+                            value={bankConfig.bank}
+                            onChange={(e) => handleBankConfigChange('bank', e.target.value)}
+                            className={validationErrors.bank ? 'error' : ''}
+                          >
+                            <option value="">Seleccione un banco</option>
+                            {bankOptions.map(bank => (
+                              <option key={bank} value={bank}>{bank}</option>
+                            ))}
+                          </select>
+                          {validationErrors.bank && (
+                            <span className="error-message">{validationErrors.bank}</span>
+                          )}
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="clabe">CLABE Interbancaria *</label>
+                          <input
+                            type="text"
+                            id="clabe"
+                            value={bankConfig.clabe}
+                            onChange={(e) => handleBankConfigChange('clabe', e.target.value.replace(/\D/g, '').slice(0, 18))}
+                            placeholder="18 dígitos"
+                            maxLength="18"
+                            className={validationErrors.clabe ? 'error' : ''}
+                          />
+                          {validationErrors.clabe && (
+                            <span className="error-message">{validationErrors.clabe}</span>
+                          )}
+                          <span className="field-help">
+                            Ingrese los 18 dígitos de la CLABE interbancaria
+                          </span>
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="currency">Moneda</label>
+                          <select
+                            id="currency"
+                            value={bankConfig.currency}
+                            onChange={(e) => handleBankConfigChange('currency', e.target.value)}
+                          >
+                            <option value="MXN">Peso Mexicano (MXN)</option>
+                            <option value="USD">Dólar Americano (USD)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="form-actions">
+                        <Button 
+                          variant="primary"
+                          onClick={handleSaveBankConfig}
+                        >
+                          Guardar Configuración Bancaria
+                        </Button>
+                        {marketplaceBankConfig && (
+                          <Button 
+                            variant="ghost"
+                            onClick={() => setShowBankForm(false)}
+                          >
+                            Cancelar
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'manual' && (
+              <div className="manual-mode">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label>Frecuencia de Liquidaciones</label>
+                    <div className="frequency-compact">
+                      {frequencyOptions.map(option => (
+                        <label key={option.value} className="frequency-compact-option">
+                          <input
+                            type="radio"
+                            value={option.value}
+                            checked={config.frequency === option.value}
+                            onChange={(e) => handleConfigChange('frequency', e.target.value)}
+                          />
+                          <span className="option-label">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    
+                    {/* Input condicional para día específico */}
+                    {config.frequency === 'semanal' && (
+                      <div className="conditional-input">
+                        <label htmlFor="weekDay">Día de la semana</label>
+                        <select
+                          id="weekDay"
+                          value={config.weekDay || ''}
+                          onChange={(e) => handleConfigChange('weekDay', e.target.value)}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {weekDayOptions.map(day => (
+                            <option key={day.value} value={day.value}>{day.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    
+                    {config.frequency === 'mensual' && (
+                      <div className="conditional-input">
+                        <label htmlFor="monthDay">Día del mes</label>
+                        <select
+                          id="monthDay"
+                          value={config.monthDay || ''}
+                          onChange={(e) => handleConfigChange('monthDay', parseInt(e.target.value))}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {monthDayOptions.map(day => (
+                            <option key={day.value} value={day.value}>{day.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Sección de configuración de envío */}
+                <div className="interface-section">
+                  <h4>Configuración de Envío de Liquidaciones</h4>
+                  <p className="interface-description">
+                    Configure cómo desea recibir las liquidaciones procesadas en su sistema.
+                  </p>
+                  
+                  <div className="delivery-methods">
+                    <div className="delivery-method">
+                      <label className="method-option">
+                        <input
+                          type="radio"
+                          name="deliveryMethod"
+                          value="file"
+                          checked={config.deliveryMethod === 'file'}
+                          onChange={(e) => handleConfigChange('deliveryMethod', e.target.value)}
+                        />
+                        <div className="method-content">
+                          <div className="method-header">
+                            <span className="method-icon">📄</span>
+                            <span className="method-title">Archivo Texto Plano</span>
+                          </div>
+                          <span className="method-description">
+                            Genera un archivo de texto con las transacciones para descarga manual
+                          </span>
+                        </div>
+                      </label>
+                      
+                      {config.deliveryMethod === 'file' && (
+                        <div className="method-config">
+                          <div className="config-group">
+                            <label htmlFor="fileFormat">Formato del archivo:</label>
+                            <select
+                              id="fileFormat"
+                              value={config.fileFormat || 'sears'}
+                              onChange={(e) => handleConfigChange('fileFormat', e.target.value)}
+                            >
+                              <option value="sears">Compatible Sears/Sanborns</option>
+                              <option value="csv">CSV Estándar</option>
+                              <option value="txt">Texto Delimitado</option>
+                            </select>
+                          </div>
+                          <div className="config-group">
+                            <label htmlFor="downloadUrl">URL de descarga:</label>
+                            <input
+                              type="url"
+                              id="downloadUrl"
+                              value={config.downloadUrl || ''}
+                              onChange={(e) => handleConfigChange('downloadUrl', e.target.value)}
+                              placeholder="https://marketplace.com/downloads/"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="delivery-method">
+                      <label className="method-option">
+                        <input
+                          type="radio"
+                          name="deliveryMethod"
+                          value="webhook"
+                          checked={config.deliveryMethod === 'webhook'}
+                          onChange={(e) => handleConfigChange('deliveryMethod', e.target.value)}
+                        />
+                        <div className="method-content">
+                          <div className="method-header">
+                            <span className="method-icon">🔗</span>
+                            <span className="method-title">Webhook JSON</span>
+                          </div>
+                          <span className="method-description">
+                            Envía las transacciones directamente a su sistema ERP mediante webhook
+                          </span>
+                        </div>
+                      </label>
+                      
+                      {config.deliveryMethod === 'webhook' && (
+                        <div className="method-config">
+                          <div className="config-group">
+                            <label htmlFor="webhookUrl">URL del Webhook:</label>
+                            <input
+                              type="url"
+                              id="webhookUrl"
+                              value={config.webhookUrl || ''}
+                              onChange={(e) => handleConfigChange('webhookUrl', e.target.value)}
+                              placeholder="https://erp.empresa.com/api/liquidaciones"
+                              required
+                            />
+                          </div>
+                          <div className="config-group">
+                            <label htmlFor="authToken">Token de Autenticación:</label>
+                            <input
+                              type="password"
+                              id="authToken"
+                              value={config.authToken || ''}
+                              onChange={(e) => handleConfigChange('authToken', e.target.value)}
+                              placeholder="Bearer token o API key"
+                            />
+                          </div>
+                          <div className="config-group">
+                            <label htmlFor="webhookTimeout">Timeout (segundos):</label>
+                            <input
+                              type="number"
+                              id="webhookTimeout"
+                              value={config.webhookTimeout || 30}
+                              onChange={(e) => handleConfigChange('webhookTimeout', parseInt(e.target.value))}
+                              min="5"
+                              max="300"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Configuración común para ambos modos */}
+          <div className="common-config">
             <div className="form-row-scrollable">
               <div className="form-row">
                 <div className="form-group">
@@ -402,7 +622,7 @@ const PaymentConfig = ({
               <div className="summary-item">
                 <span className="summary-label">Modalidad:</span>
                 <span className="summary-value">
-                  {modeOptions.find(opt => opt.value === config.mode)?.label}
+                  {activeTab === 'automatic' ? 'Automático' : 'Manual'}
                 </span>
               </div>
               <div className="summary-item">
@@ -420,9 +640,6 @@ const PaymentConfig = ({
             </div>
           </div>
 
-          <div className="form-actions">
-          
-          </div>
         </div>
       </div>
 

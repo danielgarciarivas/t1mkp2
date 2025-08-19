@@ -37,27 +37,7 @@ const Contratos = () => {
             responsabilidades: true,
             confidencialidad: true
           }
-        },
-        {
-          id: 2,
-          nombre: 'Contrato Premium Sellers',
-          descripcion: 'Contrato especial para sellers de alto volumen',
-          tipo: 'premium',
-          version: '2.1',
-          fechaCreacion: '2024-01-20T09:15:00Z',
-          fechaActualizacion: '2024-02-15T11:45:00Z',
-          estado: 'activo',
-          marketplaces: ['Sears'],
-          clausulas: {
-            comisiones: true,
-            terminos_pago: true,
-            politicas_devolucion: true,
-            responsabilidades: true,
-            confidencialidad: true,
-            exclusividad: true
-          }
-        },
-       
+        }
       ];
       
       setContratos(mockContratos);

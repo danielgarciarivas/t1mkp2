@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../../common/Button';
 import './ConfirmationModal.css';
 
@@ -11,8 +11,11 @@ const ConfirmationModal = ({
   confirmText = "Confirmar",
   cancelText = "Cancelar",
   type = "default", // default, warning, danger
-  liquidationData = null
+  liquidationData = null,
+  liquidationConfig = null
 }) => {
+  const [processing, setProcessing] = useState(false);
+  const [processingMessage, setProcessingMessage] = useState('');
   if (!isOpen) return null;
 
   const formatCurrency = (amount) => {
@@ -30,6 +33,23 @@ const ConfirmationModal = ({
       case 'danger': return 'confirmation-danger';
       default: return 'confirmation-default';
     }
+  };
+
+  const handleConfirm = async () => {
+    setProcessing(true);
+    
+    // Determinar el mensaje basado en la configuración de liquidación
+    if (liquidationConfig?.deliveryMethod === 'webhook') {
+      setProcessingMessage('Enviando transacciones al sistema ERP del marketplace...');
+    } else {
+      setProcessingMessage('Generando interfaz y enviándola...');
+    }
+    
+    // Simular proceso de 1 segundo
+    setTimeout(() => {
+      setProcessing(false);
+      onConfirm();
+    }, 1000);
   };
 
   return (
@@ -101,12 +121,24 @@ const ConfirmationModal = ({
             </div>
           )}
 
-          <div className="confirmation-warning">
-            <div className="warning-icon">⚠️</div>
-            <div className="warning-text">
-              Esta acción iniciará el proceso de transferencia bancaria y no podrá deshacerse.
+          {processing && (
+            <div className="processing-status">
+              <div className="processing-icon">⏳</div>
+              <div className="processing-text">
+                {processingMessage}
+              </div>
+              <div className="processing-spinner"></div>
             </div>
-          </div>
+          )}
+          
+          {!processing && (
+            <div className="confirmation-warning">
+              <div className="warning-icon">⚠️</div>
+              <div className="warning-text">
+                Esta acción iniciará el proceso de transferencia bancaria y no podrá deshacerse.
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="modal-footer">
@@ -118,9 +150,10 @@ const ConfirmationModal = ({
           </Button>
           <Button 
             variant={type === 'danger' ? 'danger' : 'primary'}
-            onClick={onConfirm}
+            onClick={handleConfirm}
+            disabled={processing}
           >
-            {confirmText}
+            {processing ? 'Procesando...' : confirmText}
           </Button>
         </div>
       </div>

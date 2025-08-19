@@ -139,6 +139,9 @@ const Payments = () => {
           transactionId: 'TXN-202508-001',
           cycleStart: '2025-07-21',
           cycleEnd: '2025-07-31',
+          deliveryMethod: 'file',
+          fileUrl: 'https://marketplace.com/downloads/liquidacion_TXN-202508-001.txt',
+          fileName: 'liquidacion_TXN-202508-001.txt',
           transactions: [
             { id: 'ORD-021', date: '2025-07-22', amount: 42000, commission: 4200 },
             { id: 'ORD-022', date: '2025-07-25', amount: 38500, commission: 3850 },
@@ -158,6 +161,10 @@ const Payments = () => {
           transactionId: 'TXN-202508-002',
           cycleStart: '2025-07-21',
           cycleEnd: '2025-07-31',
+          deliveryMethod: 'webhook',
+          webhookRequestId: 'WHK-202508-002',
+          webhookStatus: 'success',
+          webhookUrl: 'https://erp.homestyle.com/api/liquidaciones',
           transactions: [
             { id: 'ORD-025', date: '2025-07-23', amount: 28900, commission: 2890 },
             { id: 'ORD-026', date: '2025-07-26', amount: 31200, commission: 3120 },
@@ -253,12 +260,29 @@ const Payments = () => {
     );
 
     // Mover a historial y marcar como completadas
-    const newHistoryEntries = processedLiquidations.map(l => ({
-      ...l,
-      status: 'completed',
-      processedDate: new Date().toISOString(),
-      transactionId: `TXN-${Date.now()}-${l.id}`
-    }));
+    const newHistoryEntries = processedLiquidations.map(l => {
+      const timestamp = Date.now();
+      const entry = {
+        ...l,
+        status: 'completed',
+        processedDate: new Date().toISOString(),
+        transactionId: `TXN-${timestamp}-${l.id}`
+      };
+      
+      // Agregar información de envío basada en la configuración
+      if (liquidationConfig.deliveryMethod === 'webhook') {
+        entry.deliveryMethod = 'webhook';
+        entry.webhookRequestId = `WHK-${timestamp}-${l.id}`;
+        entry.webhookStatus = 'success';
+        entry.webhookUrl = liquidationConfig.webhookUrl || 'https://erp.example.com/api/liquidaciones';
+      } else {
+        entry.deliveryMethod = 'file';
+        entry.fileName = `liquidacion_TXN-${timestamp}-${l.id}.txt`;
+        entry.fileUrl = `${liquidationConfig.downloadUrl || 'https://marketplace.com/downloads/'}${entry.fileName}`;
+      }
+      
+      return entry;
+    });
 
     setLiquidationHistory(prev => [...newHistoryEntries, ...prev]);
     setPendingLiquidations(prev => prev.filter(l => !liquidationIds.includes(l.id)));
@@ -523,6 +547,7 @@ const Payments = () => {
           title={confirmationData.title}
           message={confirmationData.message}
           liquidationData={confirmationData.liquidationData}
+          liquidationConfig={liquidationConfig}
           onConfirm={handleConfirmAction}
           onClose={handleCancelConfirmation}
           confirmText="Procesar Liquidación"

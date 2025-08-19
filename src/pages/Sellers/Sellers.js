@@ -111,7 +111,12 @@ const Sellers = () => {
           rating: 4.8,
           odr: 2.1,
           urgente: false,
-          validationState: null
+          validationState: null,
+          score: {
+            value: 92,
+            color: 'Verde Oscuro',
+            level: 'Excelente'
+          }
         },
         {
           id: 2,
@@ -130,7 +135,12 @@ const Sellers = () => {
           rating: 4.6,
           odr: 1.8,
           urgente: false,
-          validationState: null
+          validationState: null,
+          score: {
+            value: 78,
+            color: 'Amarillo',
+            level: 'Bueno'
+          }
         },
         {
           id: 3,
@@ -147,7 +157,8 @@ const Sellers = () => {
           rating: null,
           odr: null,
           urgente: true,
-          validationState: 'pending'
+          validationState: 'pending',
+          score: null
         },
         {
           id: 4,
@@ -167,7 +178,12 @@ const Sellers = () => {
           rating: null,
           odr: null,
           urgente: false,
-          validationState: null
+          validationState: null,
+          score: {
+            value: 35,
+            color: 'Rojo',
+            level: 'Crítico'
+          }
         },
         {
           id: 5,
@@ -186,7 +202,12 @@ const Sellers = () => {
           rating: 4.2,
           odr: 6.8,
           urgente: false,
-          validationState: null
+          validationState: null,
+          score: {
+            value: 58,
+            color: 'Naranja',
+            level: 'Regular'
+          }
         },
         {
           id: 6,
@@ -206,7 +227,12 @@ const Sellers = () => {
           odr: 3.2,
           urgente: false,
           validationState: null,
-          motivoInactividad: 'decision_seller'
+          motivoInactividad: 'decision_seller',
+          score: {
+            value: 72,
+            color: 'Amarillo',
+            level: 'Bueno'
+          }
         },
         {
           id: 7,
@@ -224,7 +250,8 @@ const Sellers = () => {
           rating: null,
           odr: null,
           urgente: false,
-          validationState: 'pending'
+          validationState: 'pending',
+          score: null
         },
         {
           id: 8,
@@ -243,7 +270,12 @@ const Sellers = () => {
           rating: 4.9,
           odr: 1.2,
           urgente: false,
-          validationState: null
+          validationState: null,
+          score: {
+            value: 87,
+            color: 'Verde Claro',
+            level: 'Muy Bueno'
+          }
         }
       ];
       

@@ -76,6 +76,21 @@ const Configuracion = () => {
         'Configuración fiscal',
         'Proceso automático'
       ]
+    },
+    {
+      id: 'score-tiendas',
+      title: 'Score de Tiendas',
+      description: 'Configuración del sistema de puntuación y reputación de sellers',
+      icon: '⭐',
+      path: '/configuracion/score-tiendas',
+      features: [
+        'Configuración de métricas de evaluación',
+        'Umbrales de score por nivel',
+        'Ponderación de factores (entregas, cancelaciones, reclamos)',
+        'Políticas automáticas por score',
+        'Sistema de termómetro de 5 colores',
+        'Configuración de alertas y notificaciones'
+      ]
     }
   ];
 

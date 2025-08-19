@@ -38,6 +38,7 @@ const SellerTable = ({
             <thead>
               <tr>
                 <th>Seller</th>
+                <th>Score</th>
                 <th>Categorías</th>
                 <th>Fecha Solicitud</th>
                 <th>Estado</th>
@@ -47,6 +48,7 @@ const SellerTable = ({
             <tbody>
               {[1, 2, 3, 4, 5].map(i => (
                 <tr key={i} className="skeleton-row">
+                  <td><div className="skeleton-cell"></div></td>
                   <td><div className="skeleton-cell"></div></td>
                   <td><div className="skeleton-cell"></div></td>
                   <td><div className="skeleton-cell"></div></td>
@@ -259,6 +261,12 @@ const SellerTable = ({
               >
                 Seller {getSortIcon('nombre')}
               </th>
+              <th 
+                className="sortable-header"
+                onClick={() => handleSort('score')}
+              >
+                Score {getSortIcon('score')}
+              </th>
               <th>Categorías</th>
               <th 
                 className="sortable-header"
@@ -313,6 +321,23 @@ const SellerTable = ({
                     </div>
                   </td>
                   
+                  <td>
+                    {seller.score ? (
+                      <div className="score-display">
+                        <div className={`score-badge score-${seller.score.color.toLowerCase().replace(' ', '-')}`}>
+                          <span className="score-value">{seller.score.value}%</span>
+                        </div>
+                        <div className="score-level">{seller.score.level}</div>
+                      </div>
+                    ) : (
+                      <div className="score-display">
+                        <div className="score-badge score-sin-datos">
+                          <span className="score-value">-</span>
+                        </div>
+                        <div className="score-level">Sin datos</div>
+                      </div>
+                    )}
+                  </td>
                   
                   <td>
                     <div className="categories-list">
