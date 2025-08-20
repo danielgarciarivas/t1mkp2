@@ -38,6 +38,7 @@ const menuItems = [
       { id: 'reglas', label: 'Motor de Reglas', path: '/configuracion/reglas' },
       { id: 'comisiones', label: 'Configuración de Comisiones', path: '/configuracion/comisiones' },
       { id: 'facturacion', label: 'Facturación', path: '/configuracion/facturacion' },
+      { id: 'logistica', label: 'Logística', path: '/configuracion/logistica' },
       { id: 'score-tiendas', label: 'Score de Tiendas', path: '/configuracion/score-tiendas' }
     ]
   }
