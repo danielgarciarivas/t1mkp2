@@ -1135,7 +1135,7 @@ const SellerDetail = () => {
                   <div className="info-notice automatic">
                     <span className="info-icon">⚙️</span>
                     <div className="info-text">
-                      <strong>Configuración Individual:</strong> Esta configuración tiene prioridad sobre la configuración global del sistema. Las liquidaciones para este seller seguirán esta frecuencia específica.
+                      <strong>Configuración Individual:</strong> Esta configuración tiene prioridad sobre la configuración global del sistema. Las liquidaciones para este seller seguirán esta frecuencia específica..
                     </div>
                   </div>
                 )}
