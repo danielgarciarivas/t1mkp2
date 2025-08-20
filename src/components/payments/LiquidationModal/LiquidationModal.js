@@ -184,8 +184,16 @@ const LiquidationModal = ({
                         
                         <div className="schedule-info">
                           <div className="schedule-date">
-                            <span className="schedule-label">Fecha Programada:</span>
-                            <span className="schedule-value">{formatDate(liquidation.scheduledDate)}</span>
+                            <span className="schedule-label">Programada:</span>
+                            <span className="schedule-value">
+                              {liquidation.frequencySource === 'individual' 
+                                ? `Individual - Diario` 
+                                : `Global - Semanal`}
+                            </span>
+                          </div>
+                          <div className="schedule-next">
+                            <span className="schedule-next-label">Próxima:</span>
+                            <span className="schedule-next-value">{formatDate(liquidation.scheduledDate)}</span>
                           </div>
                         </div>
                       </div>

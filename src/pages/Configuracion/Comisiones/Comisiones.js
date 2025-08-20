@@ -12,6 +12,8 @@ const Comisiones = () => {
     categoria: '',
     precio: ''
   });
+  const [useGeneralCommission, setUseGeneralCommission] = useState(false);
+  const [generalCommission, setGeneralCommission] = useState(8.0);
 
   useEffect(() => {
     loadComisiones();
@@ -211,7 +213,7 @@ const Comisiones = () => {
           </div>
           <div className="stat-card">
             <h3>{categorias.filter(c => c.activa).length}</h3>
-            <p>Categorías Activas</p>
+            <p>Categorías Activas1</p>
           </div>
           <div className="stat-card">
             <h3>{(categorias.reduce((acc, c) => acc + c.comisionBase, 0) / categorias.length).toFixed(1)}%</h3>
@@ -220,7 +222,147 @@ const Comisiones = () => {
          
         </div>
 
-        <div className="categorias-grid">
+        {/* Configuración de Tipo de Comisión */}
+        <div className="commission-section">
+          <div className="section-header">
+            <h3>Configuración de Comisiones</h3>
+            <p className="section-description">
+              Configure cómo se aplicarán las comisiones en su marketplace
+            </p>
+          </div>
+
+          <div className="commission-config-form">
+            {/* Selector de modalidad principal */}
+            <div className="mode-selector">
+              <div className="mode-tabs">
+                <button 
+                  className={`mode-tab ${!useGeneralCommission ? 'active' : ''}`}
+                  onClick={() => setUseGeneralCommission(false)}
+                >
+                  <span className="tab-icon">📊</span>
+                  <span className="tab-text">Por Categoría</span>
+                  <span className="tab-description">Comisiones específicas por categoría</span>
+                </button>
+                <button 
+                  className={`mode-tab ${useGeneralCommission ? 'active' : ''}`}
+                  onClick={() => setUseGeneralCommission(true)}
+                >
+                  <span className="tab-icon">🌐</span>
+                  <span className="tab-text">Comisión General</span>
+                  <span className="tab-description">Una comisión para todo el marketplace</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Contenido según modo seleccionado */}
+            <div className="mode-content">
+              {!useGeneralCommission && (
+                <div className="category-mode">
+                  <div className="category-mode-info">
+                    <h4>🎯 Comisiones por Categoría</h4>
+                    <p>Configure comisiones específicas para cada categoría del marketplace, permitiendo optimizar márgenes según el tipo de producto.</p>
+                    
+                    <div className="category-benefits">
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Control granular por categoría</span>
+                      </div>
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Optimización de márgenes</span>
+                      </div>
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Estrategias diferenciadas</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {useGeneralCommission && (
+                <div className="general-mode">
+                  <div className="general-mode-info">
+                    <h4>🌐 Comisión General</h4>
+                    <p>Aplique una comisión uniforme a todas las categorías del marketplace, simplificando la gestión y manteniendo consistencia.</p>
+                    
+                    <div className="general-benefits">
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Configuración simple y rápida</span>
+                      </div>
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Gestión unificada</span>
+                      </div>
+                      <div className="benefit-item">
+                        <span className="benefit-icon">✅</span>
+                        <span>Consistencia total</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Configuración de comisión general */}
+                  <div className="general-commission-config">
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label>Porcentaje de Comisión General</label>
+                        <div className="commission-input">
+                          <span className="currency-symbol">%</span>
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                            value={generalCommission}
+                            onChange={(e) => setGeneralCommission(parseFloat(e.target.value) || 0)}
+                          />
+                        </div>
+                        <span className="field-help">
+                          Este porcentaje se aplicará a todos los productos del marketplace
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Simulador de comisión */}
+                    <div className="commission-simulator">
+                      <h5>💡 Simulador de Comisión</h5>
+                      <div className="simulator-example">
+                        <div className="example-row">
+                          <span className="example-label">Precio del producto:</span>
+                          <span className="example-value">$1,000</span>
+                        </div>
+                        <div className="example-row">
+                          <span className="example-label">Comisión ({generalCommission}%):</span>
+                          <span className="example-value commission">-${(1000 * generalCommission / 100).toFixed(0)}</span>
+                        </div>
+                        <div className="example-row total">
+                          <span className="example-label">Ganancia del seller:</span>
+                          <span className="example-value">${(1000 - (1000 * generalCommission / 100)).toFixed(0)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="form-actions">
+                      <Button 
+                        variant="primary"
+                        onClick={() => {
+                          console.log(`Guardando comisión general: ${generalCommission}%`);
+                          alert(`✅ Comisión general configurada: ${generalCommission}%`);
+                        }}
+                      >
+                        Guardar Comisión General
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {!useGeneralCommission && (
+          <div className="categorias-grid">
           {categorias.map((categoria) => (
             <div key={categoria.id} className={`categoria-card ${!categoria.activa ? 'inactiva' : ''}`}>
               <div className="categoria-header">
@@ -314,7 +456,8 @@ const Comisiones = () => {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Modal de Simulador */}

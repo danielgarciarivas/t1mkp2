@@ -172,6 +172,9 @@ const SellerDetail = () => {
   const [commission, setCommission] = useState(0);
   const [freepassEnabled, setFreepassEnabled] = useState(false);
   const [liquidationMode, setLiquidationMode] = useState('automatic'); // 'automatic' | 'manual'
+  const [liquidationFrequency, setLiquidationFrequency] = useState('diario');
+  const [liquidationWeekDay, setLiquidationWeekDay] = useState('');
+  const [liquidationMonthDay, setLiquidationMonthDay] = useState('');
   const [allowedCategories, setAllowedCategories] = useState(new Set());
   const [canSellInAllCategories, setCanSellInAllCategories] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
@@ -262,6 +265,9 @@ const SellerDetail = () => {
       setCommission(3.5); // Comisión por defecto
       setFreepassEnabled(mockSeller.freepassEnabled);
       setLiquidationMode(mockSeller.liquidationMode);
+      setLiquidationFrequency('diario');
+      setLiquidationWeekDay('');
+      setLiquidationMonthDay('');
       setLoading(false);
     }, 1000);
   };
@@ -288,6 +294,64 @@ const SellerDetail = () => {
       liquidationMode: mode
     }));
     console.log(`Modo de liquidación cambiado a ${mode === 'automatic' ? 'automático' : 'manual'} para seller ${id}`);
+  };
+
+  const handleLiquidationFrequencyChange = (frequency) => {
+    setLiquidationFrequency(frequency);
+    // Limpiar campos dependientes cuando cambia la frecuencia
+    if (frequency !== 'semanal') {
+      setLiquidationWeekDay('');
+    }
+    if (frequency !== 'mensual') {
+      setLiquidationMonthDay('');
+    }
+    setSeller(prev => ({
+      ...prev,
+      liquidationFrequency: frequency,
+      liquidationWeekDay: frequency === 'semanal' ? prev.liquidationWeekDay : '',
+      liquidationMonthDay: frequency === 'mensual' ? prev.liquidationMonthDay : ''
+    }));
+  };
+
+  const handleLiquidationWeekDayChange = (weekDay) => {
+    setLiquidationWeekDay(weekDay);
+    setSeller(prev => ({
+      ...prev,
+      liquidationWeekDay: weekDay
+    }));
+  };
+
+  const handleLiquidationMonthDayChange = (monthDay) => {
+    setLiquidationMonthDay(monthDay);
+    setSeller(prev => ({
+      ...prev,
+      liquidationMonthDay: monthDay
+    }));
+  };
+
+  const getMonthDayOptions = () => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    return Array.from({ length: lastDayOfMonth }, (_, i) => ({
+      value: i + 1,
+      label: `Día ${i + 1}`
+    }));
+  };
+
+  const getNextLiquidationDate = () => {
+    switch (liquidationFrequency) {
+      case 'diario':
+        return 'Todos los días';
+      case 'semanal':
+        return liquidationWeekDay ? `Todos los ${liquidationWeekDay}` : 'Configurar día de la semana';
+      case 'mensual':
+        return liquidationMonthDay ? `Todos los ${liquidationMonthDay} del mes` : 'Último día del mes';
+      default:
+        return 'No configurado';
+    }
   };
 
   const handleContractSign = () => {
@@ -901,7 +965,7 @@ const SellerDetail = () => {
                   <div className="config-info">
                     <h4>Modo de Liquidación</h4>
                     <p className="config-description">
-                      Configura si las liquidaciones para este seller se procesan automáticamente según la programación o requieren aprobación manual.
+                      Configura si las liquidaciones para este seller se procesan automáticamente según la programación o requieren aprobación manual. (si se configura esta opción, tendrá mas prioridad sobre la configuracion global)
                     </p>
                   </div>
                 </div>
@@ -948,16 +1012,114 @@ const SellerDetail = () => {
                   </div>
                 </div>
 
+                {/* Configuración de Frecuencia de Liquidación */}
+                <div className="liquidation-frequency-section">
+                  <h4>Frecuencia de Liquidación</h4>
+                  <div className="frequency-options">
+                    <label className={`frequency-option ${liquidationFrequency === 'diario' ? 'selected' : ''}`}>
+                      <input
+                        type="radio"
+                        name="liquidationFrequency"
+                        value="diario"
+                        checked={liquidationFrequency === 'diario'}
+                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
+                      />
+                      <div className="frequency-content">
+                        <span className="frequency-title">Diario</span>
+                        <span className="frequency-description">Liquidaciones procesadas cada día</span>
+                      </div>
+                    </label>
+
+                    <label className={`frequency-option ${liquidationFrequency === 'semanal' ? 'selected' : ''}`}>
+                      <input
+                        type="radio"
+                        name="liquidationFrequency"
+                        value="semanal"
+                        checked={liquidationFrequency === 'semanal'}
+                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
+                      />
+                      <div className="frequency-content">
+                        <span className="frequency-title">Semanal</span>
+                        <span className="frequency-description">Liquidaciones procesadas una vez por semana</span>
+                      </div>
+                    </label>
+
+                    <label className={`frequency-option ${liquidationFrequency === 'mensual' ? 'selected' : ''}`}>
+                      <input
+                        type="radio"
+                        name="liquidationFrequency"
+                        value="mensual"
+                        checked={liquidationFrequency === 'mensual'}
+                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
+                      />
+                      <div className="frequency-content">
+                        <span className="frequency-title">Último día del mes</span>
+                        <span className="frequency-description"> (liquidaciones procesadas el último día de cada mes)</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Configuración condicional para día de la semana */}
+                  {liquidationFrequency === 'semanal' && (
+                    <div className="frequency-detail">
+                      <label htmlFor="weekDay">Día de la semana</label>
+                      <select
+                        id="weekDay"
+                        value={liquidationWeekDay}
+                        onChange={(e) => handleLiquidationWeekDayChange(e.target.value)}
+                        className="frequency-select"
+                      >
+                        <option value="">Seleccionar día</option>
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miércoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                        <option value="sábado">Sábado</option>
+                        <option value="domingo">Domingo</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Configuración condicional para día del mes */}
+                  {liquidationFrequency === 'mensual' && (
+                    <div className="frequency-detail">
+                      <label htmlFor="monthDay">Día del mes (opcional)</label>
+                      <select
+                        id="monthDay"
+                        value={liquidationMonthDay}
+                        onChange={(e) => handleLiquidationMonthDayChange(e.target.value)}
+                        className="frequency-select"
+                      >
+                        <option value="">Último día del mes</option>
+                        {getMonthDayOptions().map(day => (
+                          <option key={day.value} value={day.value}>{day.label}</option>
+                        ))}
+                      </select>
+                      <small className="frequency-help">
+                        Si no se especifica un día, se usará el último día del mes
+                      </small>
+                    </div>
+                  )}
+                </div>
+
                 <div className={`config-status ${liquidationMode === 'automatic' ? 'auto' : 'manual'}`}>
                   <span className="status-indicator">
                     {liquidationMode === 'automatic' ? '🤖' : '👤'}
                   </span>
-                  <span className="status-text">
-                    {liquidationMode === 'automatic' 
-                      ? 'Modo AUTOMÁTICO - Las liquidaciones se procesan según programación' 
-                      : 'Modo MANUAL - Las liquidaciones requieren aprobación previa'
-                    }
-                  </span>
+                  <div className="status-content">
+                    <span className="status-text">
+                      {liquidationMode === 'automatic' 
+                        ? `Modo AUTOMÁTICO - ${getNextLiquidationDate()}` 
+                        : 'Modo MANUAL - Las liquidaciones requieren aprobación previa'
+                      }
+                    </span>
+                    {liquidationMode === 'automatic' && (
+                      <small className="status-detail">
+                        Frecuencia configurada: {liquidationFrequency}
+                      </small>
+                    )}
+                  </div>
                 </div>
 
                 {liquidationMode === 'manual' && (
@@ -965,6 +1127,15 @@ const SellerDetail = () => {
                     <span className="info-icon">ℹ️</span>
                     <div className="info-text">
                       <strong>Información:</strong> Con el modo manual activado, tendrás que aprobar cada liquidación individualmente desde el módulo de pagos.
+                    </div>
+                  </div>
+                )}
+
+                {liquidationMode === 'automatic' && (
+                  <div className="info-notice automatic">
+                    <span className="info-icon">⚙️</span>
+                    <div className="info-text">
+                      <strong>Configuración Individual:</strong> Esta configuración tiene prioridad sobre la configuración global del sistema. Las liquidaciones para este seller seguirán esta frecuencia específica.
                     </div>
                   </div>
                 )}
