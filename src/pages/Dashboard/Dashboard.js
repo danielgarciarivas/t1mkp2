@@ -285,10 +285,10 @@ const Dashboard = () => {
   const handleViewAll = () => {
     if (selectedSeller === 'all') {
       // Navegar a módulo "Todas las Tiendas"
-      window.location.href = 'http://localhost:3000/sellers';
+      window.location.href = 'https://t1mkp-api.vercel.app/sellers';
     } else {
       // Navegar a módulo "Todos los Productos"
-      window.location.href = 'http://localhost:3000/productos';
+      window.location.href = 'https://t1mkp-api.vercel.app/productos';
     }
   };
 
