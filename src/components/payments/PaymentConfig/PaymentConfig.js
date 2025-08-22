@@ -26,7 +26,7 @@ const PaymentConfig = ({
   const frequencyOptions = [
     { value: 'diario', label: 'Diario', description: 'Liquidaciones procesadas cada día' },
     { value: 'semanal', label: 'Semanal', description: 'Liquidaciones procesadas una vez por semana' },
-    { value: 'mensual', label: 'Último día de cada mes', description: 'Liquidaciones procesadas una vez por mes' }
+    { value: 'mensual', label: 'Mensual', description: 'Liquidaciones procesadas una vez por mes' }
   ];
 
   const weekDayOptions = [
@@ -247,6 +247,33 @@ const PaymentConfig = ({
                         </select>
                       </div>
                     )}
+
+                    {config.frequency === 'mensual' && (
+                      <div className="conditional-input">
+                        <label htmlFor="monthDay">Día del mes</label>
+                        <select
+                          id="monthDay"
+                          value={config.monthDay || ''}
+                          onChange={(e) => handleConfigChange('monthDay', e.target.value)}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              Día {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        {config.monthDay >= 29 && (
+                          <div className="warning-message">
+                            <span className="warning-icon">⚠️</span>
+                            <span className="warning-text">
+                              Si selecciona día {config.monthDay}, en meses que no tengan este día (como febrero), 
+                              la liquidación se realizará el último día del mes.
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                    
                   </div>
                 </div>
@@ -426,6 +453,33 @@ const PaymentConfig = ({
                         </select>
                       </div>
                     )}
+
+                    {config.frequency === 'mensual' && (
+                      <div className="conditional-input">
+                        <label htmlFor="monthDay">Día del mes</label>
+                        <select
+                          id="monthDay"
+                          value={config.monthDay || ''}
+                          onChange={(e) => handleConfigChange('monthDay', e.target.value)}
+                        >
+                          <option value="">Seleccionar día</option>
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              Día {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        {config.monthDay >= 29 && (
+                          <div className="warning-message">
+                            <span className="warning-icon">⚠️</span>
+                            <span className="warning-text">
+                              Si selecciona día {config.monthDay}, en meses que no tengan este día (como febrero), 
+                              la liquidación se realizará el último día del mes.
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     
                    
                   </div>
@@ -587,6 +641,21 @@ const PaymentConfig = ({
                     Días que deben transcurrir después de entregado el pedido antes de liquidar
                   </span>
                 </div>
+
+                <div className="form-group">
+                  <label htmlFor="liquidationTrigger">Estatus para Detonar Liquidación</label>
+                  <select
+                    id="liquidationTrigger"
+                    value={config.liquidationTrigger || 'entregado'}
+                    onChange={(e) => handleConfigChange('liquidationTrigger', e.target.value)}
+                  >
+                    <option value="en_camino">En Camino</option>
+                    <option value="entregado">Entregado</option>
+                  </select>
+                  <span className="field-help">
+                    Seleccione en qué estatus del pedido se debe iniciar el proceso de liquidación
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -614,6 +683,12 @@ const PaymentConfig = ({
               <div className="summary-item">
                 <span className="summary-label">Días de Retención:</span>
                 <span className="summary-value">{config.retentionDays} días</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label">Detonador:</span>
+                <span className="summary-value">
+                  {config.liquidationTrigger === 'en_camino' ? 'En Camino' : 'Entregado'}
+                </span>
               </div>
               <div className="summary-item">
                 <span className="summary-label">Próxima Liquidación:</span>

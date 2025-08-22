@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import Login from './pages/Login';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Sellers from './pages/Sellers';
 import SellersPending from './pages/SellersPending/SellersPending';
@@ -20,6 +22,7 @@ import Comisiones from './pages/Configuracion/Comisiones/Comisiones';
 import Facturacion from './pages/Configuracion/Facturacion/Facturacion';
 import Logistica from './pages/Configuracion/Logistica/Logistica';
 import ScoreTiendas from './pages/Configuracion/ScoreTiendas/ScoreTiendas';
+import Liquidaciones from './pages/Configuracion/Liquidaciones/Liquidaciones';
 import RolesPermisos from './pages/RolesPermisos';
 import './App.css';
 
@@ -28,7 +31,15 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Layout />}>
+          {/* Ruta pública de login */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Rutas protegidas */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="sellers" element={<Sellers />} />
@@ -49,6 +60,7 @@ function App() {
             <Route path="configuracion/facturacion" element={<Facturacion />} />
             <Route path="configuracion/logistica" element={<Logistica />} />
             <Route path="configuracion/score-tiendas" element={<ScoreTiendas />} />
+            <Route path="configuracion/liquidaciones" element={<Liquidaciones />} />
             <Route path="roles-permisos" element={<RolesPermisos />} />
           </Route>
         </Routes>

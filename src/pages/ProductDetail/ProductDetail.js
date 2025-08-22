@@ -9,6 +9,10 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState('info');
+  const [logs, setLogs] = useState([]);
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [stockHistory, setStockHistory] = useState([]);
 
   useEffect(() => {
     loadProductDetail();
@@ -32,9 +36,9 @@ const ProductDetail = () => {
           descripcion: 'iPhone 15 Pro Max con 256GB de almacenamiento, cámara profesional de 48MP y chip A17 Pro. Diseño premium en titanio con resistencia al agua IP68.',
           imagenes: [
             'https://resources.sears.com.mx/medios-plazavip/mkt/63d42f699b98a_12progrisjpg.jpg?scale=600&qlty=75',
-            'https://resources.sears.com.mx/medios-plazavip/t1/1749240502DNQNP761323MLU78879158670092024Ojpg?scale=500&qlty=75',
-            'https://resources.sears.com.mx/medios-plazavip/t1/1749240264appleiphone16plusblack3jpg?scale=500&qlty=75',
-            'https://resources.sears.com.mx/medios-plazavip/t1/17492410364504692jpg?scale=500&qlty=75'
+            'https://resources.sears.com.mx/medios-plazavip/mkt/63d42f699b98a_12progrisjpg.jpg?scale=500&qlty=75',
+            'https://resources.sears.com.mx/medios-plazavip/mkt/63d42f699b98a_12progrisjpg.jpg?scale=500&qlty=75',
+            'https://resources.sears.com.mx/medios-plazavip/mkt/63d42f699b98a_12progrisjpg.jpg?scale=500&qlty=75'
           ],
           especificaciones: {
             marca: 'Apple',
@@ -60,10 +64,10 @@ const ProductDetail = () => {
           fechaCreacion: '2024-01-20T14:15:00Z',
           descripcion: 'Sofá modular de 3 piezas con tapicería en tela resistente y estructura de madera maciza. Diseño contemporáneo que se adapta a cualquier espacio.',
           imagenes: [
-            'https://via.placeholder.com/600x600/8B4513/fff?text=Sofá+Completo',
-            'https://via.placeholder.com/600x600/A0522D/fff?text=Detalle+Tela',
-            'https://via.placeholder.com/600x600/CD853F/fff?text=Configuración',
-            'https://via.placeholder.com/600x600/DEB887/fff?text=Vista+Lateral'
+            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
           ],
           especificaciones: {
             marca: 'HomeStyle',
@@ -88,10 +92,10 @@ const ProductDetail = () => {
           fechaCreacion: '2024-02-01T09:00:00Z',
           descripcion: 'Vestido casual para verano con corte A-line y tela ligera. Perfect para días calurosos con su diseño fresco y cómodo.',
           imagenes: [
-            'https://via.placeholder.com/600x600/FFB6C1/333?text=Vestido+Frontal',
-            'https://via.placeholder.com/600x600/FFC0CB/333?text=Detalle+Tela',
-            'https://via.placeholder.com/600x600/FFE4E1/333?text=Vista+Trasera',
-            'https://via.placeholder.com/600x600/F0E68C/333?text=Modelo'
+            'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
           ],
           especificaciones: {
             marca: 'FashionHub',
@@ -115,10 +119,10 @@ const ProductDetail = () => {
           fechaCreacion: '2024-02-05T16:45:00Z',
           descripcion: 'Tenis profesionales para running con tecnología de amortiguación avanzada. Diseñados para atletas que buscan máximo rendimiento.',
           imagenes: [
-            'https://via.placeholder.com/600x600/000080/fff?text=Tenis+Lateral',
-            'https://via.placeholder.com/600x600/191970/fff?text=Suela',
-            'https://via.placeholder.com/600x600/4169E1/fff?text=Interior',
-            'https://via.placeholder.com/600x600/6495ED/fff?text=Par+Completo'
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
           ],
           especificaciones: {
             marca: 'Sports World Pro',
@@ -142,10 +146,10 @@ const ProductDetail = () => {
           fechaCreacion: '2024-02-08T13:30:00Z',
           descripcion: 'Serum facial con ácido hialurónico y vitamina C para combatir signos de envejecimiento. Fórmula avanzada para una piel radiante.',
           imagenes: [
-            'https://via.placeholder.com/600x600/FFA07A/333?text=Producto+Frontal',
-            'https://via.placeholder.com/600x600/FFB07A/333?text=Envase+Detalle',
-            'https://via.placeholder.com/600x600/FFC07A/333?text=Aplicación',
-            'https://via.placeholder.com/600x600/FFD07A/333?text=Ingredientes'
+            'https://images.unsplash.com/photo-1556228724-f926b5cd2178?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
           ],
           especificaciones: {
             marca: 'Beauty Corner',
@@ -169,10 +173,10 @@ const ProductDetail = () => {
           fechaCreacion: '2024-02-10T11:20:00Z',
           descripcion: 'Laptop gaming de alto rendimiento con procesador Intel i7, tarjeta gráfica RTX 4060 y 16GB RAM. Diseñada para gaming extremo y trabajo profesional.',
           imagenes: [
-            'https://via.placeholder.com/600x600/FF0000/fff?text=Laptop+Gaming',
-            'https://via.placeholder.com/600x600/FF4500/fff?text=Teclado+RGB',
-            'https://via.placeholder.com/600x600/FF6347/fff?text=Pantalla',
-            'https://via.placeholder.com/600x600/FF8C00/fff?text=Conectores'
+            'https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1561736778-92e52a7769ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
           ],
           especificaciones: {
             marca: 'ASUS ROG',
@@ -190,7 +194,61 @@ const ProductDetail = () => {
       };
       
       const mockProduct = mockProducts[parseInt(id)];
-      setProduct(mockProduct);
+      
+      // Mock data para logs y cronogramas
+      const mockLogs = [
+        {
+          id: 1,
+          fecha: '2024-02-15T14:30:00Z',
+          accion: 'Producto creado',
+          usuario: 'Sistema',
+          detalles: 'Producto sincronizado desde la API del seller'
+        },
+        {
+          id: 2,
+          fecha: '2024-02-15T14:35:00Z',
+          accion: 'Enviado a revisión',
+          usuario: 'Sistema',
+          detalles: 'Producto enviado automáticamente para validación'
+        },
+        {
+          id: 3,
+          fecha: '2024-02-16T09:15:00Z',
+          accion: 'Precio actualizado',
+          usuario: 'admin@marketplace.com',
+          detalles: 'Precio cambió de $26,999 a $24,999'
+        },
+        {
+          id: 4,
+          fecha: '2024-02-16T10:00:00Z',
+          accion: 'Stock actualizado',
+          usuario: 'seller@techstore.com',
+          detalles: 'Stock actualizado de 450 a 405 unidades'
+        }
+      ];
+      
+      const mockPriceHistory = [
+        { fecha: '2024-02-15', precio: 26999, usuario: 'Sistema', motivo: 'Precio inicial' },
+        { fecha: '2024-02-16', precio: 24999, usuario: 'admin@marketplace.com', motivo: 'Ajuste promocional' }
+      ];
+      
+      const mockStockHistory = [
+        { fecha: '2024-02-15', stock: 500, usuario: 'Sistema', motivo: 'Stock inicial' },
+        { fecha: '2024-02-16', stock: 450, usuario: 'seller@techstore.com', motivo: 'Venta realizada' },
+        { fecha: '2024-02-16', stock: 405, usuario: 'seller@techstore.com', motivo: 'Venta realizada' }
+      ];
+      
+      // Agregar fechas importantes al producto
+      const enrichedProduct = {
+        ...mockProduct,
+        fechaActivacion: '2024-02-16T09:30:00Z',
+        fechaPublicacion: '2024-02-16T10:00:00Z'
+      };
+      
+      setProduct(enrichedProduct);
+      setLogs(mockLogs);
+      setPriceHistory(mockPriceHistory);
+      setStockHistory(mockStockHistory);
       setLoading(false);
     }, 1000);
   };
@@ -416,19 +474,221 @@ const ProductDetail = () => {
                 <div className="metadata-item">
                   <span className="metadata-label">Fecha de creación:</span>
                   <span className="metadata-value">
-                    {new Date(product.fechaCreacion).toLocaleDateString('es-ES')}
+                    {new Date(product.fechaCreacion).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </span>
                 </div>
                 <div className="metadata-item">
                   <span className="metadata-label">Seller:</span>
                   <span className="metadata-value">{product.seller}</span>
                 </div>
-                 <div className="metadata-item">
-                  <span className="metadata-label">Stock:</span>
-                  <span className="metadata-value">405</span>
+                <div className="metadata-item">
+                  <span className="metadata-label">Stock actual:</span>
+                  <span className="metadata-value">405 unidades</span>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pestañas centradas debajo de todo */}
+      <div className="product-tabs-section">
+        <div className="product-tabs">
+          <div className="tab-nav">
+            <button 
+              className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
+              onClick={() => setActiveTab('info')}
+            >
+              Información General
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'cronologia' ? 'active' : ''}`}
+              onClick={() => setActiveTab('cronologia')}
+            >
+              Cronología
+            </button>
+          </div>
+          
+          <div className="tab-content">
+            {activeTab === 'info' && (
+              <div className="product-metadata-extended">
+                <h3>Información Detallada del Producto</h3>
+                <div className="metadata-grid-extended">
+                  <div className="metadata-item">
+                    <span className="metadata-label">SKU:</span>
+                    <span className="metadata-value">{product.sku}</span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="metadata-label">Fecha de creación:</span>
+                    <span className="metadata-value">
+                      {new Date(product.fechaCreacion).toLocaleDateString('es-ES', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="metadata-label">Fecha de activación:</span>
+                    <span className="metadata-value">
+                      {product.fechaActivacion ? 
+                        new Date(product.fechaActivacion).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 'Pendiente'
+                      }
+                    </span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="metadata-label">Fecha de publicación:</span>
+                    <span className="metadata-value">
+                      {product.fechaPublicacion ? 
+                        new Date(product.fechaPublicacion).toLocaleDateString('es-ES', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 'Pendiente'
+                      }
+                    </span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="metadata-label">Seller:</span>
+                    <span className="metadata-value">{product.seller}</span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="metadata-label">Stock actual:</span>
+                    <span className="metadata-value">405 unidades</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'cronologia' && (
+              <div className="cronologia-content">
+                <div className="cronologia-grid">
+                  {/* Logs del producto */}
+                  <div className="logs-section">
+                    <h3>Registro de Actividad</h3>
+                    <div className="logs-container">
+                      {logs.map(log => (
+                        <div key={log.id} className="log-item">
+                          <div className="log-timestamp">
+                            {new Date(log.fecha).toLocaleDateString('es-ES', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                          <div className="log-content">
+                            <div className="log-action">{log.accion}</div>
+                            <div className="log-details">{log.detalles}</div>
+                            <div className="log-user">por {log.usuario}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Cronograma de cambios */}
+                  <div className="history-section">
+                    <h3>Historial de Cambios (Últimos 30 días)</h3>
+                    
+                    {/* Historial de precios */}
+                    <div className="history-subsection">
+                      <h4>💰 Cambios de Precio</h4>
+                      <div className="history-list">
+                        {priceHistory.map((change, index) => (
+                          <div key={index} className="history-item">
+                            <div className="history-date">
+                              {new Date(change.fecha).toLocaleDateString('es-ES')}
+                            </div>
+                            <div className="history-change">
+                              <span className="price-value">{formatPrice(change.precio)}</span>
+                              <span className="change-reason">{change.motivo}</span>
+                            </div>
+                            <div className="history-user">{change.usuario}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Historial de stock */}
+                    <div className="history-subsection">
+                      <h4>📦 Cambios de Stock</h4>
+                      <div className="history-list">
+                        {stockHistory.map((change, index) => (
+                          <div key={index} className="history-item">
+                            <div className="history-date">
+                              {new Date(change.fecha).toLocaleDateString('es-ES')}
+                            </div>
+                            <div className="history-change">
+                              <span className="stock-value">{change.stock} unidades</span>
+                              <span className="change-reason">{change.motivo}</span>
+                            </div>
+                            <div className="history-user">{change.usuario}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Fechas importantes */}
+                    <div className="history-subsection">
+                      <h4>📅 Fechas Importantes</h4>
+                      <div className="important-dates">
+                        <div className="date-item">
+                          <span className="date-label">Creación:</span>
+                          <span className="date-value">
+                            {new Date(product.fechaCreacion).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                        <div className="date-item">
+                          <span className="date-label">Activación en Marketplace:</span>
+                          <span className="date-value">
+                            {product.fechaActivacion ? 
+                              new Date(product.fechaActivacion).toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              }) : 'Pendiente'
+                            }
+                          </span>
+                        </div>
+                        <div className="date-item">
+                          <span className="date-label">Publicación:</span>
+                          <span className="date-value">
+                            {product.fechaPublicacion ? 
+                              new Date(product.fechaPublicacion).toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              }) : 'Pendiente'
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

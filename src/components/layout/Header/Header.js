@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../../services/authService';
 import './Header.css';
 
 const Header = ({ onToggleSidebar, isMobile }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentUser = authService.getUser();
+    setUser(currentUser);
+  }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
+  };
 
   return (
     <header className="header">
@@ -29,8 +41,8 @@ const Header = ({ onToggleSidebar, isMobile }) => {
         
         <div className="user-info">
           <div className="user-details">
-            <div className="user-name">Sears Operadora</div>
-            <div className="user-role">Administrador</div>
+            <div className="user-name">{user?.name || user?.email || 'Usuario'}</div>
+            <div className="user-role">{user?.role || 'Usuario'}</div>
           </div>
           <div 
             className="user-avatar"
@@ -42,7 +54,7 @@ const Header = ({ onToggleSidebar, isMobile }) => {
             <div className="user-menu">
               <button onClick={() => navigate('/perfil')}>Perfil</button>
               <button onClick={() => navigate('/roles-permisos')}>Roles y Permisos</button>
-              <button>Cerrar Sesión</button>
+              <button onClick={handleLogout}>Cerrar Sesión</button>
             </div>
           )}
         </div>

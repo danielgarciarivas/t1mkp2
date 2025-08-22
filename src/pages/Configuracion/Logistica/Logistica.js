@@ -4,9 +4,11 @@ import './Logistica.css';
 
 const Logistica = () => {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('t1envios');
-  const [useMarketplaceAccounts, setUseMarketplaceAccounts] = useState(false);
-  const [allowBothOptions, setAllowBothOptions] = useState(true);
+  const [activeTab, setActiveTab] = useState('automatica');
+  const [useT1Envios, setUseT1Envios] = useState(true); // true = T1Envios, false = Cuentas propias
+  const [allowManualGuides, setAllowManualGuides] = useState(false);
+  const [requireTrackingUrl, setRequireTrackingUrl] = useState(false);
+  const [validateShippingData, setValidateShippingData] = useState(false);
   
   // Estados para mensajerías
   const [mensajerias, setMensajerias] = useState({
@@ -163,8 +165,10 @@ const Logistica = () => {
 
   const saveConfiguration = () => {
     const config = {
-      useMarketplaceAccounts,
-      allowBothOptions,
+      useT1Envios,
+      allowManualGuides,
+      requireTrackingUrl,
+      validateShippingData,
       mensajerias,
       weightRanges
     };
@@ -208,133 +212,141 @@ const Logistica = () => {
           <div className="mode-selector">
             <div className="mode-tabs">
               <button 
-                className={`mode-tab ${activeTab === 't1envios' ? 'active' : ''}`}
-                onClick={() => setActiveTab('t1envios')}
+                className={`mode-tab ${activeTab === 'automatica' ? 'active' : ''}`}
+                onClick={() => setActiveTab('automatica')}
               >
-                <span className="tab-icon">🚀</span>
-                <span className="tab-text">T1Envíos</span>
-                <span className="tab-description">Sellers usan sus propias cuentas T1Envíos</span>
+                <span className="tab-icon">⚡</span>
+                <span className="tab-text">Guía Automática</span>
+                <span className="tab-description">Configurar guías automáticas con T1Envíos o cuentas propias</span>
               </button>
               <button 
-                className={`mode-tab ${activeTab === 'marketplace' ? 'active' : ''}`}
-                onClick={() => setActiveTab('marketplace')}
+                className={`mode-tab ${activeTab === 'manual' ? 'active' : ''}`}
+                onClick={() => setActiveTab('manual')}
               >
-                <span className="tab-icon">🏢</span>
-                <span className="tab-text">Cuentas del Marketplace</span>
-                <span className="tab-description">Sellers usan las cuentas del marketplace</span>
-              </button>
-              <button 
-                className={`mode-tab ${activeTab === 'ambas' ? 'active' : ''}`}
-                onClick={() => setActiveTab('ambas')}
-              >
-                <span className="tab-icon">⚖️</span>
-                <span className="tab-text">Ambas Opciones</span>
-                <span className="tab-description">Sellers pueden elegir entre ambas</span>
+                <span className="tab-icon">📋</span>
+                <span className="tab-text">Guía Manual</span>
+                <span className="tab-description">Permitir guías manuales generadas por sellers</span>
               </button>
             </div>
           </div>
 
           {/* Contenido según modo seleccionado */}
           <div className="mode-content">
-            {activeTab === 't1envios' && (
-              <div className="t1envios-mode">
-                <div className="t1envios-mode-info">
-                  <h4>🚀 T1Envíos</h4>
-                  <p>Los sellers utilizarán sus propias cuentas de T1Envíos para generar guías de envío. El marketplace no interviene en el proceso logístico.</p>
-                  
-                  <div className="t1envios-benefits">
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Sin configuración adicional requerida</span>
+            {activeTab === 'automatica' && (
+              <div className="automatica-mode">
+                <div className="automatica-mode-info">
+                  <h4>⚡ Guía Automática</h4>
+                  <p>Configure cómo los sellers generarán guías automáticamente en su seller center.</p>
+                </div>
+
+                {/* Selector de tipo de cuenta */}
+                <div className="account-type-selector">
+                  <div className="section-divider">
+                    <h5>🔧 Tipo de Configuración</h5>
+                    <p>Seleccione qué tipo de cuentas utilizarán los sellers para generar guías automáticas</p>
+                  </div>
+
+                  <div className="account-options">
+                    <div className="form-group">
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          name="accountType"
+                          checked={useT1Envios}
+                          onChange={() => setUseT1Envios(true)}
+                        />
+                        <span className="radio-content">
+                          <span className="option-title">🚀 T1 Envíos</span>
+                          <span className="option-description">
+                            Los sellers usan sus propias cuentas de T1 Envíos. El marketplace puede configurar un fee por guía.
+                          </span>
+                        </span>
+                      </label>
                     </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Sellers mantienen control total</span>
-                    </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>No hay costos adicionales para el marketplace</span>
+
+                    <div className="form-group">
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          name="accountType"
+                          checked={!useT1Envios}
+                          onChange={() => setUseT1Envios(false)}
+                        />
+                        <span className="radio-content">
+                          <span className="option-title">🏢 Cuentas Propias del Marketplace</span>
+                          <span className="option-description">
+                            Los sellers usan las cuentas de mensajerías configuradas por el marketplace.
+                          </span>
+                        </span>
+                      </label>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
 
-            {activeTab === 'marketplace' && (
-              <div className="marketplace-mode">
-                <div className="marketplace-mode-info">
-                  <h4>🏢 Cuentas del Marketplace</h4>
-                  <p>Configure las cuentas de mensajerías del marketplace para que los sellers puedan generar guías utilizando sus negociaciones.</p>
-                  
-                  <div className="marketplace-benefits">
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Control centralizado de envíos</span>
+                {/* Configuración de mensajerías - Solo si es cuentas propias */}
+                {!useT1Envios && (
+                  <div className="mensajerias-config">
+                    <div className="section-divider">
+                      <h5>📦 Configuración de Mensajerías</h5>
+                      <p>Configure las cuentas de mensajerías que estarán disponibles para los sellers</p>
                     </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Mejores tarifas negociadas</span>
-                    </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Oportunidad de generar ingresos adicionales</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Configuración de mensajerías */}
-                <div className="mensajerias-config">
-                  <h5>📦 Configuración de Mensajerías</h5>
-                  <div className="mensajerias-grid">
-                    {Object.entries(mensajeriasData).map(([key, mensajeria]) => (
-                      <div key={key} className={`mensajeria-card ${mensajerias[key].active ? 'active' : ''}`}>
-                        <div className="mensajeria-header">
-                          <div className="mensajeria-info">
-                            <span className="mensajeria-icon">{mensajeria.icon}</span>
-                            <h6>{mensajeria.name}</h6>
+                    
+                    <div className="mensajerias-grid">
+                      {Object.entries(mensajeriasData).map(([key, mensajeria]) => (
+                        <div key={key} className={`mensajeria-card ${mensajerias[key].active ? 'active' : ''}`}>
+                          <div className="mensajeria-header">
+                            <div className="mensajeria-info">
+                              <span className="mensajeria-icon">{mensajeria.icon}</span>
+                              <h6>{mensajeria.name}</h6>
+                            </div>
+                            <label className="toggle-switch">
+                              <input 
+                                type="checkbox" 
+                                checked={mensajerias[key].active}
+                                onChange={() => handleMensajeriaToggle(key)}
+                              />
+                              <span className="toggle-slider"></span>
+                            </label>
                           </div>
-                          <label className="toggle-switch">
-                            <input 
-                              type="checkbox" 
-                              checked={mensajerias[key].active}
-                              onChange={() => handleMensajeriaToggle(key)}
-                            />
-                            <span className="toggle-slider"></span>
-                          </label>
+
+                          {mensajerias[key].active && (
+                            <div className="mensajeria-form">
+                              {mensajeria.fields.map(field => (
+                                <div key={field.key} className="form-group">
+                                  <label>{field.label} {field.required && <span className="required">*</span>}</label>
+                                  <input
+                                    type={field.type}
+                                    value={mensajerias[key].config[field.key] || ''}
+                                    onChange={(e) => handleMensajeriaConfigChange(key, field.key, e.target.value)}
+                                    placeholder={`Ingrese ${field.label.toLowerCase()}`}
+                                    required={field.required}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-
-                        {mensajerias[key].active && (
-                          <div className="mensajeria-form">
-                            {mensajeria.fields.map(field => (
-                              <div key={field.key} className="form-group">
-                                <label>{field.label} {field.required && <span className="required">*</span>}</label>
-                                <input
-                                  type={field.type}
-                                  value={mensajerias[key].config[field.key] || ''}
-                                  onChange={(e) => handleMensajeriaConfigChange(key, field.key, e.target.value)}
-                                  placeholder={`Ingrese ${field.label.toLowerCase()}`}
-                                  required={field.required}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Tabulador de precios */}
+                {/* Tabulador de precios - Siempre visible */}
                 <div className="price-calculator">
                   <div className="price-calculator-header">
                     <h5>💰 Tabulador de Precios por Peso</h5>
-                    <p>Configure los precios que cobrará a los sellers por cada rango de peso</p>
+                    <p>
+                      {useT1Envios 
+                        ? "Configure el fee que cobrará a los sellers por cada guía generada con T1 Envíos"
+                        : "Configure los precios que cobrará a los sellers por cada rango de peso usando sus cuentas de mensajería"
+                      }
+                    </p>
                   </div>
 
                   <div className="weight-ranges-table">
                     <div className="table-header">
                       <div className="table-cell">Rango de Peso (kg)</div>
-                      <div className="table-cell">Precio Base</div>
+                      <div className="table-cell">{useT1Envios ? 'Fee Base T1' : 'Precio Base'}</div>
                       <div className="table-cell">Precio al Seller</div>
                       <div className="table-cell">Margen (%)</div>
                       <div className="table-cell">Acciones</div>
@@ -417,32 +429,95 @@ const Logistica = () => {
               </div>
             )}
 
-            {activeTab === 'ambas' && (
-              <div className="ambas-mode">
-                <div className="ambas-mode-info">
-                  <h4>⚖️ Ambas Opciones</h4>
-                  <p>Los sellers podrán elegir entre usar T1Envíos o las cuentas del marketplace para generar sus guías de envío.</p>
-                  
-                  <div className="ambas-benefits">
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Máxima flexibilidad para sellers</span>
-                    </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Opciones de precio competitivas</span>
-                    </div>
-                    <div className="benefit-item">
-                      <span className="benefit-icon">✅</span>
-                      <span>Diversificación de servicios logísticos</span>
-                    </div>
+            {activeTab === 'manual' && (
+              <div className="manual-mode">
+                {/* Configuración de Guías Manuales */}
+                <div className="manual-guides-section">
+                  <div className="section-divider">
+                    <h5>📋 Configuración de Guías Manuales</h5>
+                    <p>Configure si los sellers pueden generar guías manuales con sus propios medios de envío</p>
                   </div>
-                </div>
 
-                <div className="ambas-note">
-                  <div className="note-icon">💡</div>
-                  <div className="note-content">
-                    <strong>Nota:</strong> Para ofrecer ambas opciones, debe configurar al menos una mensajería en la sección "Cuentas del Marketplace". Los sellers verán ambas opciones disponibles al momento de generar guías.
+                  <div className="manual-guides-config">
+                    <div className="form-group">
+                      <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={allowManualGuides}
+                          onChange={(e) => setAllowManualGuides(e.target.checked)}
+                        />
+                        <span className="checkbox-content">
+                          <span className="option-title">Permitir Guías Manuales</span>
+                          <span className="option-description">
+                            Autorizar a los sellers a generar guías manuales desde su seller center con sus propios medios de envío
+                          </span>
+                        </span>
+                      </label>
+                    </div>
+
+                    {allowManualGuides && (
+                      <div className="manual-guides-info">
+                        <div className="info-card">
+                          <div className="info-header">
+                            <span className="info-icon">📦</span>
+                            <span className="info-title">Guías Manuales Habilitadas</span>
+                          </div>
+                          <div className="info-content">
+                            <p>
+                              Los sellers podrán seleccionar entre:
+                            </p>
+                            <ul className="shipping-options-list">
+                              <li>
+                                <strong>T1 Envíos:</strong> Usar la mensajería integrada del marketplace (DHL, FedEx, etc.)
+                              </li>
+                              <li>
+                                <strong>Guía Propia:</strong> Generar guías manuales con sus propias paqueterías y medios de envío
+                              </li>
+                            </ul>
+                            <div className="warning-note">
+                              <span className="warning-icon">⚠️</span>
+                              <span className="warning-text">
+                                Con guías manuales, el seller es responsable del seguimiento y entrega del pedido
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="manual-guides-options">
+                          <div className="form-group">
+                            <label className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={requireTrackingUrl}
+                                onChange={(e) => setRequireTrackingUrl(e.target.checked)}
+                              />
+                              <span className="checkbox-content">
+                                <span className="option-title">Requerir URL de Rastreo / Evidencia de Entrega</span>
+                                <span className="option-description">
+                                  Obligar a los sellers a proporcionar una URL de rastreo válida cuando usen guías manuales
+                                </span>
+                              </span>
+                            </label>
+                          </div>
+
+                          <div className="form-group">
+                            <label className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={validateShippingData}
+                                onChange={(e) => setValidateShippingData(e.target.checked)}
+                              />
+                              <span className="checkbox-content">
+                                <span className="option-title">Validar Datos de Envío</span>
+                                <span className="option-description">
+                                  Validar que los sellers proporcionen número de guía, paquetería y fecha de envío en guías manuales
+                                </span>
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

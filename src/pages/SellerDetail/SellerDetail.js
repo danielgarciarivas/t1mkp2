@@ -1014,7 +1014,7 @@ const SellerDetail = () => {
 
                 {/* Configuración de Frecuencia de Liquidación */}
                 <div className="liquidation-frequency-section">
-                  <h4>Frecuencia de Liquidación</h4>
+                  <h4>Frecuencia de Liquidación</h4><br></br>
                   <div className="frequency-options">
                     <label className={`frequency-option ${liquidationFrequency === 'diario' ? 'selected' : ''}`}>
                       <input
@@ -1026,7 +1026,7 @@ const SellerDetail = () => {
                       />
                       <div className="frequency-content">
                         <span className="frequency-title">Diario</span>
-                        <span className="frequency-description">Liquidaciones procesadas cada día</span>
+                        <span className="frequency-description">- Liquidaciones procesadas cada día</span>
                       </div>
                     </label>
 
@@ -1040,7 +1040,7 @@ const SellerDetail = () => {
                       />
                       <div className="frequency-content">
                         <span className="frequency-title">Semanal</span>
-                        <span className="frequency-description">Liquidaciones procesadas una vez por semana</span>
+                        <span className="frequency-description">- Liquidaciones procesadas una vez por semana</span>
                       </div>
                     </label>
 
@@ -1058,7 +1058,7 @@ const SellerDetail = () => {
                       </div>
                     </label>
                   </div>
-
+                  <br></br>
                   {/* Configuración condicional para día de la semana */}
                   {liquidationFrequency === 'semanal' && (
                     <div className="frequency-detail">

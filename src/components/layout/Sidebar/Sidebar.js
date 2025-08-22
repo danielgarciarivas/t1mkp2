@@ -21,8 +21,8 @@ const menuItems = [
     hasSubmenu: true,
     submenu: [
       { id: 'productos-pending', label: 'Por Autorizar', path: '/productos/pending' },
-      { id: 'productos-all', label: 'Todos los Productos', path: '/productos' },
-      { id: 'productos-logs', label: 'Logs', path: '/productos/logs' }
+      { id: 'productos-all', label: 'Todos los Productos', path: '/productos' }
+      //{ id: 'productos-logs', label: 'Logs', path: '/productos/logs' }
     ]
   },
   { id: 'pedidos', icon: '📋', label: 'Pedidos', path: '/pedidos' },
@@ -39,7 +39,8 @@ const menuItems = [
       { id: 'comisiones', label: 'Configuración de Comisiones', path: '/configuracion/comisiones' },
       { id: 'facturacion', label: 'Facturación', path: '/configuracion/facturacion' },
       { id: 'logistica', label: 'Logística', path: '/configuracion/logistica' },
-      { id: 'score-tiendas', label: 'Score de Tiendas', path: '/configuracion/score-tiendas' }
+      { id: 'score-tiendas', label: 'Score de Tiendas', path: '/configuracion/score-tiendas' },
+      { id: 'liquidaciones', label: 'Liquidaciones', path: '/configuracion/liquidaciones' }
     ]
   }
 ];

@@ -85,7 +85,10 @@ const ActivityFeed = ({ activities, loading = false }) => {
       </div>
       
       <div className="activity-feed-footer">
-        <button className="view-all-activity">
+        <button 
+          className="view-all-activity"
+          onClick={() => window.location.href = 'http://localhost:3000/pedidos'}
+        >
           Ver toda la actividad
         </button>
       </div>
@@ -96,9 +99,15 @@ const ActivityFeed = ({ activities, loading = false }) => {
 const getActivityIcon = (type) => {
   const icons = {
     order: '📦',
-    payment: '💰',
+    validation: '✅',
+    confirmation: '✅',
     shipment: '🚛',
+    shipping: '📦',
+    transit: '🚚',
+    delivery: '✅',
+    cancellation: '❌',
     return: '↩️',
+    payment: '💰',
     approval: '✅',
     rejection: '❌'
   };

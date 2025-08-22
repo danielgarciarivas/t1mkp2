@@ -270,28 +270,6 @@ const ProductTable = ({
               >
                 Precio {getSortIcon('precio')}
               </th>
-              {!pendingOnly && (
-                <>
-                  <th 
-                    className="sortable-header"
-                    onClick={() => handleSort('ventasBrutas')}
-                  >
-                    Ventas Brutas {getSortIcon('ventasBrutas')}
-                  </th>
-                  <th 
-                    className="sortable-header"
-                    onClick={() => handleSort('participacion')}
-                  >
-                    % Participación {getSortIcon('participacion')}
-                  </th>
-                  <th 
-                    className="sortable-header"
-                    onClick={() => handleSort('unidadesVendidas')}
-                  >
-                    Unidades Vendidas {getSortIcon('unidadesVendidas')}
-                  </th>
-                </>
-              )}
               <th>Categoría</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -334,35 +312,6 @@ const ProductTable = ({
                       <span className="price-value">{formatPrice(product.precio)}</span>
                     </div>
                   </td>
-                  
-                  {!pendingOnly && (
-                    <>
-                      <td>
-                        <div className="sales-info">
-                          <span className="sales-value">{formatPrice(product.ventasBrutas || 0)}</span>
-                        </div>
-                      </td>
-                      
-                      <td>
-                        <div className="participation-info">
-                          <span className="participation-value">{product.participacion || 0}%</span>
-                          <div className="participation-bar">
-                            <div 
-                              className="participation-fill" 
-                              style={{ width: `${Math.min(product.participacion || 0, 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </td>
-                      
-                      <td>
-                        <div className="units-info">
-                          <span className="units-value">{product.unidadesVendidas || 0}</span>
-                          <span className="units-label">unidades</span>
-                        </div>
-                      </td>
-                    </>
-                  )}
                   
                   <td>
                     <span className="category-pill">

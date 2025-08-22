@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import MetricCard from '../../components/common/MetricCard';
 import PaymentTable from '../../components/payments/PaymentTable';
-import PaymentConfig from '../../components/payments/PaymentConfig';
 import LiquidationModal from '../../components/payments/LiquidationModal';
 import TransactionDetailsModal from '../../components/payments/TransactionDetailsModal';
 import ConfirmationModal from '../../components/payments/ConfirmationModal';
 import './Payments.css';
 
 const Payments = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showLiquidationModal, setShowLiquidationModal] = useState(false);
@@ -18,7 +15,7 @@ const Payments = () => {
   const [selectedLiquidation, setSelectedLiquidation] = useState(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationData, setConfirmationData] = useState(null);
-  const [liquidationConfig, setLiquidationConfig] = useState({
+  const [liquidationConfig] = useState({
     frequency: 'each_10_days', // cada_10_dias, quincenal, mensual
     minimumAmount: 1000,
     retentionDays: 3,
@@ -39,7 +36,6 @@ const Payments = () => {
   // Liquidaciones pendientes
   const [pendingLiquidations, setPendingLiquidations] = useState([]);
   const [liquidationHistory, setLiquidationHistory] = useState([]);
-  const [marketplaceBankConfig, setMarketplaceBankConfig] = useState(null);
 
   useEffect(() => {
     loadPaymentData();
@@ -173,21 +169,8 @@ const Payments = () => {
         }
       ];
 
-      // Configuración bancaria del marketplace
-      const mockBankConfig = {
-        id: 1,
-        accountName: 'SEARS OPERADORA MEXICO SA DE CV',
-        bank: 'BBVA',
-        clabe: '012320001252541754',
-        currency: 'MXN',
-        isActive: true,
-        verificationStatus: 'verified',
-        lastUpdated: '2025-01-15T10:30:00Z'
-      };
-
       setPendingLiquidations(mockPendingLiquidations);
       setLiquidationHistory(mockLiquidationHistory);
-      setMarketplaceBankConfig(mockBankConfig);
       setLoading(false);
     }, 1000);
   };
@@ -302,10 +285,6 @@ const Payments = () => {
     // Implementar lógica de reintento
   };
 
-  const handleConfigSave = (newConfig) => {
-    setLiquidationConfig(newConfig);
-    console.log('Configuración guardada:', newConfig);
-  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-MX', {
@@ -429,12 +408,6 @@ const Payments = () => {
           >
             Historial
           </button>
-          <button 
-            className={`tab-button ${activeTab === 'config' ? 'active' : ''}`}
-            onClick={() => setActiveTab('config')}
-          >
-            Configuración
-          </button>
         </div>
 
         <div className="tab-content">
@@ -508,14 +481,6 @@ const Payments = () => {
             />
           )}
 
-          {activeTab === 'config' && (
-            <PaymentConfig
-              liquidationConfig={liquidationConfig}
-              marketplaceBankConfig={marketplaceBankConfig}
-              onConfigSave={handleConfigSave}
-              onBankConfigUpdate={setMarketplaceBankConfig}
-            />
-          )}
         </div>
       </div>
 
