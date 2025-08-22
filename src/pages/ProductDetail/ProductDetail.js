@@ -610,6 +610,11 @@ const ProductDetail = () => {
                     {/* Historial de precios */}
                     <div className="history-subsection">
                       <h4>💰 Cambios de Precio</h4>
+                      <div className="changes-summary">
+                        <span className="changes-count">
+                          Se cambió {priceHistory.length} veces el precio en los últimos 30 días
+                        </span>
+                      </div>
                       <div className="history-list">
                         {priceHistory.map((change, index) => (
                           <div key={index} className="history-item">
@@ -629,6 +634,11 @@ const ProductDetail = () => {
                     {/* Historial de stock */}
                     <div className="history-subsection">
                       <h4>📦 Cambios de Stock</h4>
+                      <div className="changes-summary">
+                        <span className="changes-count">
+                          Se cambió {stockHistory.length} veces el stock en los últimos 30 días
+                        </span>
+                      </div>
                       <div className="history-list">
                         {stockHistory.map((change, index) => (
                           <div key={index} className="history-item">

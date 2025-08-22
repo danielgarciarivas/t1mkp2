@@ -37,7 +37,10 @@ const Products = () => {
           precio: 24999,
           categoria: 'electronicos',
           estado: 'pendiente',
-          fechaCreacion: '2024-01-15T10:30:00Z'
+          fechaCreacion: '2024-01-15T10:30:00Z',
+          ventasBrutas: 1250000,
+          participacion: 15.2,
+          unidadesVendidas: 50
         },
         {
           id: 2,
@@ -47,7 +50,10 @@ const Products = () => {
           precio: 15999,
           categoria: 'hogar',
           estado: 'activo',
-          fechaCreacion: '2024-01-20T14:15:00Z'
+          fechaCreacion: '2024-01-20T14:15:00Z',
+          ventasBrutas: 479970,
+          participacion: 5.8,
+          unidadesVendidas: 30
         },
         {
           id: 3,
@@ -57,7 +63,10 @@ const Products = () => {
           precio: 1299,
           categoria: 'ropa',
           estado: 'suspendido',
-          fechaCreacion: '2024-02-01T09:00:00Z'
+          fechaCreacion: '2024-02-01T09:00:00Z',
+          ventasBrutas: 155880,
+          participacion: 1.9,
+          unidadesVendidas: 120
         },
         {
           id: 4,
@@ -67,7 +76,10 @@ const Products = () => {
           precio: 2499,
           categoria: 'deportes',
           estado: 'rechazado',
-          fechaCreacion: '2024-02-05T16:45:00Z'
+          fechaCreacion: '2024-02-05T16:45:00Z',
+          ventasBrutas: 199920,
+          participacion: 2.4,
+          unidadesVendidas: 80
         },
         {
           id: 5,
@@ -77,7 +89,10 @@ const Products = () => {
           precio: 899,
           categoria: 'salud',
           estado: 'pendiente',
-          fechaCreacion: '2024-02-08T13:30:00Z'
+          fechaCreacion: '2024-02-08T13:30:00Z',
+          ventasBrutas: 89900,
+          participacion: 1.1,
+          unidadesVendidas: 100
         },
         {
           id: 6,
@@ -87,7 +102,10 @@ const Products = () => {
           precio: 35999,
           categoria: 'electronicos',
           estado: 'freepass',
-          fechaCreacion: '2024-02-10T11:20:00Z'
+          fechaCreacion: '2024-02-10T11:20:00Z',
+          ventasBrutas: 719980,
+          participacion: 8.7,
+          unidadesVendidas: 20
         }
       ];
       
@@ -201,7 +219,7 @@ const Products = () => {
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
-          <h1 className="module-title">Gestión de Productos</h1>
+          <h1 className="module-title">Gestión de Productos2</h1>
           <p className="module-subtitle">
             Revise y apruebe productos antes de su publicación
           </p>
