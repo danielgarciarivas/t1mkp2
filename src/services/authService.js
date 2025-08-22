@@ -1,5 +1,5 @@
-const API_BASE_URL = 'http://localhost:3001/api/auth';
-
+const API_BASE_URL = 'https://t1mkp-api.vercel.app/api/auth';
+//const API_BASE_URL = 'https://t1mkp-api.vercel.app/api/auth';
 export const authService = {
   async register(email, password) {
     try {
