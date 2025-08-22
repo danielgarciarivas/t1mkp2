@@ -87,7 +87,7 @@ const ActivityFeed = ({ activities, loading = false }) => {
       <div className="activity-feed-footer">
         <button 
           className="view-all-activity"
-          onClick={() => window.location.href = 'http://localhost:3000/pedidos'}
+          onClick={() => window.location.href = '/pedidos'}
         >
           Ver toda la actividad
         </button>

@@ -58,7 +58,7 @@ const Dashboard = () => {
           comisiones: { value: '$92,360', change: '+8.3%', changeType: 'positive' }
         });
         const allSellersData = [
-          { id: 1, name: 'TechStore Pro', rating: 4.8, value: '$45,230', growth: 15 },
+          { id: 1, name: 'TechStore Pro', rating: 4.8,  value: '$45,230', growth: 15 },
           { id: 2, name: 'Fashion Boutique', rating: 4.6, odr: 1.8, value: '$38,120', growth: 8 },
           { id: 3, name: 'Home Decor Plus', rating: 4.5, odr: 2.5, value: '$32,890', growth: -2 },
           { id: 4, name: 'Sports World', rating: 4.7, odr: 1.9, value: '$28,450', growth: 12 },
@@ -87,111 +87,63 @@ const Dashboard = () => {
       setActivities([
         {
           id: 1,
-          orderId: 'ORD-2024-001256',
+          orderId: 'ORD-2024-001',
           type: 'order',
           title: 'Nueva orden recibida',
-          productName: 'iPhone 15 Pro Max 256GB',
+          productName: 'iPhone 15 Pro',
           seller: 'TechStore Pro',
-          marketplace: 'Marketplace',
-          amount: '$27,498',
-          status: 'Recibido',
+          marketplace: 'Sears',
+          amount: '$1,299',
+          status: 'Confirmado',
           timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 min ago
         },
         {
           id: 2,
-          orderId: 'ORD-2024-001257',
-          type: 'validation',
-          title: 'Orden validada',
-          productName: 'Sofá Modular 3 Piezas',
-          seller: 'HomeStyle México',
-          marketplace: 'Marketplace',
-          amount: '$16,298',
-          status: 'Validado',
+          orderId: 'ORD-2024-002',
+          type: 'payment',
+          title: 'Pago procesado',
+          productName: 'Laptop Gaming',
+          seller: 'TechStore Pro',
+          marketplace: 'Liverpool',
+          amount: '$2,499',
+          status: 'Confirmado',
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) // 2 hours ago
         },
         {
           id: 3,
-          orderId: 'ORD-2024-001258',
+          orderId: 'ORD-2024-003',
           type: 'shipment',
-          title: 'Orden enviada por seller',
-          productName: 'Tenis Running Professional',
-          seller: 'Sports World',
-          marketplace: 'Marketplace',
-          amount: '$3,847',
-          status: 'Enviado Seller',
+          title: 'Orden enviada',
+          productName: 'Auriculares Pro',
+          seller: 'Fashion Boutique',
+          marketplace: 'Sanborns',
+          amount: '$299',
+          status: 'Enviado',
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4) // 4 hours ago
         },
         {
           id: 4,
-          orderId: 'ORD-2024-001259',
-          type: 'confirmation',
-          title: 'Orden confirmada',
-          productName: 'Serum Facial Anti-Edad',
-          seller: 'Beauty Corner',
-          marketplace: 'Marketplace',
-          amount: '$1,598',
-          status: 'Confirmado',
+          orderId: 'ORD-2024-004',
+          type: 'approval',
+          title: 'Producto aprobado',
+          productName: 'Smartwatch',
+          seller: 'Sports World',
+          marketplace: 'Multiple',
+          amount: '$399',
+          status: 'Pendiente',
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6) // 6 hours ago
         },
         {
           id: 5,
-          orderId: 'ORD-2024-001260',
-          type: 'shipping',
-          title: 'En proceso de envío',
-          productName: 'Vestido Casual Verano',
-          seller: 'FashionHub',
-          marketplace: 'Marketplace',
-          amount: '$2,299',
-          status: 'En Proceso Envío',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8) // 8 hours ago
-        },
-        {
-          id: 6,
-          orderId: 'ORD-2024-001261',
-          type: 'transit',
-          title: 'Pedido en camino',
-          productName: 'Auriculares Bluetooth',
-          seller: 'TechStore Pro',
-          marketplace: 'Marketplace',
-          amount: '$5,499',
-          status: 'En Camino',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 12) // 12 hours ago
-        },
-        {
-          id: 7,
-          orderId: 'ORD-2024-001262',
-          type: 'delivery',
-          title: 'Pedido entregado',
-          productName: 'Vestido Casual Verano',
-          seller: 'FashionHub',
-          marketplace: 'Marketplace',
-          amount: '$1,598',
-          status: 'Entregado',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
-        },
-        {
-          id: 8,
-          orderId: 'ORD-2024-001263',
-          type: 'cancellation',
-          title: 'Pedido cancelado',
-          productName: 'Tenis Running Professional',
-          seller: 'Sports World',
-          marketplace: 'Marketplace',
-          amount: '$2,798',
-          status: 'Cancelado',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 16) // 16 hours ago
-        },
-        {
-          id: 9,
-          orderId: 'ORD-2024-001264',
+          orderId: 'ORD-2024-005',
           type: 'return',
-          title: 'Pedido devuelto',
-          productName: 'Serum Facial Anti-Edad',
+          title: 'Devolución solicitada',
+          productName: 'Tablet Pro',
           seller: 'Beauty Corner',
-          marketplace: 'Marketplace',
-          amount: '$1,198',
-          status: 'Devuelto',
-          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48) // 2 days ago
+          marketplace: 'Elektra',
+          amount: '$599',
+          status: 'Cancelado',
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8) // 8 hours ago
         }
       ]);
       
@@ -285,10 +237,10 @@ const Dashboard = () => {
   const handleViewAll = () => {
     if (selectedSeller === 'all') {
       // Navegar a módulo "Todas las Tiendas"
-      window.location.href = 'https://t1mkp-api.vercel.app/sellers';
+      window.location.href = '/sellers';
     } else {
       // Navegar a módulo "Todos los Productos"
-      window.location.href = 'https://t1mkp-api.vercel.app/productos';
+      window.location.href = '/productos';
     }
   };
 
