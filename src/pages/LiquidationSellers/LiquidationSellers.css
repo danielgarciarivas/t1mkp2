@@ -1,0 +1,372 @@
+.liquidation-sellers-header {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 500;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+.header-info {
+  flex: 1;
+  margin-left: 24px;
+}
+
+.liquidation-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.liquidation-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.liquidation-summary-card {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.summary-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748B;
+}
+
+.summary-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.sellers-content {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sellers-table-container {
+  width: 100%;
+}
+
+.table-header {
+  background: #F8FAFC;
+  padding: 20px 24px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.table-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.sellers-table {
+  width: 100%;
+}
+
+/* 6-column grid for sellers table */
+.sellers-table .table-header-row,
+.sellers-table .table-row {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr 1.5fr 1.5fr 1.5fr 1.5fr;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.table-header-row {
+  background: #F8FAFC;
+  height: 48px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-row {
+  min-height: 80px;
+  padding: 16px 24px;
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background: #FAFBFC;
+}
+
+.table-header-cell,
+.table-cell {
+  display: flex;
+  align-items: center;
+}
+
+.seller-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.seller-name {
+  font-weight: 600;
+  color: #1E293B;
+  font-size: 14px;
+}
+
+.seller-id {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.order-count {
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.gross-sales {
+  font-weight: 600;
+  color: #059669;
+}
+
+.commission-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.commission-item {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.adjustments {
+  font-weight: 500;
+  color: #DC2626;
+}
+
+.net-amount {
+  font-weight: 700;
+  color: #059669;
+  font-size: 15px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-completed {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-error {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.status-expired {
+  background: #FDF2F8;
+  color: #BE185D;
+}
+
+.status-default {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Pagination - Match Dashboard Style */
+.pagination {
+  padding: 20px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafbfc;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
+}
+
+.pagination-btn.active:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pagination-ellipsis {
+  padding: 8px 4px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1200px) {
+  .sellers-table .table-header-row,
+  .sellers-table .table-row {
+    grid-template-columns: 2fr 1fr 1.2fr 1.2fr 1.2fr 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-info {
+    margin-left: 0;
+  }
+
+  .liquidation-meta {
+    flex-wrap: wrap;
+  }
+
+  .sellers-table .table-header-row,
+  .sellers-table .table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .table-header-cell,
+  .table-cell {
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .table-header-cell::before,
+  .table-cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748B;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}

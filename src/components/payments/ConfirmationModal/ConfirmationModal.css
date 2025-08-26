@@ -38,7 +38,7 @@
   100% { transform: rotate(360deg); }
 }
 .confirmation-modal {
-  max-width: 500px;
+  max-width: 700px;
   width: 90vw;
 }
 
@@ -55,24 +55,24 @@
 }
 
 .confirmation-message {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.5;
   color: #212529;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .liquidation-details {
   background: #f8f9fa;
-  padding: 20px;
+  padding: 24px;
   border-radius: 8px;
-  margin: 20px 0;
+  margin: 24px 0;
   border: 1px solid #e0e0e0;
 }
 
 .liquidation-details h4 {
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
   color: #495057;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -80,8 +80,8 @@
 
 .single-liquidation .liquidation-item {
   background: #fff;
-  padding: 16px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 8px;
   border: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
@@ -95,12 +95,12 @@
 }
 
 .seller-info strong {
-  font-size: 14px;
+  font-size: 16px;
   color: #212529;
 }
 
 .seller-info span {
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
 }
 
@@ -112,29 +112,29 @@
 }
 
 .amount {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: #28a745;
 }
 
 .date {
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
 }
 
 .liquidations-summary {
   background: #fff;
-  padding: 16px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 8px;
   border: 1px solid #e0e0e0;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .summary-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -146,24 +146,24 @@
 .total-amount {
   color: #28a745;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .liquidations-list {
-  max-height: 120px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
 .liquidation-item.small {
   background: #fff;
-  padding: 8px 12px;
-  margin-bottom: 4px;
-  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 6px;
+  border-radius: 6px;
   border: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .liquidation-item.small .seller {

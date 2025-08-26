@@ -65,8 +65,8 @@ const Configuracion = () => {
     },
     {
       id: 'facturacion',
-      title: 'Facturación Automática',
-      description: 'Configuración del servicio de facturación electrónica',
+      title: 'Facturación SAT',
+      description: 'Configuración del servicio de facturación electrónica (SAT)',
       icon: '🧾',
       path: '/configuracion/facturacion',
       features: [

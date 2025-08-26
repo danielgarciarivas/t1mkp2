@@ -1,0 +1,516 @@
+/* LiquidationDetail.css */
+
+.liquidation-header {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  padding: 16px 24px;
+  margin-bottom: 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ 
+  margin: 0 auto;
+}
+
+.back-button {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-processed {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-completed {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-error {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.status-expired {
+  background: #FDF2F8;
+  color: #BE185D;
+}
+
+/* Section Header with Actions */
+.section-title-with-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.section-title-with-actions h3 {
+  margin: 0;
+}
+
+/* Pagination - Match Dashboard Style */
+.pagination {
+  padding: 20px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafbfc;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
+}
+
+.pagination-btn.active:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pagination-ellipsis {
+  padding: 8px 4px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .section-title-with-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.liquidation-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Total Section */
+.total-section {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 24px;
+  background: #fafafa;
+  border-radius: 12px;
+}
+
+.total-label {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.total-amount {
+  font-size: 48px;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.period-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.visa-icon {
+  font-size: 18px;
+}
+
+/* Sections */
+.timeline-section,
+.orders-section,
+.summary-section {
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.section-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.section-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Timeline */
+.timeline {
+  padding: 24px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -24px;
+  width: 2px;
+  background: #e9ecef;
+}
+
+.timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+}
+
+.timeline-item.active .timeline-icon {
+  background: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.timeline-item.completed .timeline-icon {
+  background: #e8f5e8;
+  border-color: #4caf50;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.timeline-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.timeline-time {
+  font-size: 12px;
+  color: #999;
+  font-family: monospace;
+}
+
+/* Lists */
+.orders-list {
+  padding: 0 24px 24px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-info {
+  flex: 1;
+  padding-right: 16px;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #1976d2;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.order-product {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.order-details {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.order-status {
+  background: #e8f5e8;
+  color: #2e7d32;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.order-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 140px;
+}
+
+.order-amounts .total-amount {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.order-amounts .commission-amount {
+  font-size: 12px;
+  color: #e74c3c;
+}
+
+.order-amounts .net-amount {
+  font-weight: 700;
+  color: #28a745;
+  font-size: 14px;
+}
+
+/* Summary */
+.summary-items {
+  padding: 24px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item.total-item {
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 2px solid #e9ecef;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.summary-label {
+  color: #666;
+}
+
+.summary-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.total-item .summary-value {
+  color: #DB3B2B;
+  font-size: 20px;
+}
+
+/* Footer */
+.footer-note {
+  text-align: center;
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+  margin-top: 32px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* Loading and Error */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #DB3B2B;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container h2 {
+  color: #e74c3c;
+  margin-bottom: 16px;
+}
+
+.error-container p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .liquidation-content {
+    padding: 16px;
+  }
+  
+  .total-amount {
+    font-size: 36px;
+  }
+  
+  .section-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .subscription-item,
+  .commission-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .commission-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

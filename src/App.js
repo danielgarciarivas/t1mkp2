@@ -24,6 +24,8 @@ import Logistica from './pages/Configuracion/Logistica/Logistica';
 import ScoreTiendas from './pages/Configuracion/ScoreTiendas/ScoreTiendas';
 import Liquidaciones from './pages/Configuracion/Liquidaciones/Liquidaciones';
 import RolesPermisos from './pages/RolesPermisos';
+import LiquidationDetail from './pages/LiquidationDetail/LiquidationDetail';
+import LiquidationSellers from './pages/LiquidationSellers/LiquidationSellers';
 import './App.css';
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
             <Route path="configuracion/logistica" element={<Logistica />} />
             <Route path="configuracion/score-tiendas" element={<ScoreTiendas />} />
             <Route path="configuracion/liquidaciones" element={<Liquidaciones />} />
+            <Route path="liquidaciones/:liquidationNumber/sellers" element={<LiquidationSellers />} />
+            <Route path="liquidaciones/:liquidationNumber/seller/:sellerId" element={<LiquidationDetail />} />
             <Route path="roles-permisos" element={<RolesPermisos />} />
           </Route>
         </Routes>

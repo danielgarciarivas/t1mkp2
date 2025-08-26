@@ -670,7 +670,7 @@ const ProductDetail = () => {
                           </span>
                         </div>
                         <div className="date-item">
-                          <span className="date-label">Activación en Marketplace:</span>
+                          <span className="date-label">Enviado al Marketplace:</span>
                           <span className="date-value">
                             {product.fechaActivacion ? 
                               new Date(product.fechaActivacion).toLocaleDateString('es-ES', {

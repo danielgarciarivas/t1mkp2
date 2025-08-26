@@ -7,6 +7,7 @@ const PaymentTable = ({
   data = [], 
   type = 'pending', // 'pending' | 'history'
   onAction,
+  onLiquidationClick,
   loading = false 
 }) => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -24,7 +25,11 @@ const PaymentTable = ({
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedItems(data.map(item => item.id));
+      // Solo seleccionar items que pueden ser seleccionados (pending o en_curso)
+      const selectableItems = data.filter(item => 
+        type === 'pending' || item.status === 'en_curso'
+      );
+      setSelectedItems(selectableItems.map(item => item.id));
     } else {
       setSelectedItems([]);
     }
@@ -57,13 +62,12 @@ const PaymentTable = ({
 
   const getStatusBadge = (status) => {
     const badges = {
-      'pending': { text: 'Pendiente', class: 'status-pending' },
-      'processing': { text: 'Procesando', class: 'status-processing' },
-      'completed': { text: 'Completado', class: 'status-completed' },
-      'failed': { text: 'Fallido', class: 'status-failed' }
+      'en_curso': { text: 'En Curso', class: 'status-en-curso' },
+      'pagada': { text: 'Pagada', class: 'status-pagada' },
+      'error': { text: 'Error', class: 'status-error' }
     };
     
-    return badges[status] || badges['pending'];
+    return badges[status] || badges['en_curso'];
   };
 
   const getSortIcon = (field) => {
@@ -71,8 +75,12 @@ const PaymentTable = ({
     return sortDirection === 'asc' ? '↑' : '↓';
   };
 
-  const isAllSelected = selectedItems.length === data.length && data.length > 0;
-  const isPartialSelected = selectedItems.length > 0 && selectedItems.length < data.length;
+  // Solo considerar items seleccionables para el estado de "todos seleccionados"
+  const selectableItems = data.filter(item => 
+    type === 'pending' || item.status === 'en_curso'
+  );
+  const isAllSelected = selectedItems.length === selectableItems.length && selectableItems.length > 0;
+  const isPartialSelected = selectedItems.length > 0 && selectedItems.length < selectableItems.length;
 
   if (loading) {
     return (
@@ -149,7 +157,7 @@ const PaymentTable = ({
         <table>
           <thead>
             <tr>
-              {type === 'pending' && (
+              {(type === 'pending' || type === 'unified') && (
                 <th className="checkbox-col">
                   <input
                     type="checkbox"
@@ -186,7 +194,7 @@ const PaymentTable = ({
               >
                 {type === 'pending' ? 'Fecha Programada' : 'Fecha Procesada'} {getSortIcon(type === 'pending' ? 'scheduledDate' : 'processedDate')}
               </th>
-              {type === 'history' && (
+              {(type === 'history' || type === 'unified') && (
                 <th>Estado</th>
               )}
               <th className="actions-col">Acciones</th>
@@ -194,25 +202,33 @@ const PaymentTable = ({
           </thead>
           <tbody>
             {data.map(item => {
-              const statusInfo = type === 'history' ? getStatusBadge(item.status) : null;
+              const statusInfo = (type === 'history' || type === 'unified') ? getStatusBadge(item.status) : null;
               const totalCommissions = item.marketplaceCommission + item.t1Commission + (item.adjustments || 0);
               
               return (
                 <tr key={item.id} className={`payment-row ${selectedItems.includes(item.id) ? 'selected' : ''}`}>
-                  {type === 'pending' && (
+                  {(type === 'pending' || type === 'unified') && (
                     <td className="checkbox-col">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.includes(item.id)}
-                        onChange={() => handleSelectItem(item.id)}
-                      />
+                      {(type === 'pending' || item.status === 'en_curso') && (
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                        />
+                      )}
                     </td>
                   )}
                   
                   <td className="seller-info-col">
                     <div className="seller-info">
-                      <div className="seller-name">{item.sellerName}</div>
+                      <div 
+                        className="seller-name clickable" 
+                        onClick={() => onLiquidationClick && onLiquidationClick(item)}
+                      >
+                        {item.liquidationNumber || `#${item.id}`}
+                      </div>
                       <div className="seller-details">
+                        <span className="seller-name-small">{item.sellerName}</span>
                         <span className="order-count">{item.orderCount} pedidos</span>
                         {type === 'pending' && (
                           <span className="cycle-period">
@@ -271,7 +287,7 @@ const PaymentTable = ({
                     </div>
                   </td>
                   
-                  {type === 'history' && (
+                  {(type === 'history' || type === 'unified') && (
                     <td>
                       <div className="status-container">
                         <span className={`status-badge ${statusInfo.class}`}>
@@ -286,12 +302,12 @@ const PaymentTable = ({
                       <Button 
                         variant="secondary"
                         size="small"
-                        onClick={() => onAction('view_details', [item.id])}
+                        onClick={() => onLiquidationClick && onLiquidationClick(item)}
                       >
-                        Ver Pedidos
+                        Ver Liquidación
                       </Button>
                       
-                      {type === 'pending' && (
+                      {(type === 'pending' || (type === 'unified' && item.status === 'en_curso')) && (
                         <Button 
                           variant="primary"
                           size="small"
@@ -301,7 +317,7 @@ const PaymentTable = ({
                         </Button>
                       )}
                       
-                      {type === 'history' && item.status === 'failed' && (
+                      {((type === 'history' && item.status === 'failed') || (type === 'unified' && item.status === 'error')) && (
                         <Button 
                           variant="warning"
                           size="small"

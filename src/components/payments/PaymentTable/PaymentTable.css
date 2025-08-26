@@ -139,6 +139,23 @@
   font-size: 14px;
 }
 
+.seller-name.clickable {
+  color: #1976d2;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.seller-name.clickable:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+.seller-name-small {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 13px;
+}
+
 .seller-details {
   display: flex;
   flex-direction: column;
@@ -253,25 +270,19 @@
   letter-spacing: 0.3px;
 }
 
-.status-pending {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
-}
-
-.status-processing {
+.status-en-curso {
   background: #cce5ff;
   color: #004085;
   border: 1px solid #80bdff;
 }
 
-.status-completed {
+.status-pagada {
   background: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.status-failed {
+.status-error {
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;

@@ -105,7 +105,7 @@ body {
   background: var(--t1-surface-primary);
   border-radius: var(--t1-radius-xl);
   box-shadow: var(--t1-shadow-xl);
-  max-width: 500px;
+  max-width: 700px;
   width: 100%;
   max-height: 90vh;
   overflow: hidden;

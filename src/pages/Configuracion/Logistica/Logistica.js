@@ -10,6 +10,92 @@ const Logistica = () => {
   const [requireTrackingUrl, setRequireTrackingUrl] = useState(false);
   const [validateShippingData, setValidateShippingData] = useState(false);
   
+  // Estados para splitting de paquetes
+  const [splittingRules, setSplittingRules] = useState({
+    categoryRules: [],
+    savedRules: [
+      {
+        id: 1,
+        categoryId: 'electronics',
+        maxItems: 3,
+        maxDimensions: { length: 40, width: 30, height: 15 },
+        packageType: 'Caja con protección antiestática',
+        allowMixing: false
+      }
+    ]
+  });
+
+  // Estado para regla temporal en edición
+  const [currentRule, setCurrentRule] = useState({
+    id: null,
+    categoryId: '',
+    maxItems: 5,
+    maxDimensions: { length: 40, width: 30, height: 20 },
+    packageType: 'Caja estándar',
+    allowMixing: false
+  });
+
+  // Árbol de categorías del marketplace
+  const marketplaceCategories = [
+    {
+      id: 'electronics',
+      name: 'Electrónicos',
+      children: [
+        { id: 'smartphones', name: 'Smartphones' },
+        { id: 'laptops', name: 'Laptops' },
+        { id: 'audio', name: 'Audio y Video' },
+        { id: 'gaming', name: 'Gaming' }
+      ]
+    },
+    {
+      id: 'fashion',
+      name: 'Moda',
+      children: [
+        { id: 'clothing', name: 'Ropa' },
+        { id: 'shoes', name: 'Calzado' },
+        { id: 'accessories', name: 'Accesorios' },
+        { id: 'jewelry', name: 'Joyería' }
+      ]
+    },
+    {
+      id: 'home',
+      name: 'Hogar',
+      children: [
+        { id: 'furniture', name: 'Muebles' },
+        { id: 'kitchen', name: 'Cocina' },
+        { id: 'decoration', name: 'Decoración' },
+        { id: 'garden', name: 'Jardín' }
+      ]
+    },
+    {
+      id: 'books',
+      name: 'Libros y Medios',
+      children: [
+        { id: 'books', name: 'Libros' },
+        { id: 'magazines', name: 'Revistas' },
+        { id: 'dvd', name: 'DVD/Blu-ray' }
+      ]
+    },
+    {
+      id: 'sports',
+      name: 'Deportes',
+      children: [
+        { id: 'fitness', name: 'Fitness' },
+        { id: 'outdoor', name: 'Deportes al aire libre' },
+        { id: 'team-sports', name: 'Deportes de equipo' }
+      ]
+    },
+    {
+      id: 'beauty',
+      name: 'Belleza y Salud',
+      children: [
+        { id: 'skincare', name: 'Cuidado de la piel' },
+        { id: 'makeup', name: 'Maquillaje' },
+        { id: 'health', name: 'Salud' }
+      ]
+    }
+  ];
+  
   // Estados para mensajerías
   const [mensajerias, setMensajerias] = useState({
     fedex: { active: false, config: {} },
@@ -23,9 +109,9 @@ const Logistica = () => {
 
   // Estados para tabulador de precios
   const [weightRanges, setWeightRanges] = useState([
-    { id: 1, minWeight: 0, maxWeight: 1, basePrice: 0, sellerPrice: 0 },
-    { id: 2, minWeight: 1, maxWeight: 5, basePrice: 0, sellerPrice: 0 },
-    { id: 3, minWeight: 5, maxWeight: 10, basePrice: 0, sellerPrice: 0 }
+    { id: 1, minWeight: 0, maxWeight: 1, basePrice: 0, sellerPrice: 120 },
+    { id: 2, minWeight: 1, maxWeight: 5, basePrice: 0, sellerPrice: 99 },
+    { id: 3, minWeight: 5, maxWeight: 10, basePrice: 0, sellerPrice: 65 }
   ]);
 
   const mensajeriasData = {
@@ -163,6 +249,112 @@ const Logistica = () => {
     return ((range.sellerPrice - range.basePrice) / range.basePrice * 100).toFixed(2);
   };
 
+
+  const updateCurrentRule = (field, value) => {
+    setCurrentRule(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateCurrentRuleDimensions = (dimension, value) => {
+    setCurrentRule(prev => ({
+      ...prev,
+      maxDimensions: {
+        ...prev.maxDimensions,
+        [dimension]: parseInt(value) || 0
+      }
+    }));
+  };
+
+  const addNewRule = () => {
+    setCurrentRule({
+      id: Date.now(),
+      categoryId: '',
+      maxItems: 5,
+      maxDimensions: { length: 40, width: 30, height: 20 },
+      packageType: 'Caja estándar',
+      allowMixing: false
+    });
+  };
+
+  const saveCurrentRule = () => {
+    if (!currentRule.categoryId) {
+      alert('Por favor seleccione una categoría antes de guardar');
+      return;
+    }
+    
+    const newRule = {
+      ...currentRule,
+      id: currentRule.id || Date.now()
+    };
+    
+    setSplittingRules(prev => ({
+      ...prev,
+      savedRules: [...prev.savedRules, newRule]
+    }));
+
+    // Reset current rule
+    setCurrentRule({
+      id: null,
+      categoryId: '',
+      maxItems: 5,
+      maxDimensions: { length: 40, width: 30, height: 20 },
+      packageType: 'Caja estándar',
+      allowMixing: false
+    });
+  };
+
+  const editSavedRule = (rule) => {
+    setCurrentRule(rule);
+    setSplittingRules(prev => ({
+      ...prev,
+      savedRules: prev.savedRules.filter(r => r.id !== rule.id)
+    }));
+  };
+
+  const deleteSavedRule = (ruleId) => {
+    setSplittingRules(prev => ({
+      ...prev,
+      savedRules: prev.savedRules.filter(rule => rule.id !== ruleId)
+    }));
+  };
+
+  const cancelCurrentRule = () => {
+    setCurrentRule({
+      id: null,
+      categoryId: '',
+      maxItems: 5,
+      maxDimensions: { length: 40, width: 30, height: 20 },
+      packageType: 'Caja estándar',
+      allowMixing: false
+    });
+  };
+
+  const getCategoryName = (categoryId) => {
+    for (const category of marketplaceCategories) {
+      if (category.id === categoryId) {
+        return category.name;
+      }
+      for (const child of category.children) {
+        if (child.id === categoryId) {
+          return `${category.name} > ${child.name}`;
+        }
+      }
+    }
+    return 'Seleccionar categoría...';
+  };
+
+  const getAllSelectableCategories = () => {
+    const categories = [];
+    marketplaceCategories.forEach(category => {
+      // Add main category
+      categories.push({ id: category.id, name: category.name, level: 0 });
+      // Add subcategories
+      category.children.forEach(child => {
+        categories.push({ id: child.id, name: `${category.name} > ${child.name}`, level: 1 });
+      });
+    });
+    return categories;
+  };
+
   const saveConfiguration = () => {
     const config = {
       useT1Envios,
@@ -170,7 +362,8 @@ const Logistica = () => {
       requireTrackingUrl,
       validateShippingData,
       mensajerias,
-      weightRanges
+      weightRanges,
+      categoryPackagingRules: splittingRules.savedRules
     };
     console.log('Guardando configuración de logística:', config);
     alert('✅ Configuración de logística guardada exitosamente');
@@ -217,7 +410,7 @@ const Logistica = () => {
               >
                 <span className="tab-icon">⚡</span>
                 <span className="tab-text">Guía Automática</span>
-                <span className="tab-description">Configurar guías automáticas con T1Envíos o cuentas propias</span>
+                <span className="tab-description">Configurar guías automáticas que se generan y envian al seller al momento de enviar la Orden al Sellercenter.</span>
               </button>
               <button 
                 className={`mode-tab ${activeTab === 'manual' ? 'active' : ''}`}
@@ -234,102 +427,8 @@ const Logistica = () => {
           <div className="mode-content">
             {activeTab === 'automatica' && (
               <div className="automatica-mode">
-                <div className="automatica-mode-info">
-                  <h4>⚡ Guía Automática</h4>
-                  <p>Configure cómo los sellers generarán guías automáticamente en su seller center.</p>
-                </div>
-
-                {/* Selector de tipo de cuenta */}
-                <div className="account-type-selector">
-                  <div className="section-divider">
-                    <h5>🔧 Tipo de Configuración</h5>
-                    <p>Seleccione qué tipo de cuentas utilizarán los sellers para generar guías automáticas</p>
-                  </div>
-
-                  <div className="account-options">
-                    <div className="form-group">
-                      <label className="radio-label">
-                        <input
-                          type="radio"
-                          name="accountType"
-                          checked={useT1Envios}
-                          onChange={() => setUseT1Envios(true)}
-                        />
-                        <span className="radio-content">
-                          <span className="option-title">🚀 T1 Envíos</span>
-                          <span className="option-description">
-                            Los sellers usan sus propias cuentas de T1 Envíos. El marketplace puede configurar un fee por guía.
-                          </span>
-                        </span>
-                      </label>
-                    </div>
-
-                    <div className="form-group">
-                      <label className="radio-label">
-                        <input
-                          type="radio"
-                          name="accountType"
-                          checked={!useT1Envios}
-                          onChange={() => setUseT1Envios(false)}
-                        />
-                        <span className="radio-content">
-                          <span className="option-title">🏢 Cuentas Propias del Marketplace</span>
-                          <span className="option-description">
-                            Los sellers usan las cuentas de mensajerías configuradas por el marketplace.
-                          </span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Configuración de mensajerías - Solo si es cuentas propias */}
-                {!useT1Envios && (
-                  <div className="mensajerias-config">
-                    <div className="section-divider">
-                      <h5>📦 Configuración de Mensajerías</h5>
-                      <p>Configure las cuentas de mensajerías que estarán disponibles para los sellers</p>
-                    </div>
-                    
-                    <div className="mensajerias-grid">
-                      {Object.entries(mensajeriasData).map(([key, mensajeria]) => (
-                        <div key={key} className={`mensajeria-card ${mensajerias[key].active ? 'active' : ''}`}>
-                          <div className="mensajeria-header">
-                            <div className="mensajeria-info">
-                              <span className="mensajeria-icon">{mensajeria.icon}</span>
-                              <h6>{mensajeria.name}</h6>
-                            </div>
-                            <label className="toggle-switch">
-                              <input 
-                                type="checkbox" 
-                                checked={mensajerias[key].active}
-                                onChange={() => handleMensajeriaToggle(key)}
-                              />
-                              <span className="toggle-slider"></span>
-                            </label>
-                          </div>
-
-                          {mensajerias[key].active && (
-                            <div className="mensajeria-form">
-                              {mensajeria.fields.map(field => (
-                                <div key={field.key} className="form-group">
-                                  <label>{field.label} {field.required && <span className="required">*</span>}</label>
-                                  <input
-                                    type={field.type}
-                                    value={mensajerias[key].config[field.key] || ''}
-                                    onChange={(e) => handleMensajeriaConfigChange(key, field.key, e.target.value)}
-                                    placeholder={`Ingrese ${field.label.toLowerCase()}`}
-                                    required={field.required}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+               {/* Configuración de mensajerías - Solo si es cuentas propias */}
+               
 
                 {/* Tabulador de precios - Siempre visible */}
                 <div className="price-calculator">
@@ -337,7 +436,7 @@ const Logistica = () => {
                     <h5>💰 Tabulador de Precios por Peso</h5>
                     <p>
                       {useT1Envios 
-                        ? "Configure el fee que cobrará a los sellers por cada guía generada con T1 Envíos"
+                        ? "Configure el fee que cobrará a los sellers por cada guía generada con T1 Envíos, Si configura esta opcion con cada pedido que se sincronice desde el marketplace al seller center, deberá llegar con una guia generada con T1envios.com"
                         : "Configure los precios que cobrará a los sellers por cada rango de peso usando sus cuentas de mensajería"
                       }
                     </p>
@@ -346,9 +445,7 @@ const Logistica = () => {
                   <div className="weight-ranges-table">
                     <div className="table-header">
                       <div className="table-cell">Rango de Peso (kg)</div>
-                      <div className="table-cell">{useT1Envios ? 'Fee Base T1' : 'Precio Base'}</div>
                       <div className="table-cell">Precio al Seller</div>
-                      <div className="table-cell">Margen (%)</div>
                       <div className="table-cell">Acciones</div>
                     </div>
 
@@ -374,18 +471,7 @@ const Logistica = () => {
                           />
                           <span>kg</span>
                         </div>
-                        <div className="table-cell">
-                          <div className="currency-input">
-                            <span className="currency-symbol">$</span>
-                            <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              value={range.basePrice}
-                              onChange={(e) => updateWeightRange(range.id, 'basePrice', e.target.value)}
-                            />
-                          </div>
-                        </div>
+                     
                         <div className="table-cell">
                           <div className="currency-input">
                             <span className="currency-symbol">$</span>
@@ -398,11 +484,7 @@ const Logistica = () => {
                             />
                           </div>
                         </div>
-                        <div className="table-cell margin-cell">
-                          <span className={`margin-value ${calculateMargin(range) > 0 ? 'positive' : 'neutral'}`}>
-                            {calculateMargin(range)}%
-                          </span>
-                        </div>
+                      
                         <div className="table-cell actions-cell">
                           <button
                             className="remove-range-btn"
@@ -426,6 +508,204 @@ const Logistica = () => {
                     </Button>
                   </div>
                 </div>
+
+                {/* Configuración de Agrupación por Categorías */}
+                <div className="package-splitting-section">
+                  <div className="section-header">
+                    <div className="section-title-row">
+                      <div className="section-title-content">
+                        <h5>📦 Reglas de Agrupación por Categoría</h5>
+                        <p>Configure la volumetría y cantidad máxima de productos que se pueden agrupar por categoría del marketplace</p>
+                      </div>
+                      <Button 
+                        variant="outline"
+                        size="small"
+                        onClick={addNewRule}
+                      >
+                        + Agregar Regla
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="unified-rules-container">
+                    {/* Formulario de regla actual */}
+                    {currentRule.id && (
+                      <div className="current-rule-form">
+                        <div className="form-header">
+                          <h6>📂 Nueva Regla de Categoría</h6>
+                          <button
+                            className="cancel-rule-btn"
+                            onClick={cancelCurrentRule}
+                            title="Cerrar formulario"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="rule-content">
+                          <div className="rule-row">
+                            <div className="rule-field">
+                              <label>Categoría del marketplace:</label>
+                              <select
+                                value={currentRule.categoryId}
+                                onChange={(e) => updateCurrentRule('categoryId', e.target.value)}
+                                className="rule-input-select"
+                              >
+                                <option value="">Seleccionar categoría...</option>
+                                {getAllSelectableCategories().map((category) => (
+                                  <option 
+                                    key={category.id} 
+                                    value={category.id}
+                                    style={{ paddingLeft: category.level * 20 }}
+                                  >
+                                    {category.level === 1 ? '  └─ ' : ''}{category.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="rule-field">
+                              <label>Máximo productos por paquete:</label>
+                              <input
+                                type="number"
+                                min="1"
+                                max="50"
+                                value={currentRule.maxItems}
+                                onChange={(e) => updateCurrentRule('maxItems', parseInt(e.target.value) || 0)}
+                                className="rule-input"
+                              />
+                            </div>
+                          </div>
+                          <div className="rule-row">
+                            <div className="rule-field">
+                              <label>Volumetría máxima del paquete (L x W x H cm):</label>
+                              <div className="dimensions-inputs">
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={currentRule.maxDimensions.length}
+                                  onChange={(e) => updateCurrentRuleDimensions('length', e.target.value)}
+                                  className="dimension-input"
+                                  placeholder="L"
+                                />
+                                <span>×</span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={currentRule.maxDimensions.width}
+                                  onChange={(e) => updateCurrentRuleDimensions('width', e.target.value)}
+                                  className="dimension-input"
+                                  placeholder="W"
+                                />
+                                <span>×</span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={currentRule.maxDimensions.height}
+                                  onChange={(e) => updateCurrentRuleDimensions('height', e.target.value)}
+                                  className="dimension-input"
+                                  placeholder="H"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="rule-row">
+                            <div className="rule-field">
+                              <label>Tipo de empaque recomendado:</label>
+                              <input
+                                type="text"
+                                value={currentRule.packageType}
+                                onChange={(e) => updateCurrentRule('packageType', e.target.value)}
+                                className="rule-input-text"
+                                placeholder="Ej: Caja con protección, Sobre flexible, Caja resistente..."
+                              />
+                            </div>
+                          </div>
+                          <div className="rule-row">
+                            <label className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={currentRule.allowMixing}
+                                onChange={(e) => updateCurrentRule('allowMixing', e.target.checked)}
+                              />
+                              <span className="checkbox-content">
+                                <span className="option-title">Permitir mezclar con otras categorías compatibles</span>
+                                <span className="option-description">
+                                  Productos de esta categoría pueden empacarse junto con productos de otras categorías que también tengan esta opción activada
+                                </span>
+                              </span>
+                            </label>
+                          </div>
+                          <div className="rule-actions">
+                            <Button
+                              variant="secondary"
+                              size="small"
+                              onClick={saveCurrentRule}
+                            >
+                              ✅ Guardar Regla
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="small"
+                              onClick={cancelCurrentRule}
+                            >
+                              Cancelar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Lista de reglas guardadas */}
+                    <div className="saved-rules-section">
+                      {splittingRules.savedRules.length > 0 && (
+                        <div className="saved-rules-header">
+                          <h6>📋 Reglas Configuradas ({splittingRules.savedRules.length})</h6>
+                        </div>
+                      )}
+                      
+                      {splittingRules.savedRules.length === 0 ? (
+                        <div className="no-rules-message">
+                          <p>No hay reglas configuradas. Agregue una nueva regla para comenzar.</p>
+                        </div>
+                      ) : (
+                        <div className="saved-rules-list">
+                          {splittingRules.savedRules.map((rule) => (
+                            <div key={rule.id} className="saved-rule-item">
+                              <div className="saved-rule-info">
+                                <div className="saved-rule-category">
+                                  <strong>📂 {getCategoryName(rule.categoryId)}</strong>
+                                </div>
+                                <div className="saved-rule-details">
+                                  <span>Max {rule.maxItems} productos</span>
+                                  <span>•</span>
+                                  <span>{rule.maxDimensions.length}×{rule.maxDimensions.width}×{rule.maxDimensions.height} cm</span>
+                                  <span>•</span>
+                                  <span>{rule.packageType}</span>
+                                  {rule.allowMixing && <span className="mixing-badge">🔀 Mezcla permitida</span>}
+                                </div>
+                              </div>
+                              <div className="saved-rule-actions">
+                                <Button
+                                  variant="secondary"
+                                  size="small"
+                                  onClick={() => editSavedRule(rule)}
+                                >
+                                  Editar
+                                </Button>
+                                <Button
+                                  variant="secondary"
+                                  size="small"
+                                  onClick={() => deleteSavedRule(rule.id)}
+                                >
+                                  Eliminar
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -440,6 +720,23 @@ const Logistica = () => {
 
                   <div className="manual-guides-config">
                     <div className="form-group">
+
+                    <label className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={true}
+                          disabled={true}
+                          onChange={() => {}}
+                        />
+                        <span className="checkbox-content">
+                          <span className="option-title">Permitir Guías T1Envios</span>
+                          <span className="option-description">
+                            Autorizar a los sellers a generar guías manuales desde su seller center con su cuenta de T1Envios (ésta opción siempre estará activa como opción al seller)
+                          </span>
+                        </span>
+                      </label>
+
+
                       <label className="checkbox-label">
                         <input
                           type="checkbox"
@@ -472,6 +769,9 @@ const Logistica = () => {
                               </li>
                               <li>
                                 <strong>Guía Propia:</strong> Generar guías manuales con sus propias paqueterías y medios de envío
+                              </li>
+                              <li>
+                                <strong>Liquidaciones:</strong> Las liquidaciones dependeran que internamente se agreguen las evidencias de entrega correspondiente
                               </li>
                             </ul>
                             <div className="warning-note">

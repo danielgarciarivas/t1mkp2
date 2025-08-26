@@ -445,7 +445,7 @@
 }
 
 .mode-tab.active {
-  background: #007bff;
+  background: #e3e4e5;
   color: white;
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
 }
