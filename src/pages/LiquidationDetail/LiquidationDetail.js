@@ -11,6 +11,7 @@ const LiquidationDetail = () => {
   const [liquidation, setLiquidation] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [ordersPerPage] = useState(5);
+  const [showConfirmPayment, setShowConfirmPayment] = useState(false);
   const sellerName = location.state?.sellerName;
 
   useEffect(() => {
@@ -27,8 +28,8 @@ const LiquidationDetail = () => {
         liquidationNumber: liquidationNumber,
         sellerId: parseInt(sellerId) || 1,
         sellerName: sellerName || 'TechnoMax SA',
-        status: 'processed',
-        totalAmount: 337221,
+        status: 'en_curso',
+        totalAmount: 318721,
         processedDate: '01 Ago - 31 Ago 2025',
         paymentMethod: 'Transferencia Bancaria',
         accountInfo: 'Cuenta Fondeadora BBVA •••• 5678',
@@ -221,7 +222,7 @@ const LiquidationDetail = () => {
           marketplaceCommission: 37469,
           guidesCommission: 18500,
           adjustments: 0,
-          netToLiquidate: 337221
+          netToLiquidate: 318721
         }
       };
       
@@ -238,11 +239,41 @@ const LiquidationDetail = () => {
   };
 
   const handleDownloadLiquidation = () => {
-    // Simular descarga de archivo ZIP
     const fileName = `liquidacion_${liquidationNumber}_seller_${sellerId}.zip`;
     console.log(`Descargando archivo: ${fileName}`);
-    // Aquí iría la lógica real de descarga
     alert(`Descargando ${fileName}`);
+  };
+
+  const handleMarkAsPaid = () => {
+    setShowConfirmPayment(true);
+  };
+
+  const confirmMarkAsPaid = () => {
+    console.log(`Marcando como pagada la liquidación del seller ${sellerId}`);
+    // Aquí iría la lógica para marcar como pagada
+    setLiquidation(prev => ({
+      ...prev,
+      status: 'pagada'
+    }));
+    setShowConfirmPayment(false);
+    alert('Liquidación marcada como pagada');
+  };
+
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      'en_curso': { label: 'En Curso', class: 'status-pending' },
+      'pagada': { label: 'Pagada', class: 'status-completed' },
+      'error': { label: 'Error', class: 'status-error' },
+      'vencida': { label: 'Vencida', class: 'status-expired' },
+      'processed': { label: 'En Curso', class: 'status-pending' }
+    };
+    
+    const config = statusConfig[status] || { label: status, class: 'status-default' };
+    return (
+      <span className={`status-badge ${config.class}`}>
+        {config.label}
+      </span>
+    );
   };
 
   // Paginación
@@ -279,164 +310,220 @@ const LiquidationDetail = () => {
   return (
     <div className="module">
       {/* Header */}
-      <div className="liquidation-header">
+      <div className="liquidation-sellers-header">
         <div className="header-content">
           <button 
             onClick={() => navigate(`/liquidaciones/${liquidationNumber}/sellers`)}
             className="btn btn--secondary btn--small back-button"
           >
-            ← Volver a Sellers - {liquidation.liquidationNumber}
+            ← Volver a Sellers
           </button>
+          <div className="header-info">
+            <h1 className="liquidation-title">{liquidation.sellerName}</h1>
+            <div className="liquidation-meta">
+              <span>Liquidación: {liquidation.liquidationNumber}</span>
+              <span>•</span>
+              <span>Período: {liquidation.processedDate}</span>
+              <span>•</span>
+              <span>{liquidation.orders.length} pedidos</span>
+            </div>
+          </div>
           <div className="header-status">
-            <span className="status-badge status-processed">En curso</span>
+            {getStatusBadge(liquidation.status)}
+            <Button 
+              variant="secondary" 
+              size="small"
+              onClick={handleDownloadLiquidation}
+            >
+              Descargar Liquidación ZIP
+            </Button>
+            <Button 
+              variant="primary" 
+              size="small"
+              onClick={handleMarkAsPaid}
+              disabled={liquidation.status === 'pagada'}
+            >
+              {liquidation.status === 'pagada' ? 'Pagada' : 'Marcar como Pagada'}
+            </Button>
+          </div>
+        </div>
+        
+        {/* Summary Card */}
+        <div className="liquidation-summary-card">
+          <div className="summary-main">
+            <div className="summary-title">
+              <span className="summary-label">Total Neto a Liquidar</span>
+              <span className="summary-value">{formatPrice(liquidation.summary.netToLiquidate)}</span>
+            </div>
+            
+            <div className="summary-details">
+              <div className="detail-item">
+                <span className="detail-label">Ventas Brutas:</span>
+                <span className="detail-amount gross">{formatPrice(liquidation.summary.grossSales)}</span>
+              </div>
+              <span className="detail-separator">•</span>
+              <div className="detail-item">
+                <span className="detail-label">Comisión Marketplace:</span>
+                <span className="detail-amount deduction">-{formatPrice(liquidation.summary.marketplaceCommission)}</span>
+              </div>
+              <span className="detail-separator">•</span>
+              <div className="detail-item">
+                <span className="detail-label">Cobro x envío:</span>
+                <span className="detail-amount deduction">-{formatPrice(liquidation.summary.guidesCommission)}</span>
+              </div>
+              {liquidation.summary.adjustments !== 0 && (
+                <>
+                  <span className="detail-separator">•</span>
+                  <div className="detail-item">
+                    <span className="detail-label">Ajustes:</span>
+                    <span className={`detail-amount ${liquidation.summary.adjustments > 0 ? 'positive' : 'negative'}`}>
+                      {liquidation.summary.adjustments > 0 ? '+' : ''}{formatPrice(liquidation.summary.adjustments)}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="liquidation-content">
-        {/* Total Amount */}
-        <div className="total-section">
-          <div className="total-label">Total</div>
-          <div className="total-amount">{formatPrice(liquidation.totalAmount)}</div>
-          <div className="period-info">
-            <span>Período: {liquidation.processedDate}</span>
-            <span className="payment-method">
-              <i className="visa-icon">🏦</i> {liquidation.accountInfo}
-            </span>
+      {/* Orders Table */}
+      <div className="sellers-content">
+        <div className="sellers-table-container">
+          <div className="table-header">
+            <h2>Pedidos en esta Liquidación</h2>
           </div>
-        </div>
-
-    
-
-        {/* Orders Details */}
-        <div className="orders-section">
-          <div className="section-header">
-            <div className="section-title-with-actions">
-              <h3>Detalle de pedidos ({liquidation.orders.length} pedidos)</h3>
-                <div className="section-amount">{formatPrice(liquidation.summary.grossSales)}</div>
-              <Button 
-                variant="secondary" 
-                size="small"
-                onClick={handleDownloadLiquidation}
-              >
-                Descargar Liquidacion ZIP
-              </Button>
+          
+          <div className="sellers-table">
+            <div className="table-header-row">
+              <div className="table-header-cell">Pedido</div>
+              <div className="table-header-cell">Producto</div>
+              <div className="table-header-cell">Cantidad</div>
+              <div className="table-header-cell">Precio Unitario</div>
+              <div className="table-header-cell">Total</div>
+              <div className="table-header-cell">Neto</div>
             </div>
-          
-          </div>
-          
-          <div className="orders-list">
-            {currentOrders.map((order, index) => (
-              <div key={index} className="order-item">
-                <div className="order-info">
-                  <div className="order-id">{order.id}</div>
-                  <div className="order-status">{order.status}</div>
-                  <div className="order-product">{order.productName}</div>
-                  <div className="order-details">
-                    <span>{new Date(order.date).toLocaleDateString('es-ES')}</span>
-                    <span>•</span>
-                    <span>Cant: {order.quantity}</span>
-                    <span>•</span>
-                    <span>{formatPrice(order.unitPrice)} c/u</span>
+            
+            {currentOrders.map((order) => (
+              <div key={order.id} className="table-row">
+                <div className="table-cell">
+                  <div className="seller-info">
+                    <span className="seller-name">{order.id}</span>
+                    <span className="seller-id">{new Date(order.date).toLocaleDateString('es-ES')}</span>
                   </div>
                 </div>
-                <div className="order-amounts">
-                  <div className="total-amount">{formatPrice(order.totalAmount)}</div>
-                  <div className="commission-amount">- {formatPrice(order.commission)} comisión</div>
-                  <div className="net-amount">{formatPrice(order.netAmount)} neto</div>
+                <div className="table-cell">
+                  <div className="seller-info">
+                    <span className="seller-name">{order.productName}</span>
+                    <span className="seller-id">{order.status}</span>
+                  </div>
+                </div>
+                <div className="table-cell">
+                  <span className="seller-name">{order.quantity}</span>
+                </div>
+                <div className="table-cell">
+                  <span className="gross-sales">{formatPrice(order.unitPrice)}</span>
+                </div>
+                <div className="table-cell">
+                  <span className="gross-sales">{formatPrice(order.totalAmount)}</span>
+                </div>
+                <div className="table-cell">
+                  <span className="net-amount">{formatPrice(order.netAmount)}</span>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Paginación */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <div className="pagination-info">
-                Mostrando {(currentPage - 1) * ordersPerPage + 1} - {Math.min(currentPage * ordersPerPage, liquidation.orders.length)} de {liquidation.orders.length} pedidos
-              </div>
-              
-              <div className="pagination-controls">
-                <button 
-                  className="pagination-btn prev"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => prev - 1)}
-                >
-                  ← Anterior
-                </button>
-                
-                <div className="pagination-pages">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(page => {
-                      if (totalPages <= 7) return true;
-                      if (page === 1 || page === totalPages) return true;
-                      if (page >= currentPage - 1 && page <= currentPage + 1) return true;
-                      return false;
-                    })
-                    .map((page, index, array) => {
-                      const prevPage = array[index - 1];
-                      const showEllipsis = prevPage && page - prevPage > 1;
-                      
-                      return (
-                        <React.Fragment key={page}>
-                          {showEllipsis && <span className="pagination-ellipsis">...</span>}
-                          <button
-                            className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </button>
-                        </React.Fragment>
-                      );
-                    })
-                  }
+            
+            {/* Paginación */}
+            {!loading && totalPages > 1 && (
+              <div className="pagination">
+                <div className="pagination-info">
+                  Mostrando {(currentPage - 1) * ordersPerPage + 1} - {Math.min(currentPage * ordersPerPage, liquidation.orders.length)} de {liquidation.orders.length} pedidos
                 </div>
                 
-                <button 
-                  className="pagination-btn next"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                >
-                  Siguiente →
-                </button>
+                <div className="pagination-controls">
+                  <button 
+                    className="pagination-btn prev"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => prev - 1)}
+                  >
+                    ← Anterior
+                  </button>
+                  
+                  <div className="pagination-pages">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => {
+                        if (totalPages <= 7) return true;
+                        if (page === 1 || page === totalPages) return true;
+                        if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                        return false;
+                      })
+                      .map((page, index, array) => {
+                        const prevPage = array[index - 1];
+                        const showEllipsis = prevPage && page - prevPage > 1;
+                        
+                        return (
+                          <React.Fragment key={page}>
+                            {showEllipsis && <span className="pagination-ellipsis">...</span>}
+                            <button
+                              className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        );
+                      })
+                    }
+                  </div>
+                  
+                  <button 
+                    className="pagination-btn next"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(prev => prev + 1)}
+                  >
+                    Siguiente →
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Summary */}
-        <div className="summary-section">
-          <div className="section-header">
-            <h3>Resumen de liquidación</h3>
+            )}
           </div>
-          
-          <div className="summary-items">
-            <div className="summary-item">
-              <span className="summary-label">Ventas brutas</span>
-              <span className="summary-value">{formatPrice(liquidation.summary.grossSales)}</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-label">Comisión Marketplace (10%)</span>
-              <span className="summary-value">- {formatPrice(liquidation.summary.marketplaceCommission)}</span>
-            </div>
-             <div className="summary-item">
-              <span className="summary-label">Comisiones Guias (8%)</span>
-              <span className="summary-value">- {formatPrice(liquidation.summary.guidesCommission)}</span>
-            </div>
-           
-            <div className="summary-item total-item">
-              <span className="summary-label">Neto a liquidar</span>
-              <span className="summary-value">{formatPrice(liquidation.summary.netToLiquidate)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Note */}
-        <div className="footer-note">
-          Esta liquidación incluye todos los pedidos entregados (o en el estatus configurado) durante el período especificado.
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmPayment && (
+        <div className="modal-overlay" onClick={() => setShowConfirmPayment(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirmar Pago de Liquidación</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowConfirmPayment(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>¿Estás seguro de que quieres marcar como pagada la liquidación del seller <strong>{liquidation.sellerName}</strong>?</p>
+              <p>Total a liquidar: <strong>{formatPrice(liquidation.summary.netToLiquidate)}</strong></p>
+            </div>
+            <div className="modal-footer">
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowConfirmPayment(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={confirmMarkAsPaid}
+              >
+                Confirmar Pago
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

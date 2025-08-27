@@ -13,6 +13,12 @@ const ProductDetail = () => {
   const [logs, setLogs] = useState([]);
   const [priceHistory, setPriceHistory] = useState([]);
   const [stockHistory, setStockHistory] = useState([]);
+  const [productCommission, setProductCommission] = useState({
+    personalizada: null,
+    categoria: 8.5,
+    aplicada: 8.5,
+    tienePersonalizada: false
+  });
 
   useEffect(() => {
     loadProductDetail();
@@ -239,10 +245,143 @@ const ProductDetail = () => {
       ];
       
       // Agregar fechas importantes al producto
+      // Agregar variantes de ejemplo basadas en el tipo de producto
+      let variants = [];
+      
+      if (mockProduct.categoria === 'Ropa') {
+        variants = [
+          {
+            id: 1,
+            nombre: 'Talla S - Azul cielo',
+            atributos: { talla: 'S', color: 'Azul cielo' },
+            sku: `${mockProduct.sku}-S-BLUE`,
+            precio: mockProduct.precio,
+            stock: 25,
+            imagen: mockProduct.imagenes[0]
+          },
+          {
+            id: 2,
+            nombre: 'Talla M - Azul cielo',
+            atributos: { talla: 'M', color: 'Azul cielo' },
+            sku: `${mockProduct.sku}-M-BLUE`,
+            precio: mockProduct.precio,
+            stock: 35,
+            imagen: mockProduct.imagenes[1]
+          },
+          {
+            id: 3,
+            nombre: 'Talla L - Azul cielo',
+            atributos: { talla: 'L', color: 'Azul cielo' },
+            sku: `${mockProduct.sku}-L-BLUE`,
+            precio: mockProduct.precio,
+            stock: 20,
+            imagen: mockProduct.imagenes[2]
+          },
+          {
+            id: 4,
+            nombre: 'Talla S - Rosa coral',
+            atributos: { talla: 'S', color: 'Rosa coral' },
+            sku: `${mockProduct.sku}-S-PINK`,
+            precio: mockProduct.precio + 100,
+            stock: 15,
+            imagen: mockProduct.imagenes[3]
+          },
+          {
+            id: 5,
+            nombre: 'Talla M - Rosa coral',
+            atributos: { talla: 'M', color: 'Rosa coral' },
+            sku: `${mockProduct.sku}-M-PINK`,
+            precio: mockProduct.precio + 100,
+            stock: 30,
+            imagen: mockProduct.imagenes[0]
+          }
+        ];
+      } else if (mockProduct.categoria === 'Deportes') {
+        variants = [
+          {
+            id: 1,
+            nombre: 'Talla 25 cm - Negro/Azul',
+            atributos: { talla: '25 cm', color: 'Negro/Azul' },
+            sku: `${mockProduct.sku}-25-BLK`,
+            precio: mockProduct.precio,
+            stock: 12,
+            imagen: mockProduct.imagenes[0]
+          },
+          {
+            id: 2,
+            nombre: 'Talla 26 cm - Negro/Azul',
+            atributos: { talla: '26 cm', color: 'Negro/Azul' },
+            sku: `${mockProduct.sku}-26-BLK`,
+            precio: mockProduct.precio,
+            stock: 18,
+            imagen: mockProduct.imagenes[1]
+          },
+          {
+            id: 3,
+            nombre: 'Talla 27 cm - Negro/Azul',
+            atributos: { talla: '27 cm', color: 'Negro/Azul' },
+            sku: `${mockProduct.sku}-27-BLK`,
+            precio: mockProduct.precio,
+            stock: 22,
+            imagen: mockProduct.imagenes[2]
+          },
+          {
+            id: 4,
+            nombre: 'Talla 28 cm - Blanco/Rojo',
+            atributos: { talla: '28 cm', color: 'Blanco/Rojo' },
+            sku: `${mockProduct.sku}-28-WHT`,
+            precio: mockProduct.precio + 200,
+            stock: 8,
+            imagen: mockProduct.imagenes[3]
+          }
+        ];
+      } else if (mockProduct.categoria === 'Electrónicos') {
+        variants = [
+          {
+            id: 1,
+            nombre: '256GB - Titanio Natural',
+            atributos: { almacenamiento: '256GB', color: 'Titanio Natural' },
+            sku: `${mockProduct.sku}-256-NAT`,
+            precio: mockProduct.precio,
+            stock: 45,
+            imagen: mockProduct.imagenes[0]
+          },
+          {
+            id: 2,
+            nombre: '512GB - Titanio Natural',
+            atributos: { almacenamiento: '512GB', color: 'Titanio Natural' },
+            sku: `${mockProduct.sku}-512-NAT`,
+            precio: mockProduct.precio + 5000,
+            stock: 32,
+            imagen: mockProduct.imagenes[1]
+          },
+          {
+            id: 3,
+            nombre: '256GB - Titanio Azul',
+            atributos: { almacenamiento: '256GB', color: 'Titanio Azul' },
+            sku: `${mockProduct.sku}-256-BLU`,
+            precio: mockProduct.precio,
+            stock: 28,
+            imagen: mockProduct.imagenes[2]
+          },
+          {
+            id: 4,
+            nombre: '1TB - Titanio Negro',
+            atributos: { almacenamiento: '1TB', color: 'Titanio Negro' },
+            sku: `${mockProduct.sku}-1TB-BLK`,
+            precio: mockProduct.precio + 8000,
+            stock: 15,
+            imagen: mockProduct.imagenes[3]
+          }
+        ];
+      }
+      
       const enrichedProduct = {
         ...mockProduct,
         fechaActivacion: '2024-02-16T09:30:00Z',
-        fechaPublicacion: '2024-02-16T10:00:00Z'
+        fechaPublicacion: '2024-02-16T10:00:00Z',
+        variants: variants,
+        hasVariants: variants.length > 0
       };
       
       setProduct(enrichedProduct);
@@ -305,6 +444,24 @@ const ProductDetail = () => {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price);
+  };
+
+  const handleUpdateCommission = (newCommission) => {
+    setProductCommission(prev => ({
+      ...prev,
+      personalizada: newCommission,
+      aplicada: newCommission || prev.categoria,
+      tienePersonalizada: !!newCommission
+    }));
+  };
+
+  const removePersonalizedCommission = () => {
+    setProductCommission(prev => ({
+      ...prev,
+      personalizada: null,
+      aplicada: prev.categoria,
+      tienePersonalizada: false
+    }));
   };
 
   if (loading) {
@@ -453,45 +610,31 @@ const ProductDetail = () => {
             </div>
 
             <div className="product-specifications">
-              <h3>Especificaciones</h3>
+              <h3>Especificaciones Técnicas</h3>
               <div className="specs-grid">
                 {Object.entries(product.especificaciones).map(([key, value]) => (
                   <div key={key} className="spec-item">
-                    <span className="spec-label">{key.charAt(0).toUpperCase() + key.slice(1)}:</span>
-                    <span className="spec-value">{value}</span>
+                    <dt className="spec-label">{key.charAt(0).toUpperCase() + key.slice(1)}</dt>
+                    <dd className="spec-value">{value}</dd>
                   </div>
                 ))}
               </div>
+              
+              {product.hasVariants && (
+                <div className="variants-indicator">
+                  <div className="variants-badge">
+                    <span className="variants-icon">🔀</span>
+                    <div className="variants-info">
+                      <strong>Producto con Variantes</strong>
+                      <p>Este producto tiene {product.variants.length} variantes disponibles</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="product-metadata">
-              <h3>Información adicional</h3>
-              <div className="metadata-grid">
-                <div className="metadata-item">
-                  <span className="metadata-label">SKU:</span>
-                  <span className="metadata-value">{product.sku}</span>
-                </div>
-                <div className="metadata-item">
-                  <span className="metadata-label">Fecha de creación:</span>
-                  <span className="metadata-value">
-                    {new Date(product.fechaCreacion).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                </div>
-                <div className="metadata-item">
-                  <span className="metadata-label">Seller:</span>
-                  <span className="metadata-value">{product.seller}</span>
-                </div>
-                <div className="metadata-item">
-                  <span className="metadata-label">Stock actual:</span>
-                  <span className="metadata-value">405 unidades</span>
-                </div>
-              </div>
+             
             </div>
           </div>
         </div>
@@ -513,6 +656,20 @@ const ProductDetail = () => {
             >
               Cronología
             </button>
+            <button 
+              className={`tab-button ${activeTab === 'comision' ? 'active' : ''}`}
+              onClick={() => setActiveTab('comision')}
+            >
+              Comisión
+            </button>
+            {product.hasVariants && (
+              <button 
+                className={`tab-button ${activeTab === 'variants' ? 'active' : ''}`}
+                onClick={() => setActiveTab('variants')}
+              >
+                Variantes ({product.variants.length})
+              </button>
+            )}
           </div>
           
           <div className="tab-content">
@@ -609,68 +766,27 @@ const ProductDetail = () => {
                     
                     {/* Historial de precios */}
                     <div className="history-subsection">
-                      <h4>💰 Cambios de Precio</h4>
                       <div className="changes-summary">
                         <span className="changes-count">
-                          Se cambió {priceHistory.length} veces el precio en los últimos 30 días
+                         💰 Se cambió {priceHistory.length} veces el precio en los últimos 30 días
                         </span>
-                      </div>
-                      <div className="history-list">
-                        {priceHistory.map((change, index) => (
-                          <div key={index} className="history-item">
-                            <div className="history-date">
-                              {new Date(change.fecha).toLocaleDateString('es-ES')}
-                            </div>
-                            <div className="history-change">
-                              <span className="price-value">{formatPrice(change.precio)}</span>
-                              <span className="change-reason">{change.motivo}</span>
-                            </div>
-                            <div className="history-user">{change.usuario}</div>
-                          </div>
-                        ))}
                       </div>
                     </div>
                     
                     {/* Historial de stock */}
                     <div className="history-subsection">
-                      <h4>📦 Cambios de Stock</h4>
                       <div className="changes-summary">
                         <span className="changes-count">
-                          Se cambió {stockHistory.length} veces el stock en los últimos 30 días
+                         📦 Se cambió {stockHistory.length} veces el stock en los últimos 30 días
                         </span>
-                      </div>
-                      <div className="history-list">
-                        {stockHistory.map((change, index) => (
-                          <div key={index} className="history-item">
-                            <div className="history-date">
-                              {new Date(change.fecha).toLocaleDateString('es-ES')}
-                            </div>
-                            <div className="history-change">
-                              <span className="stock-value">{change.stock} unidades</span>
-                              <span className="change-reason">{change.motivo}</span>
-                            </div>
-                            <div className="history-user">{change.usuario}</div>
-                          </div>
-                        ))}
                       </div>
                     </div>
                     
                     {/* Fechas importantes */}
                     <div className="history-subsection">
-                      <h4>📅 Fechas Importantes</h4>
                       <div className="important-dates">
                         <div className="date-item">
-                          <span className="date-label">Creación:</span>
-                          <span className="date-value">
-                            {new Date(product.fechaCreacion).toLocaleDateString('es-ES', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </span>
-                        </div>
-                        <div className="date-item">
-                          <span className="date-label">Enviado al Marketplace:</span>
+                          <span className="date-label"> 📅 Creación:</span>
                           <span className="date-value">
                             {product.fechaActivacion ? 
                               new Date(product.fechaActivacion).toLocaleDateString('es-ES', {
@@ -682,7 +798,7 @@ const ProductDetail = () => {
                           </span>
                         </div>
                         <div className="date-item">
-                          <span className="date-label">Publicación:</span>
+                          <span className="date-label">📅 Publicación:</span>
                           <span className="date-value">
                             {product.fechaPublicacion ? 
                               new Date(product.fechaPublicacion).toLocaleDateString('es-ES', {
@@ -694,6 +810,186 @@ const ProductDetail = () => {
                           </span>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'comision' && (
+              <div className="commission-content">
+                <div className="commission-header">
+                  <h3>Comisión del Producto</h3>
+                  <p>Configure la comisión específica para este producto</p>
+                </div>
+                
+                <div className="commission-config-grid">
+                  {/* Información del producto */}
+                  
+
+                  {/* Configuración de comisión */}
+                  <div className="commission-configuration">
+                    <h4>⚙️ Configuración de Comisión</h4>
+                    
+                    <div className="commission-status">
+                      <div className={`commission-indicator ${productCommission.tienePersonalizada ? 'personalized' : 'inherited'}`}>
+                        {productCommission.tienePersonalizada ? (
+                          <>
+                            <span className="status-icon">🎯</span>
+                            <div className="status-info">
+                              <span className="status-title">Comisión Personalizada</span>
+                              <span className="status-description">Este producto tiene una comisión específica configurada</span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <span className="status-icon">📂</span>
+                            <div className="status-info">
+                              <span className="status-title">Comisión de Categoría</span>
+                              <span className="status-description">Usando la comisión por defecto de la categoría</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="commission-form">
+                      <div className="form-group">
+                        <label>Comisión Personalizada (%)</label>
+                        <div className="commission-input-group">
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                            value={productCommission.personalizada || ''}
+                            onChange={(e) => handleUpdateCommission(parseFloat(e.target.value) || null)}
+                            placeholder={`Usa comisión de categoría en este momento`}
+                            className="commission-input"
+                          />
+                          <span className="input-suffix">%</span>
+                        </div>
+                        <span className="field-help">
+                          {productCommission.tienePersonalizada 
+                            ? `Comisión personalizada: ${productCommission.personalizada}%` 
+                            : `Comisión heredada de categoría "${product.categoria}": ${productCommission.categoria}%`
+                          }
+                        </span>
+                      </div>
+
+                      {productCommission.tienePersonalizada && (
+                        <Button 
+                          variant="secondary"
+                          size="small"
+                          onClick={removePersonalizedCommission}
+                        >
+                          Usar Comisión de Categoría
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Vista previa de comisión */}
+                    <div className="commission-preview">
+                      <h5>💡 Vista Previa de Comisión</h5>
+                      <div className="preview-calculations">
+                        <div className="calculation-row">
+                          <span className="calc-label">Precio del producto:</span>
+                          <span className="calc-value">{formatPrice(product.precio)}</span>
+                        </div>
+                        <div className="calculation-row">
+                          <span className="calc-label">Comisión aplicada ({productCommission.aplicada}%):</span>
+                          <span className="calc-value commission">-{formatPrice(product.precio * productCommission.aplicada / 100)}</span>
+                        </div>
+                        <div className="calculation-row total">
+                          <span className="calc-label">Ganancia para el seller:</span>
+                          <span className="calc-value">{formatPrice(product.precio - (product.precio * productCommission.aplicada / 100))}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="commission-actions">
+                      <Button 
+                        variant="primary"
+                        onClick={() => {
+                          alert(`✅ Comisión ${productCommission.tienePersonalizada ? 'personalizada' : 'de categoría'} guardada: ${productCommission.aplicada}%`);
+                        }}
+                      >
+                        Guardar Configuración
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información adicional */}
+                
+              </div>
+            )}
+            
+            {activeTab === 'variants' && product.hasVariants && (
+              <div className="variants-content">
+                <div className="variants-header">
+                  <h3>Variantes del Producto</h3>
+                  <p>Este producto tiene {product.variants.length} variantes disponibles</p>
+                </div>
+                
+                <div className="variants-grid">
+                  {product.variants.map(variant => (
+                    <div key={variant.id} className="variant-card">
+                      <div className="variant-image">
+                        <img src={variant.imagen} alt={variant.nombre} />
+                      </div>
+                      
+                      <div className="variant-info">
+                        <div className="variant-header">
+                          <h4 className="variant-name">{variant.nombre}</h4>
+                          <span className="variant-sku">{variant.sku}</span>
+                        </div>
+                        
+                        <div className="variant-attributes">
+                          {Object.entries(variant.atributos).map(([key, value]) => (
+                            <div key={key} className="variant-attribute">
+                              <span className="attr-label">{key}:</span>
+                              <span className="attr-value">{value}</span>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="variant-details">
+                          <div className="variant-price">
+                            <span className="price-label">Precio:</span>
+                            <span className="price-value">{formatPrice(variant.precio)}</span>
+                          </div>
+                          
+                          <div className="variant-stock">
+                            <span className="stock-label">Stock:</span>
+                            <span className={`stock-value ${variant.stock < 10 ? 'low-stock' : variant.stock < 20 ? 'medium-stock' : 'good-stock'}`}>
+                              {variant.stock} unidades
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Resumen de variantes */}
+                <div className="variants-summary">
+                  <div className="summary-stats">
+                    <div className="summary-stat">
+                      <span className="stat-label">Total de variantes:</span>
+                      <span className="stat-value">{product.variants.length}</span>
+                    </div>
+                    <div className="summary-stat">
+                      <span className="stat-label">Stock total:</span>
+                      <span className="stat-value">
+                        {product.variants.reduce((total, variant) => total + variant.stock, 0)} unidades
+                      </span>
+                    </div>
+                    <div className="summary-stat">
+                      <span className="stat-label">Rango de precios:</span>
+                      <span className="stat-value">
+                        {formatPrice(Math.min(...product.variants.map(v => v.precio)))} - {formatPrice(Math.max(...product.variants.map(v => v.precio)))}
+                      </span>
                     </div>
                   </div>
                 </div>

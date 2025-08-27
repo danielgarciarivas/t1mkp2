@@ -269,14 +269,14 @@ const Payments = () => {
                         size="small"
                         onClick={() => handleViewLiquidation(liquidation.liquidationNumber)}
                       >
-                        Ver Sellers
+                        Ver Detalle
                       </Button>
                       <Button
                         variant="outline"
                         size="small"
                         onClick={() => handleDownloadLiquidation(liquidation.liquidationNumber)}
                       >
-                        📁 ZIP
+                        Descargar
                       </Button>
                     </div>
                   </div>

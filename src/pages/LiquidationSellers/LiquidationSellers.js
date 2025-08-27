@@ -11,6 +11,7 @@ const LiquidationSellers = () => {
   const [sellers, setSellers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sellersPerPage] = useState(5);
+  const [showConfirmPayment, setShowConfirmPayment] = useState(false);
 
   useEffect(() => {
     loadLiquidationSellers();
@@ -27,7 +28,14 @@ const LiquidationSellers = () => {
         status: 'en_curso',
         totalSellers: 3,
         totalOrders: 105,
-        totalNetToLiquidate: 252520
+        totalNetToLiquidate: 252520,
+        summary: {
+          grossSales: 374690,
+          marketplaceCommission: 37469,
+          guidesCommission: 18500,
+          adjustments: 0,
+          netToLiquidate: 318721
+        }
       };
 
       const mockSellers = [
@@ -177,6 +185,63 @@ const LiquidationSellers = () => {
     alert(`Descargando ${fileName}`);
   };
 
+  const handleMarkLiquidationAsPaid = () => {
+    setShowConfirmPayment(true);
+  };
+
+  const confirmMarkLiquidationAsPaid = () => {
+    console.log(`Marcando como pagada la liquidación ${liquidationNumber}`);
+    // Aquí iría la lógica para marcar como pagada toda la liquidación
+    setLiquidationData(prev => ({
+      ...prev,
+      status: 'pagada'
+    }));
+    
+    // Marcar todos los sellers como pagados también
+    setSellers(prev => prev.map(seller => ({
+      ...seller,
+      status: 'pagada'
+    })));
+    
+    setShowConfirmPayment(false);
+    alert('Liquidación completa marcada como pagada');
+  };
+
+  const handleMarkSellerAsPaid = (sellerId, sellerName) => {
+    console.log(`Marcando como pagado el seller ${sellerId}`);
+    // Marcar el seller específico como pagado
+    setSellers(prev => prev.map(seller => 
+      seller.sellerId === sellerId 
+        ? { ...seller, status: 'pagada' }
+        : seller
+    ));
+    
+    // Verificar si todos los sellers están pagados
+    const updatedSellers = sellers.map(seller => 
+      seller.sellerId === sellerId 
+        ? { ...seller, status: 'pagada' }
+        : seller
+    );
+    
+    const allPaid = updatedSellers.every(seller => seller.status === 'pagada');
+    const somePaid = updatedSellers.some(seller => seller.status === 'pagada');
+    
+    // Actualizar el estado de la liquidación según la lógica de pagos parciales
+    let newLiquidationStatus = 'en_curso';
+    if (allPaid) {
+      newLiquidationStatus = 'pagada';
+    } else if (somePaid) {
+      newLiquidationStatus = 'parcialmente_pagada';
+    }
+    
+    setLiquidationData(prev => ({
+      ...prev,
+      status: newLiquidationStatus
+    }));
+    
+    alert(`Seller ${sellerName} marcado como pagado`);
+  };
+
   // Paginación
   const indexOfLastSeller = currentPage * sellersPerPage;
   const indexOfFirstSeller = indexOfLastSeller - sellersPerPage;
@@ -202,6 +267,7 @@ const LiquidationSellers = () => {
     const statusConfig = {
       'en_curso': { label: 'En Curso', class: 'status-pending' },
       'pagada': { label: 'Pagada', class: 'status-completed' },
+      'parcialmente_pagada': { label: 'Parcialmente Pagada', class: 'status-partial' },
       'error': { label: 'Error', class: 'status-error' },
       'vencida': { label: 'Vencida', class: 'status-expired' }
     };
@@ -269,15 +335,52 @@ const LiquidationSellers = () => {
             >
               Descargar Liquidación Completa
             </Button>
-            
+            <Button 
+              variant="primary" 
+              size="small"
+              onClick={handleMarkLiquidationAsPaid}
+              disabled={liquidationData.status === 'pagada'}
+            >
+              {liquidationData.status === 'pagada' ? 'Pagada' : 'Marcar como Pagada'}
+            </Button>
           </div>
         </div>
         
         {/* Summary Card */}
         <div className="liquidation-summary-card">
-          <div className="summary-amount">
-            <span className="summary-label">Total Neto a Liquidar</span>
-            <span className="summary-value">{formatPrice(liquidationData.totalNetToLiquidate)}</span>
+          <div className="summary-main">
+            <div className="summary-title">
+              <span className="summary-label">Total Neto a Liquidar</span>
+              <span className="summary-value">{formatPrice(liquidationData.summary.netToLiquidate)}</span>
+            </div>
+            
+            <div className="summary-details">
+              <div className="detail-item">
+                <span className="detail-label">Ventas Brutas:</span>
+                <span className="detail-amount gross">{formatPrice(liquidationData.summary.grossSales)}</span>
+              </div>
+              <span className="detail-separator">•</span>
+              <div className="detail-item">
+                <span className="detail-label">Comisión Marketplace:</span>
+                <span className="detail-amount deduction">-{formatPrice(liquidationData.summary.marketplaceCommission)}</span>
+              </div>
+              <span className="detail-separator">•</span>
+              <div className="detail-item">
+                <span className="detail-label">Cobro x envío:</span>
+                <span className="detail-amount deduction">-{formatPrice(liquidationData.summary.guidesCommission)}</span>
+              </div>
+              {liquidationData.summary.adjustments !== 0 && (
+                <>
+                  <span className="detail-separator">•</span>
+                  <div className="detail-item">
+                    <span className="detail-label">Ajustes:</span>
+                    <span className={`detail-amount ${liquidationData.summary.adjustments > 0 ? 'positive' : 'negative'}`}>
+                      {liquidationData.summary.adjustments > 0 ? '+' : ''}{formatPrice(liquidationData.summary.adjustments)}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -326,14 +429,22 @@ const LiquidationSellers = () => {
                       size="small"
                       onClick={() => handleViewLiquidationDetail(seller.sellerId, seller.sellerName)}
                     >
-                      Ver Pedidos
+                      Ver Detalle
                     </Button>
                     <Button
                       variant="outline"
                       size="small"
                       onClick={() => handleDownloadSellerLiquidation(seller.sellerId, seller.sellerName)}
                     >
-                      📁 ZIP
+                       Descargar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="small"
+                      onClick={() => handleMarkSellerAsPaid(seller.sellerId, seller.sellerName)}
+                      disabled={seller.status === 'pagada'}
+                    >
+                      {seller.status === 'pagada' ? 'Pagada' : 'Marcar Pagada'}
                     </Button>
                   </div>
                 </div>
@@ -396,6 +507,42 @@ const LiquidationSellers = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmPayment && (
+        <div className="modal-overlay" onClick={() => setShowConfirmPayment(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirmar Pago de Liquidación</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowConfirmPayment(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>¿Estás seguro de que quieres marcar como pagada toda la liquidación <strong>{liquidationData.liquidationNumber}</strong>?</p>
+              <p>Total a liquidar: <strong>{formatPrice(liquidationData.summary.netToLiquidate)}</strong></p>
+              <p>Esto marcará como pagados todos los sellers de esta liquidación.</p>
+            </div>
+            <div className="modal-footer">
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowConfirmPayment(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={confirmMarkLiquidationAsPaid}
+              >
+                Confirmar Pago Completo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -9,7 +9,6 @@ const T1_CATEGORY_TAXONOMY = [
   {
     id: 'electronica',
     name: 'Electrónicos y Tecnología',
-    icon: '📱',
     children: [
       {
         id: 'smartphones',
@@ -44,7 +43,6 @@ const T1_CATEGORY_TAXONOMY = [
   {
     id: 'hogar',
     name: 'Hogar y Jardín',
-    icon: '🏠',
     children: [
       {
         id: 'muebles',
@@ -78,7 +76,6 @@ const T1_CATEGORY_TAXONOMY = [
   {
     id: 'moda',
     name: 'Moda y Accesorios',
-    icon: '👗',
     children: [
       {
         id: 'ropa-dama',
@@ -114,7 +111,6 @@ const T1_CATEGORY_TAXONOMY = [
   {
     id: 'deportes',
     name: 'Deportes y Fitness',
-    icon: '⚽',
     children: [
       {
         id: 'fitness',
@@ -138,7 +134,6 @@ const T1_CATEGORY_TAXONOMY = [
   {
     id: 'belleza',
     name: 'Belleza y Cuidado Personal',
-    icon: '💄',
     children: [
       {
         id: 'maquillaje',
@@ -178,6 +173,24 @@ const SellerDetail = () => {
   const [allowedCategories, setAllowedCategories] = useState(new Set());
   const [canSellInAllCategories, setCanSellInAllCategories] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
+  
+  // Opciones de frecuencia de liquidación (igual a PaymentConfig)
+  const frequencyOptions = [
+    { value: 'diario', label: 'Diario', description: 'Liquidaciones procesadas cada día' },
+    { value: 'semanal', label: 'Semanal', description: 'Liquidaciones procesadas una vez por semana' },
+    { value: 'mensual', label: 'Mensual', description: 'Liquidaciones procesadas una vez por mes' }
+  ];
+
+  const weekDayOptions = [
+    { value: 'lunes', label: 'Lunes' },
+    { value: 'martes', label: 'Martes' },
+    { value: 'miercoles', label: 'Miércoles' },
+    { value: 'jueves', label: 'Jueves' },
+    { value: 'viernes', label: 'Viernes' },
+    { value: 'sabado', label: 'Sábado' },
+    { value: 'domingo', label: 'Domingo' }
+  ];
+  
 
   useEffect(() => {
     loadSellerDetail();
@@ -435,24 +448,57 @@ const SellerDetail = () => {
       const isParentLevel = level === 0;
       
       return (
-        <div key={category.id} className={`category-item level-${level}`}>
+        <div key={category.id} className={`category-item level-${level} ${hasChildren ? 'has-children' : 'leaf-node'}`}>
           <div className="category-row">
             <div className="category-content">
-              {hasChildren && (
+              {/* Indentación visual basada en nivel */}
+              <div className="category-indent" style={{ width: `${level * 20}px` }}></div>
+              
+              {/* Botón de expansión o indicador de hoja */}
+              {hasChildren ? (
                 <button
-                  className={`expand-button ${isExpanded ? 'expanded' : ''}`}
+                  className={`expand-button ${isExpanded ? 'expanded' : 'collapsed'}`}
                   onClick={() => handleExpandCategory(category.id)}
+                  aria-label={isExpanded ? 'Contraer' : 'Expandir'}
                 >
-                  {isExpanded ? '▼' : '▶'}
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d={isExpanded 
+                      ? "M3 6l5 5 5-5H3z" 
+                      : "M6 3l5 5-5 5V3z"
+                    } />
+                  </svg>
                 </button>
+              ) : (
+                <div className="leaf-indicator">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <circle cx="8" cy="8" r="2" />
+                  </svg>
+                </div>
               )}
               
-              {!hasChildren && <div className="expand-spacer"></div>}
+              {/* Icono de carpeta/documento */}
+              <div className="category-type-icon">
+                {hasChildren ? (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M1.75 2A1.75 1.75 0 000 3.75v8.5C0 13.216.784 14 1.75 14h12.5A1.75 1.75 0 0016 12.25v-8.5A1.75 1.75 0 0014.25 2H9.586a.25.25 0 01-.177-.073L7.97 0.488A1.75 1.75 0 006.544 0H1.75z" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.414 2.414c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z" />
+                  </svg>
+                )}
+              </div>
               
-              <span className="category-icon">{category.icon || '📁'}</span>
+              {/* Nombre de la categoría */}
               <span className="category-name">{category.name}</span>
+              
+              {/* Contador de subcategorías */}
+              {hasChildren && (
+                <span className="children-count">({category.children.length})</span>
+              )}
             </div>
             
+            {/* Checkbox solo para categorías padre */}
             {isParentLevel && (
               <div className="category-selection">
                 <label className="category-checkbox">
@@ -468,6 +514,7 @@ const SellerDetail = () => {
             )}
           </div>
           
+          {/* Subcategorías */}
           {hasChildren && isExpanded && (
             <div className="category-children">
               {renderCategoryTree(category.children, level + 1)}
@@ -477,6 +524,7 @@ const SellerDetail = () => {
       );
     });
   };
+
 
   if (loading) {
     return (
@@ -551,7 +599,17 @@ const SellerDetail = () => {
                 {seller.tipoPersona} • {seller.tipoSociedad}
               </p>
             </div>
+             <div class="header-status_seller">
+             <Button 
+              variant="primary" 
+              size="small"
+              
+            >
+              Ver Reportería
+            </Button>
+            </div>
           </div>
+          
         </div>
 
         {/* Acciones para sellers pendientes */}
@@ -955,193 +1013,8 @@ const SellerDetail = () => {
                     </div>
                   )}
                 </div>
-
-               
-              </div>
-
-              {/* Configuración de Modo de Liquidación */}
-              <div className="config-item">
-                <div className="config-header">
-                  <div className="config-info">
-                    <h4>Modo de Liquidación</h4>
-                    <p className="config-description">
-                      Configura si las liquidaciones para este seller se procesan automáticamente según la programación o requieren aprobación manual. (si se configura esta opción, tendrá mas prioridad sobre la configuracion global)
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="liquidation-mode-options">
-                  <div className="mode-option-group">
-                    <label className={`mode-option ${liquidationMode === 'automatic' ? 'selected' : ''}`}>
-                      <input 
-                        type="radio" 
-                        name="liquidationMode"
-                        value="automatic"
-                        checked={liquidationMode === 'automatic'}
-                        onChange={(e) => handleLiquidationModeChange(e.target.value)}
-                      />
-                      <div className="mode-content">
-                        <div className="mode-header">
-                          <span className="mode-icon">🤖</span>
-                          <span className="mode-title">Automático</span>
-                        </div>
-                        <p className="mode-description">
-                          Las liquidaciones se procesan automáticamente según la frecuencia configurada en el sistema.
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className={`mode-option ${liquidationMode === 'manual' ? 'selected' : ''}`}>
-                      <input 
-                        type="radio" 
-                        name="liquidationMode"
-                        value="manual"
-                        checked={liquidationMode === 'manual'}
-                        onChange={(e) => handleLiquidationModeChange(e.target.value)}
-                      />
-                      <div className="mode-content">
-                        <div className="mode-header">
-                          <span className="mode-icon">👤</span>
-                          <span className="mode-title">Manual por Aprobación</span>
-                        </div>
-                        <p className="mode-description">
-                          Las liquidaciones requieren aprobación manual antes de ser procesadas.
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Configuración de Frecuencia de Liquidación */}
-                <div className="liquidation-frequency-section">
-                  <h4>Frecuencia de Liquidación</h4><br></br>
-                  <div className="frequency-options">
-                    <label className={`frequency-option ${liquidationFrequency === 'diario' ? 'selected' : ''}`}>
-                      <input
-                        type="radio"
-                        name="liquidationFrequency"
-                        value="diario"
-                        checked={liquidationFrequency === 'diario'}
-                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
-                      />
-                      <div className="frequency-content">
-                        <span className="frequency-title">Diario</span>
-                        <span className="frequency-description">- Liquidaciones procesadas cada día</span>
-                      </div>
-                    </label>
-
-                    <label className={`frequency-option ${liquidationFrequency === 'semanal' ? 'selected' : ''}`}>
-                      <input
-                        type="radio"
-                        name="liquidationFrequency"
-                        value="semanal"
-                        checked={liquidationFrequency === 'semanal'}
-                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
-                      />
-                      <div className="frequency-content">
-                        <span className="frequency-title">Semanal</span>
-                        <span className="frequency-description">- Liquidaciones procesadas una vez por semana</span>
-                      </div>
-                    </label>
-
-                    <label className={`frequency-option ${liquidationFrequency === 'mensual' ? 'selected' : ''}`}>
-                      <input
-                        type="radio"
-                        name="liquidationFrequency"
-                        value="mensual"
-                        checked={liquidationFrequency === 'mensual'}
-                        onChange={(e) => handleLiquidationFrequencyChange(e.target.value)}
-                      />
-                      <div className="frequency-content">
-                        <span className="frequency-title">Último día del mes</span>
-                        <span className="frequency-description"> (liquidaciones procesadas el último día de cada mes)</span>
-                      </div>
-                    </label>
-                  </div>
-                  <br></br>
-                  {/* Configuración condicional para día de la semana */}
-                  {liquidationFrequency === 'semanal' && (
-                    <div className="frequency-detail">
-                      <label htmlFor="weekDay">Día de la semana</label>
-                      <select
-                        id="weekDay"
-                        value={liquidationWeekDay}
-                        onChange={(e) => handleLiquidationWeekDayChange(e.target.value)}
-                        className="frequency-select"
-                      >
-                        <option value="">Seleccionar día</option>
-                        <option value="lunes">Lunes</option>
-                        <option value="martes">Martes</option>
-                        <option value="miércoles">Miércoles</option>
-                        <option value="jueves">Jueves</option>
-                        <option value="viernes">Viernes</option>
-                        <option value="sábado">Sábado</option>
-                        <option value="domingo">Domingo</option>
-                      </select>
-                    </div>
-                  )}
-
-                  {/* Configuración condicional para día del mes */}
-                  {liquidationFrequency === 'mensual' && (
-                    <div className="frequency-detail">
-                      <label htmlFor="monthDay">Día del mes (opcional)</label>
-                      <select
-                        id="monthDay"
-                        value={liquidationMonthDay}
-                        onChange={(e) => handleLiquidationMonthDayChange(e.target.value)}
-                        className="frequency-select"
-                      >
-                        <option value="">Último día del mes</option>
-                        {getMonthDayOptions().map(day => (
-                          <option key={day.value} value={day.value}>{day.label}</option>
-                        ))}
-                      </select>
-                      <small className="frequency-help">
-                        Si no se especifica un día, se usará el último día del mes
-                      </small>
-                    </div>
-                  )}
-                </div>
-
-                <div className={`config-status ${liquidationMode === 'automatic' ? 'auto' : 'manual'}`}>
-                  <span className="status-indicator">
-                    {liquidationMode === 'automatic' ? '🤖' : '👤'}
-                  </span>
-                  <div className="status-content">
-                    <span className="status-text">
-                      {liquidationMode === 'automatic' 
-                        ? `Modo AUTOMÁTICO - ${getNextLiquidationDate()}` 
-                        : 'Modo MANUAL - Las liquidaciones requieren aprobación previa'
-                      }
-                    </span>
-                    {liquidationMode === 'automatic' && (
-                      <small className="status-detail">
-                        Frecuencia configurada: {liquidationFrequency}
-                      </small>
-                    )}
-                  </div>
-                </div>
-
-                {liquidationMode === 'manual' && (
-                  <div className="info-notice">
-                    <span className="info-icon">ℹ️</span>
-                    <div className="info-text">
-                      <strong>Información:</strong> Con el modo manual activado, tendrás que aprobar cada liquidación individualmente desde el módulo de pagos.
-                    </div>
-                  </div>
-                )}
-
-                {liquidationMode === 'automatic' && (
-                  <div className="info-notice automatic">
-                    <span className="info-icon">⚙️</span>
-                    <div className="info-text">
-                      <strong>Configuración Individual:</strong> Esta configuración tiene prioridad sobre la configuración global del sistema. Las liquidaciones para este seller seguirán esta frecuencia específica..
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Botón de guardar configuración al final */}
+               </div>
+                {/* Botón de guardar configuración al final */}
                <div className="categories-actions">
                   <Button 
                     variant="primary"

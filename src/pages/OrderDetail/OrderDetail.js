@@ -370,12 +370,7 @@ const OrderDetail = () => {
           
           {order.estado === 'recibido' && (
             <>
-              <Button 
-                variant="success"
-                onClick={() => handleOrderAction('validate')}
-              >
-                Validar Pedido
-              </Button>
+              
               <Button 
                 variant="danger"
                 onClick={() => handleOrderAction('cancel')}

@@ -1,14 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 import './Contratos.css';
 
 const Contratos = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  
   const [loading, setLoading] = useState(true);
   const [contratos, setContratos] = useState([]);
-  const [showEditor, setShowEditor] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [contractType, setContractType] = useState(null); // 'manual' or 'pdf'
+  const [showManualEditor, setShowManualEditor] = useState(false);
   const [selectedContrato, setSelectedContrato] = useState(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [editorContent, setEditorContent] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [contractsPerPage] = useState(10);
+  
+  // Form states for manual contracts
+  const [contractForm, setContractForm] = useState({
+    nombre: '',
+    tags: [],
+    contenido: '',
+    isMainContract: false,
+    newTag: ''
+  });
+  
+  // PDF upload states
+  const [pdfForm, setPdfForm] = useState({
+    nombre: '',
+    tags: [],
+    archivo: null,
+    isMainContract: false,
+    newTag: ''
+  });
 
   useEffect(() => {
     loadContratos();
@@ -17,26 +41,133 @@ const Contratos = () => {
   const loadContratos = async () => {
     setLoading(true);
     
-    // Simular carga de contratos
+    // Simular carga de contratos con nuevo formato
     setTimeout(() => {
       const mockContratos = [
         {
           id: 1,
+          numeroContrato: 'CONT-2024-001',
           nombre: 'Contrato Estándar Marketplace',
-          descripcion: 'Plantilla base para marketplaces generales',
-          tipo: 'template',
-          version: '1.0',
-          fechaCreacion: '2024-01-15T10:30:00Z',
-          fechaActualizacion: '2024-02-10T14:20:00Z',
-          estado: 'activo',
-          marketplaces: ['Sears'],
-          clausulas: {
-            comisiones: true,
-            terminos_pago: true,
-            politicas_devolucion: true,
-            responsabilidades: true,
-            confidencialidad: true
-          }
+          tipo: 'manual', // 'manual' o 'pdf'
+          fechaUltimaActualizacion: '2024-02-10T14:20:00Z',
+          tags: ['general', 'comisiones', 'pagos'],
+          isMainContract: true,
+          versiones: [
+            {
+              version: '1.2',
+              fecha: '2024-02-10T14:20:00Z',
+              cambios: 'Actualización de cláusulas de comisión',
+              contenido: 'Contenido del contrato v1.2...'
+            },
+            {
+              version: '1.1',
+              fecha: '2024-01-20T10:30:00Z',
+              cambios: 'Corrección de términos legales',
+              contenido: 'Contenido del contrato v1.1...'
+            },
+            {
+              version: '1.0',
+              fecha: '2024-01-15T10:30:00Z',
+              cambios: 'Versión inicial',
+              contenido: 'Contenido inicial del contrato...'
+            }
+          ],
+          contenidoActual: `CONTRATO DE PRESTACIÓN DE SERVICIOS DE MARKETPLACE
+
+Entre T1 Marketplace, S.A. de C.V., en adelante denominada "EL MARKETPLACE", y el vendedor registrado, en adelante denominado "EL SELLER"
+
+CLÁUSULAS
+
+PRIMERA.- OBJETO DEL CONTRATO
+EL MARKETPLACE proporcionará al SELLER una plataforma digital para la comercialización de productos, facilitando la conexión entre el SELLER y los compradores finales.
+
+SEGUNDA.- COMISIONES
+EL MARKETPLACE cobrará una comisión del 12% sobre el valor total de cada venta realizada a través de la plataforma, más IVA correspondiente.
+
+TERCERA.- TÉRMINOS DE PAGO
+Los pagos se realizarán quincenalmente, los días 15 y último de cada mes, mediante transferencia bancaria a la cuenta registrada por EL SELLER.
+
+CUARTA.- POLÍTICAS DE DEVOLUCIÓN
+EL SELLER acepta y se compromete a cumplir con las políticas de devolución establecidas por EL MARKETPLACE, incluyendo reembolsos dentro de 30 días naturales.
+
+QUINTA.- RESPONSABILIDADES
+EL SELLER es responsable de la calidad, descripción veraz y entrega oportuna de los productos ofrecidos en la plataforma.
+
+SEXTA.- CONFIDENCIALIDAD
+Ambas partes se comprometen a mantener la confidencialidad de la información comercial intercambiada durante la vigencia del presente contrato.`
+        },
+        {
+          id: 2,
+          numeroContrato: 'CONT-2024-002',
+          nombre: 'Contrato Premium Sellers',
+          tipo: 'pdf',
+          fechaUltimaActualizacion: '2024-02-05T09:15:00Z',
+          tags: ['premium', 'exclusivo', 'alto-volumen'],
+          isMainContract: false,
+          versiones: [
+            {
+              version: '2.1',
+              fecha: '2024-02-05T09:15:00Z',
+              cambios: 'Actualización de cláusulas de exclusividad',
+              pdfUrl: '/uploads/contratos/premium_v2.1.pdf'
+            },
+            {
+              version: '2.0',
+              fecha: '2024-01-20T14:30:00Z',
+              cambios: 'Revisión mayor - nuevas políticas premium',
+              pdfUrl: '/uploads/contratos/premium_v2.0.pdf'
+            },
+            {
+              version: '1.0',
+              fecha: '2024-01-10T10:00:00Z',
+              cambios: 'Carga inicial de contrato PDF',
+              pdfUrl: '/uploads/contratos/premium_v1.0.pdf'
+            }
+          ],
+          pdfUrl: '/uploads/contratos/premium_v2.1.pdf'
+        },
+        {
+          id: 3,
+          numeroContrato: 'CONT-2024-003',
+          nombre: 'Contrato Categoría Electrónicos',
+          tipo: 'manual',
+          fechaUltimaActualizacion: '2024-01-30T16:45:00Z',
+          tags: ['tecnología', 'electrónicos', 'garantías-extendidas'],
+          isMainContract: false,
+          versiones: [
+            {
+              version: '1.0',
+              fecha: '2024-01-30T16:45:00Z',
+              cambios: 'Versión inicial',
+              contenido: 'Contrato específico para productos electrónicos...'
+            }
+          ],
+          contenidoActual: `CONTRATO ESPECÍFICO PARA PRODUCTOS ELECTRÓNICOS
+
+Entre T1 Marketplace, S.A. de C.V. y EL SELLER para la comercialización de productos electrónicos
+
+DISPOSICIONES ESPECIALES
+
+PRIMERA.- CATEGORÍAS APLICABLES
+Este contrato aplica exclusivamente para: smartphones, laptops, tablets, accesorios electrónicos, componentes de computadora y dispositivos wearables.
+
+SEGUNDA.- GARANTÍAS EXTENDIDAS
+Todos los productos electrónicos deben incluir garantía mínima de 12 meses, extendible hasta 24 meses para productos premium.
+
+TERCERA.- CERTIFICACIONES REQUERIDAS
+EL SELLER debe proporcionar certificaciones FCC, CE, NOM y todas las aplicables según normativa mexicana vigente.
+
+CUARTA.- COMISIONES DIFERENCIADAS
+- Smartphones y tablets: 8%
+- Laptops y computadoras: 6%
+- Accesorios: 15%
+- Componentes especializados: 10%
+
+QUINTA.- POLÍTICA DE DEVOLUCIONES
+Período extendido de 45 días para devoluciones, considerando la naturaleza técnica de los productos.
+
+SEXTA.- SOPORTE TÉCNICO
+EL SELLER debe proporcionar soporte técnico especializado durante las primeras 72 horas post-venta.`
         }
       ];
       
@@ -45,68 +176,128 @@ const Contratos = () => {
     }, 1000);
   };
 
-  const handleCrearContrato = () => {
-    setSelectedContrato(null);
-    setEditorContent('');
-    setShowEditor(true);
+  const handleCreateContract = () => {
+    setShowCreateModal(true);
+  };
+  
+  const handleSelectContractType = (type) => {
+    setContractType(type);
+    setShowCreateModal(false);
+    
+    if (type === 'manual') {
+      setShowManualEditor(true);
+      setContractForm({
+        nombre: '',
+        tags: [],
+        contenido: '',
+        isMainContract: false,
+        newTag: ''
+      });
+    } else if (type === 'pdf') {
+      // PDF upload form will be shown in the modal
+      setPdfForm({
+        nombre: '',
+        tags: [],
+        archivo: null,
+        isMainContract: false,
+        newTag: ''
+      });
+    }
   };
 
-  const handleEditarContrato = (contrato) => {
-    setSelectedContrato(contrato);
-    setEditorContent(generateContractContent(contrato));
-    setShowEditor(true);
+  const handleViewContract = (contrato) => {
+    navigate(`/configuracion/contratos/${contrato.id}`, { 
+      state: { 
+        contract: contrato,
+        canEdit: contrato.tipo === 'manual'
+      }
+    });
   };
 
-  const handlePreview = () => {
-    setShowPreview(true);
+  const handleSaveManualContract = () => {
+    if (!contractForm.nombre.trim() || !contractForm.contenido.trim()) {
+      alert('Por favor complete todos los campos requeridos');
+      return;
+    }
+    
+    const newContract = {
+      id: Date.now(),
+      numeroContrato: `CONT-2024-${String(contratos.length + 1).padStart(3, '0')}`,
+      nombre: contractForm.nombre,
+      tipo: 'manual',
+      fechaUltimaActualizacion: new Date().toISOString(),
+      tags: contractForm.tags,
+      isMainContract: contractForm.isMainContract,
+      versiones: [{
+        version: '1.0',
+        fecha: new Date().toISOString(),
+        cambios: 'Versión inicial',
+        contenido: contractForm.contenido
+      }],
+      contenidoActual: contractForm.contenido
+    };
+    
+    setContratos(prev => [...prev, newContract]);
+    setShowManualEditor(false);
+    alert('Contrato manual creado exitosamente');
   };
-
-  const handleGuardarContrato = () => {
-    // Simular guardado
-    console.log('Guardando contrato:', editorContent);
-    setShowEditor(false);
-    setSelectedContrato(null);
-    setEditorContent('');
+  
+  const handleUploadPDF = () => {
+    if (!pdfForm.nombre.trim() || !pdfForm.archivo) {
+      alert('Por favor complete todos los campos y seleccione un archivo PDF');
+      return;
+    }
+    
+    const newContract = {
+      id: Date.now(),
+      numeroContrato: `CONT-2024-${String(contratos.length + 1).padStart(3, '0')}`,
+      nombre: pdfForm.nombre,
+      tipo: 'pdf',
+      fechaUltimaActualizacion: new Date().toISOString(),
+      tags: pdfForm.tags,
+      isMainContract: pdfForm.isMainContract,
+      versiones: [{
+        version: '1.0',
+        fecha: new Date().toISOString(),
+        cambios: 'Carga inicial de PDF',
+        pdfUrl: URL.createObjectURL(pdfForm.archivo)
+      }],
+      pdfUrl: URL.createObjectURL(pdfForm.archivo)
+    };
+    
+    setContratos(prev => [...prev, newContract]);
+    setContractType(null);
+    alert('Contrato PDF subido exitosamente');
   };
-
-  const generateContractContent = (contrato) => {
-    return `CONTRATO DE PRESTACIÓN DE SERVICIOS DE MARKETPLACE
-
-Entre ${contrato?.nombre || '[NOMBRE DEL MARKETPLACE]'} y el SELLER
-
-CLÁUSULAS:
-
-1. OBJETO DEL CONTRATO
-El presente contrato tiene por objeto establecer los términos y condiciones bajo los cuales el Seller podrá ofrecer sus productos a través de la plataforma del Marketplace.
-
-2. COMISIONES
-${contrato?.clausulas?.comisiones ? 'El Marketplace cobrará una comisión sobre las ventas realizadas según la estructura definida en el anexo de comisiones.' : ''}
-
-3. TÉRMINOS DE PAGO
-${contrato?.clausulas?.terminos_pago ? 'Los pagos se realizarán según el ciclo de liquidaciones establecido, con un período de retención de seguridad.' : ''}
-
-4. POLÍTICAS DE DEVOLUCIÓN
-${contrato?.clausulas?.politicas_devolucion ? 'Se aplicarán las políticas de devolución estándar del marketplace, con excepciones según la categoría de producto.' : ''}
-
-5. RESPONSABILIDADES
-${contrato?.clausulas?.responsabilidades ? 'Cada parte asume las responsabilidades específicas definidas en este contrato.' : ''}
-
-${contrato?.clausulas?.confidencialidad ? `
-
-6. CONFIDENCIALIDAD
-Las partes se comprometen a mantener la confidencialidad de la información intercambiada.` : ''}
-
-${contrato?.clausulas?.exclusividad ? `
-
-7. EXCLUSIVIDAD
-Términos especiales de exclusividad para sellers premium.` : ''}
-
-${contrato?.clausulas?.garantias_especiales ? `
-
-8. GARANTÍAS ESPECIALES
-Garantías adicionales aplicables a productos electrónicos y tecnológicos.` : ''}
-
-Firmado digitalmente el [FECHA] por [SELLER] y ${contrato?.nombre || '[MARKETPLACE]'}`;
+  
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setPdfForm(prev => ({ ...prev, archivo: file }));
+    } else {
+      alert('Por favor seleccione un archivo PDF válido');
+    }
+  };
+  
+  const addTag = (isManual = true) => {
+    const form = isManual ? contractForm : pdfForm;
+    const setForm = isManual ? setContractForm : setPdfForm;
+    
+    if (form.newTag.trim() && !form.tags.includes(form.newTag.trim())) {
+      setForm(prev => ({
+        ...prev,
+        tags: [...prev.tags, prev.newTag.trim()],
+        newTag: ''
+      }));
+    }
+  };
+  
+  const removeTag = (tagToRemove, isManual = true) => {
+    const setForm = isManual ? setContractForm : setPdfForm;
+    setForm(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
   };
 
   const formatDate = (dateString) => {
@@ -114,27 +305,40 @@ Firmado digitalmente el [FECHA] por [SELLER] y ${contrato?.nombre || '[MARKETPLA
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
-
-  const getEstadoBadge = (estado) => {
-    const badges = {
-      activo: 'estado-activo',
-      borrador: 'estado-borrador',
-      inactivo: 'estado-inactivo'
-    };
-    return badges[estado] || 'estado-borrador';
+  
+  const getCurrentVersion = (contract) => {
+    return contract.versiones?.[0]?.version || '1.0';
   };
-
-  const getTipoBadge = (tipo) => {
-    const tipos = {
-      template: { label: 'Plantilla', class: 'tipo-template' },
-      premium: { label: 'Premium', class: 'tipo-premium' },
-      categoria: { label: 'Categoría', class: 'tipo-categoria' }
-    };
-    return tipos[tipo] || { label: 'Estándar', class: 'tipo-template' };
+  
+  const getContractTypeBadge = (tipo) => {
+    return tipo === 'pdf' ? (
+      <span className="type-badge type-pdf">PDF</span>
+    ) : (
+      <span className="type-badge type-manual">Manual</span>
+    );
   };
+  
+  const getMainContractBadge = (isMain) => {
+    return isMain ? (
+      <span className="main-badge">Principal</span>
+    ) : null;
+  };
+  
+  // Rich text editor functions
+  const applyFormatting = (command) => {
+    document.execCommand(command, false, null);
+  };
+  
+  // Pagination
+  const indexOfLastContract = currentPage * contractsPerPage;
+  const indexOfFirstContract = indexOfLastContract - contractsPerPage;
+  const currentContracts = contratos.slice(indexOfFirstContract, indexOfLastContract);
+  const totalPages = Math.ceil(contratos.length / contractsPerPage);
 
   if (loading) {
     return (
@@ -153,158 +357,413 @@ Firmado digitalmente el [FECHA] por [SELLER] y ${contrato?.nombre || '[MARKETPLA
         <div className="module-title-section">
           <h1 className="module-title">Gestión de Contratos</h1>
           <p className="module-subtitle">
-            Administración de acuerdos legales y comerciales con interfaz visual
+            Administra contratos PDF y manuales con sistema de versiones y tags
           </p>
         </div>
         
         <div className="module-actions">
           <Button 
             variant="primary"
-            onClick={handleCrearContrato}
+            onClick={handleCreateContract}
           >
-            + Crear Nuevo Contrato
+            + Crear Contrato
           </Button>
         </div>
       </div>
 
-      {!showEditor ? (
-        <div className="contratos-section">
-          <div className="contratos-grid">
-            {contratos.map((contrato) => {
-              const tipoBadge = getTipoBadge(contrato.tipo);
-              
-              return (
-                <div key={contrato.id} className="contrato-card">
-                  <div className="contrato-header">
-                    <div className="contrato-title">
-                      <h3>{contrato.nombre}</h3>
-                      <p>{contrato.descripcion}</p>
-                    </div>
-                    <div className="contrato-badges">
-                      <span className={`estado-badge ${getEstadoBadge(contrato.estado)}`}>
-                        {contrato.estado}
-                      </span>
-                      <span className={`tipo-badge ${tipoBadge.class}`}>
-                        {tipoBadge.label}
-                      </span>
+      {/* Contracts Table */}
+      <div className="contracts-content">
+        <div className="contracts-table-container">
+          <div className="contracts-table">
+            <div className="table-header-row">
+              <div className="table-header-cell">Número de Contrato</div>
+              <div className="table-header-cell">Nombre del Contrato</div>
+              <div className="table-header-cell">Fecha Última Actualización</div>
+              <div className="table-header-cell">Tipo</div>
+              <div className="table-header-cell">Tags</div>
+              <div className="table-header-cell">Acciones</div>
+            </div>
+            
+            {loading ? (
+              <div className="table-loading">
+                <div className="loading-spinner"></div>
+                <p>Cargando contratos...</p>
+              </div>
+            ) : currentContracts.length === 0 ? (
+              <div className="table-empty">
+                <p>No hay contratos registrados</p>
+                <Button 
+                  variant="primary" 
+                  size="small"
+                  onClick={handleCreateContract}
+                >
+                  Crear Primer Contrato
+                </Button>
+              </div>
+            ) : (
+              currentContracts.map((contrato) => (
+                <div key={contrato.id} className="table-row">
+                  <div className="table-cell">
+                    <div className="contract-number">
+                      <span className="number">{contrato.numeroContrato}</span>
+                      {getMainContractBadge(contrato.isMainContract)}
                     </div>
                   </div>
-
-                  <div className="contrato-info">
-                    <div className="info-row">
-                      <span className="info-label">Versión:</span>
-                      <span className="info-value">v{contrato.version}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="info-label">Última actualización:</span>
-                      <span className="info-value">{formatDate(contrato.fechaActualizacion)}</span>
-                    </div>
-                    <div className="info-row">
-                      <span className="info-label">Marketplaces:</span>
-                      <span className="info-value">{contrato.marketplaces.join(', ')}</span>
+                  <div className="table-cell">
+                    <div className="contract-name">
+                      <span className="name">{contrato.nombre}</span>
+                      <span className="version">v{getCurrentVersion(contrato)}</span>
                     </div>
                   </div>
-
-                  <div className="clausulas-preview">
-                    <h4>Cláusulas incluidas:</h4>
-                    <div className="clausulas-list">
-                      {Object.entries(contrato.clausulas).filter(([_, incluida]) => incluida).map(([clausula, _]) => (
-                        <span key={clausula} className="clausula-tag">
-                          {clausula.replace(/_/g, ' ')}
-                        </span>
+                  <div className="table-cell">
+                    <span className="date">{formatDate(contrato.fechaUltimaActualizacion)}</span>
+                  </div>
+                  <div className="table-cell">
+                    {getContractTypeBadge(contrato.tipo)}
+                  </div>
+                  <div className="table-cell">
+                    <div className="tags-container">
+                      {contrato.tags.slice(0, 2).map((tag, index) => (
+                        <span key={index} className="tag">{tag}</span>
                       ))}
+                      {contrato.tags.length > 2 && (
+                        <span className="tag-more">+{contrato.tags.length - 2}</span>
+                      )}
                     </div>
                   </div>
-
-                  <div className="contrato-actions">
-                    <Button 
-                      variant="secondary" 
-                      size="small"
-                      onClick={() => handleEditarContrato(contrato)}
-                    >
-                      Editar
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="small"
-                      onClick={() => {
-                        setSelectedContrato(contrato);
-                        setEditorContent(generateContractContent(contrato));
-                        handlePreview();
-                      }}
-                    >
-                      Vista Previa
-                    </Button>
+                  <div className="table-cell">
+                    <div className="action-buttons">
+                      <Button 
+                        variant="outline" 
+                        size="small"
+                        onClick={() => handleViewContract(contrato)}
+                      >
+                        Ver Contrato
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              );
-            })}
+              ))
+            )}
+          </div>
+          
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="pagination">
+              <div className="pagination-info">
+                Mostrando {indexOfFirstContract + 1} - {Math.min(indexOfLastContract, contratos.length)} de {contratos.length} contratos
+              </div>
+              
+              <div className="pagination-controls">
+                <button 
+                  className="pagination-btn prev"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  ← Anterior
+                </button>
+                
+                <div className="pagination-pages">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(page => {
+                      if (totalPages <= 7) return true;
+                      if (page === 1 || page === totalPages) return true;
+                      if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                      return false;
+                    })
+                    .map((page, index, array) => {
+                      const prevPage = array[index - 1];
+                      const showEllipsis = prevPage && page - prevPage > 1;
+                      
+                      return (
+                        <React.Fragment key={page}>
+                          {showEllipsis && <span className="pagination-ellipsis">...</span>}
+                          <button
+                            className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                            onClick={() => setCurrentPage(page)}
+                          >
+                            {page}
+                          </button>
+                        </React.Fragment>
+                      );
+                    })
+                  }
+                </div>
+                
+                <button 
+                  className="pagination-btn next"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Create Contract Type Modal */}
+      {showCreateModal && (
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-content create-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Seleccionar Tipo de Contrato</h2>
+              <button 
+                className="close-button" 
+                onClick={() => setShowCreateModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="contract-type-options">
+                <div 
+                  className="contract-type-option"
+                  onClick={() => handleSelectContractType('pdf')}
+                >
+                  <div className="option-icon">📄</div>
+                  <h3>Cargar Contrato PDF</h3>
+                  <p>Sube un contrato ya elaborado en formato PDF</p>
+                </div>
+                
+                <div 
+                  className="contract-type-option"
+                  onClick={() => handleSelectContractType('manual')}
+                >
+                  <div className="option-icon">📝</div>
+                  <h3>Crear Contrato Manual</h3>
+                  <p>Crea un contrato usando el editor de texto con herramientas</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      ) : (
-        <div className="editor-section">
-          <div className="editor-header">
-            <h2>
-              {selectedContrato ? `Editando: ${selectedContrato.nombre}` : 'Crear Nuevo Contrato'}
-            </h2>
-            <div className="editor-actions">
-              <Button 
-                variant="outline"
-                onClick={handlePreview}
+      )}
+      
+      {/* PDF Upload Form */}
+      {contractType === 'pdf' && (
+        <div className="modal-overlay" onClick={() => setContractType(null)}>
+          <div className="modal-content pdf-upload-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Cargar Contrato PDF</h2>
+              <button 
+                className="close-button" 
+                onClick={() => setContractType(null)}
               >
-                Vista Previa
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Nombre del Contrato *</label>
+                <input 
+                  type="text"
+                  value={pdfForm.nombre}
+                  onChange={(e) => setPdfForm(prev => ({ ...prev, nombre: e.target.value }))}
+                  placeholder="Ej: Contrato Premium Sellers"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Archivo PDF *</label>
+                <input 
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".pdf"
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+                <div className="file-upload-area" onClick={() => fileInputRef.current?.click()}>
+                  {pdfForm.archivo ? (
+                    <div className="file-selected">
+                      <span>📄 {pdfForm.archivo.name}</span>
+                      <button 
+                        type="button" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPdfForm(prev => ({ ...prev, archivo: null }));
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="file-placeholder">
+                      <span>📄 Haz clic para seleccionar un archivo PDF</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label>Tags</label>
+                <div className="tags-input">
+                  <input 
+                    type="text"
+                    value={pdfForm.newTag}
+                    onChange={(e) => setPdfForm(prev => ({ ...prev, newTag: e.target.value }))}
+                    placeholder="Agregar tag"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag(false))}
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="small"
+                    onClick={() => addTag(false)}
+                  >
+                    Agregar
+                  </Button>
+                </div>
+                <div className="tags-list">
+                  {pdfForm.tags.map((tag, index) => (
+                    <span key={index} className="tag">
+                      {tag}
+                      <button onClick={() => removeTag(tag, false)}>×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox"
+                    checked={pdfForm.isMainContract}
+                    onChange={(e) => setPdfForm(prev => ({ ...prev, isMainContract: e.target.checked }))}
+                  />
+                  Marcar como contrato principal para Seller Center
+                </label>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <Button 
+                variant="secondary" 
+                onClick={() => setContractType(null)}
+              >
+                Cancelar
               </Button>
               <Button 
+                variant="primary" 
+                onClick={handleUploadPDF}
+              >
+                Subir Contrato
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Manual Contract Editor */}
+      {showManualEditor && (
+        <div className="editor-section">
+          <div className="editor-header">
+            <h2>Crear Contrato Manual</h2>
+            <div className="editor-actions">
+              <Button 
                 variant="primary"
-                onClick={handleGuardarContrato}
+                onClick={handleSaveManualContract}
               >
                 Guardar Contrato
               </Button>
               <Button 
                 variant="secondary"
-                onClick={() => setShowEditor(false)}
+                onClick={() => setShowManualEditor(false)}
               >
                 Cancelar
               </Button>
             </div>
           </div>
 
-          <div className="contract-editor">
-            <textarea
-              className="editor-textarea"
-              value={editorContent}
-              onChange={(e) => setEditorContent(e.target.value)}
-              placeholder="Escriba el contenido del contrato aquí..."
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Vista Previa */}
-      {showPreview && (
-        <div className="modal-overlay">
-          <div className="modal-content preview-modal">
-            <div className="modal-header">
-              <h2>Vista Previa del Contrato</h2>
-              <button 
-                className="close-button" 
-                onClick={() => setShowPreview(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="preview-content">
-                <pre>{editorContent || generateContractContent(selectedContrato)}</pre>
+          <div className="contract-form">
+            <div className="form-row">
+              <div className="form-group">
+                <label>Nombre del Contrato *</label>
+                <input 
+                  type="text"
+                  value={contractForm.nombre}
+                  onChange={(e) => setContractForm(prev => ({ ...prev, nombre: e.target.value }))}
+                  placeholder="Ej: Contrato Estándar Marketplace"
+                />
               </div>
             </div>
-            <div className="modal-footer">
-              <Button 
-                variant="secondary" 
-                onClick={() => setShowPreview(false)}
-              >
-                Cerrar
-              </Button>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Tags</label>
+                <div className="tags-input">
+                  <input 
+                    type="text"
+                    value={contractForm.newTag}
+                    onChange={(e) => setContractForm(prev => ({ ...prev, newTag: e.target.value }))}
+                    placeholder="Agregar tag"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag(true))}
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="small"
+                    onClick={() => addTag(true)}
+                  >
+                    Agregar
+                  </Button>
+                </div>
+                <div className="tags-list">
+                  {contractForm.tags.map((tag, index) => (
+                    <span key={index} className="tag">
+                      {tag}
+                      <button onClick={() => removeTag(tag, true)}>×</button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox"
+                    checked={contractForm.isMainContract}
+                    onChange={(e) => setContractForm(prev => ({ ...prev, isMainContract: e.target.checked }))}
+                  />
+                  Marcar como contrato principal para Seller Center
+                </label>
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label>Contenido del Contrato *</label>
+              <div className="rich-text-toolbar">
+                <button 
+                  type="button"
+                  className="toolbar-btn"
+                  onClick={() => applyFormatting('bold')}
+                  title="Negrita"
+                >
+                  <strong>B</strong>
+                </button>
+                <button 
+                  type="button"
+                  className="toolbar-btn"
+                  onClick={() => applyFormatting('italic')}
+                  title="Cursiva"
+                >
+                  <em>I</em>
+                </button>
+                <button 
+                  type="button"
+                  className="toolbar-btn"
+                  onClick={() => applyFormatting('underline')}
+                  title="Subrayado"
+                >
+                  <u>U</u>
+                </button>
+              </div>
+              <div 
+                className="rich-text-editor"
+                contentEditable
+                onInput={(e) => setContractForm(prev => ({ ...prev, contenido: e.target.innerText }))}
+                dangerouslySetInnerHTML={{ __html: contractForm.contenido }}
+              />
             </div>
           </div>
         </div>

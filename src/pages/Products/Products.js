@@ -219,7 +219,7 @@ const Products = () => {
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
-          <h1 className="module-title">Gestión de Productos2</h1>
+          <h1 className="module-title">Gestión de Productos</h1>
           <p className="module-subtitle">
             Revise y apruebe productos antes de su publicación
           </p>

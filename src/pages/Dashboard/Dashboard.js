@@ -402,13 +402,6 @@ const Dashboard = () => {
               onViewAll={handleViewAll}
             />
           </div>
-          
-          <div className="activity-section">
-            <ActivityFeed 
-              activities={activities}
-              loading={loading}
-            />
-          </div>
         </div>
       </div>
     </div>

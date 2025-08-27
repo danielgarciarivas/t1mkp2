@@ -16,6 +16,7 @@ import OrderDetail from './pages/OrderDetail';
 import Payments from './pages/Payments/Payments';
 import Configuracion from './pages/Configuracion/Configuracion';
 import Contratos from './pages/Configuracion/Contratos/Contratos';
+import ContractDetail from './pages/Configuracion/Contratos/ContractDetail';
 import Categorias from './pages/Configuracion/Categorias/Categorias';
 import Reglas from './pages/Configuracion/Reglas/Reglas';
 import Comisiones from './pages/Configuracion/Comisiones/Comisiones';
@@ -56,6 +57,7 @@ function App() {
             <Route path="pagos" element={<Payments />} />
             <Route path="configuracion" element={<Configuracion />} />
             <Route path="configuracion/contratos" element={<Contratos />} />
+            <Route path="configuracion/contratos/:contractId" element={<ContractDetail />} />
             <Route path="configuracion/categorias" element={<Categorias />} />
             <Route path="configuracion/reglas" element={<Reglas />} />
             <Route path="configuracion/comisiones" element={<Comisiones />} />

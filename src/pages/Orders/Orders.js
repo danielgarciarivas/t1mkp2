@@ -13,6 +13,8 @@ const Orders = () => {
   const [filters, setFilters] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ordersPerPage] = useState(10);
 
   useEffect(() => {
     loadOrders();
@@ -22,6 +24,10 @@ const Orders = () => {
     applyFilters();
   // eslint-disable-next-line react-hooks/exhaustive-deps  
   }, [orders, filters, searchTerm]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredOrders.length]);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -301,11 +307,17 @@ const Orders = () => {
     // Implementar exportación
   };
 
+  // Paginación
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
   return (
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
-          <h1 className="module-title">Gestión de Pedidos</h1>
+          <h1 className="module-title">Gestión de Pedidos2</h1>
           <p className="module-subtitle">
             Administre y supervise todos los pedidos del marketplace
           </p>
@@ -327,7 +339,7 @@ const Orders = () => {
         
         {/* Tabla de pedidos con filtros integrados */}
         <OrderTable
-          orders={filteredOrders}
+          orders={currentOrders}
           loading={loading}
           onOrderAction={handleOrderAction}
           onOrderSelect={setSelectedOrders}
@@ -336,6 +348,60 @@ const Orders = () => {
           onFiltersChange={setFilters}
           onSearch={setSearchTerm}
         />
+        
+        {/* Paginación */}
+        {!loading && totalPages > 1 && (
+          <div className="pagination">
+            <div className="pagination-info">
+              Mostrando {indexOfFirstOrder + 1} - {Math.min(indexOfLastOrder, filteredOrders.length)} de {filteredOrders.length} pedidos
+            </div>
+            
+            <div className="pagination-controls">
+              <button 
+                className="pagination-btn prev"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+              >
+                ← Anterior
+              </button>
+              
+              <div className="pagination-pages">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(page => {
+                    if (totalPages <= 7) return true;
+                    if (page === 1 || page === totalPages) return true;
+                    if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                    return false;
+                  })
+                  .map((page, index, array) => {
+                    const prevPage = array[index - 1];
+                    const showEllipsis = prevPage && page - prevPage > 1;
+                    
+                    return (
+                      <React.Fragment key={page}>
+                        {showEllipsis && <span className="pagination-ellipsis">...</span>}
+                        <button
+                          className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                          onClick={() => setCurrentPage(page)}
+                        >
+                          {page}
+                        </button>
+                      </React.Fragment>
+                    );
+                  })
+                }
+              </div>
+              
+              <button 
+                className="pagination-btn next"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

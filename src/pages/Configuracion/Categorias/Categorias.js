@@ -8,11 +8,14 @@ const Categorias = () => {
   const [showEditor, setShowEditor] = useState(false);
   const [showMappingModal, setShowMappingModal] = useState(false);
   const [showT1MatchingModal, setShowT1MatchingModal] = useState(false);
+  const [showColumnMatchingModal, setShowColumnMatchingModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [mappingPreview, setMappingPreview] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [t1Categories, setT1Categories] = useState([]);
+  const [parsedData, setParsedData] = useState([]);
+  const [columnMappings, setColumnMappings] = useState({});
 
   useEffect(() => {
     loadCategorias();
@@ -21,15 +24,15 @@ const Categorias = () => {
   const loadCategorias = async () => {
     setLoading(true);
     
-    setTimeout(() => {
-      const mockCategorias = [
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const mockCategorias = [
         {
           id: 1,
           codigo: 'ELEC001',
           nombre: 'Electrónicos',
           nivel: 1,
           padre: null,
-          comision: 8.5,
           activa: true,
           taxonomiaT1: null,
           taxonomiaT1Matched: false,
@@ -40,7 +43,6 @@ const Categorias = () => {
               nombre: 'Smartphones',
               nivel: 2,
               padre: 1,
-              comision: 7.0,
               activa: true,
               taxonomiaT1: 'T1 > Electronics > Mobile Devices > Smartphones',
               taxonomiaT1Matched: true,
@@ -51,7 +53,6 @@ const Categorias = () => {
                   nombre: 'iPhone',
                   nivel: 3,
                   padre: 11,
-                  comision: 6.5,
                   activa: true,
                   taxonomiaT1: 'T1 > Electronics > Mobile Devices > Smartphones > Apple',
                   taxonomiaT1Matched: true,
@@ -63,7 +64,6 @@ const Categorias = () => {
                   nombre: 'Samsung Galaxy',
                   nivel: 3,
                   padre: 11,
-                  comision: 7.2,
                   activa: true,
                   taxonomiaT1: 'T1 > Electronics > Mobile Devices > Smartphones > Samsung',
                   taxonomiaT1Matched: true,
@@ -77,7 +77,6 @@ const Categorias = () => {
               nombre: 'Laptops',
               nivel: 2,
               padre: 1,
-              comision: 9.0,
               activa: true,
               taxonomiaT1: null,
               taxonomiaT1Matched: false,
@@ -91,7 +90,6 @@ const Categorias = () => {
           nombre: 'Ropa y Accesorios',
           nivel: 1,
           padre: null,
-          comision: 12.0,
           activa: true,
           taxonomiaT1: 'T1 > Fashion > Clothing & Accessories',
           taxonomiaT1Matched: true,
@@ -102,7 +100,6 @@ const Categorias = () => {
               nombre: 'Ropa Masculina',
               nivel: 2,
               padre: 2,
-              comision: 11.5,
               activa: true,
               taxonomiaT1: null,
               taxonomiaT1Matched: false,
@@ -116,7 +113,6 @@ const Categorias = () => {
           nombre: 'Hogar y Decoración',
           nivel: 1,
           padre: null,
-          comision: 10.0,
           activa: true,
           taxonomiaT1: null,
           taxonomiaT1Matched: false,
@@ -127,42 +123,104 @@ const Categorias = () => {
       const mockT1Categories = [
         {
           id: 't1_1',
+          nombre: 'Electronics',
           path: 'T1 > Electronics',
-          children: [
-            { id: 't1_1_1', path: 'T1 > Electronics > Mobile Devices' },
-            { id: 't1_1_2', path: 'T1 > Electronics > Computers' },
-            { id: 't1_1_3', path: 'T1 > Electronics > Audio & Video' }
+          subcategorias: [
+            { id: 't1_1_1', nombre: 'Mobile Devices', path: 'T1 > Electronics > Mobile Devices' },
+            { id: 't1_1_2', nombre: 'Computers', path: 'T1 > Electronics > Computers' },
+            { id: 't1_1_3', nombre: 'Audio & Video', path: 'T1 > Electronics > Audio & Video' }
           ]
         },
         {
           id: 't1_2',
+          nombre: 'Fashion',
           path: 'T1 > Fashion',
-          children: [
-            { id: 't1_2_1', path: 'T1 > Fashion > Clothing & Accessories' },
-            { id: 't1_2_2', path: 'T1 > Fashion > Shoes' },
-            { id: 't1_2_3', path: 'T1 > Fashion > Jewelry' }
+          subcategorias: [
+            { id: 't1_2_1', nombre: 'Clothing & Accessories', path: 'T1 > Fashion > Clothing & Accessories' },
+            { id: 't1_2_2', nombre: 'Shoes', path: 'T1 > Fashion > Shoes' },
+            { id: 't1_2_3', nombre: 'Jewelry', path: 'T1 > Fashion > Jewelry' }
           ]
         },
         {
           id: 't1_3',
+          nombre: 'Home & Garden',
           path: 'T1 > Home & Garden',
-          children: [
-            { id: 't1_3_1', path: 'T1 > Home & Garden > Furniture' },
-            { id: 't1_3_2', path: 'T1 > Home & Garden > Decor' },
-            { id: 't1_3_3', path: 'T1 > Home & Garden > Appliances' }
+          subcategorias: [
+            { id: 't1_3_1', nombre: 'Furniture', path: 'T1 > Home & Garden > Furniture' },
+            { id: 't1_3_2', nombre: 'Décor', path: 'T1 > Home & Garden > Décor' },
+            { id: 't1_3_3', nombre: 'Kitchen & Dining', path: 'T1 > Home & Garden > Kitchen & Dining' }
+          ]
+        },
+        {
+          id: 't1_4',
+          nombre: 'Sports & Outdoors',
+          path: 'T1 > Sports & Outdoors',
+          subcategorias: [
+            { id: 't1_4_1', nombre: 'Exercise & Fitness', path: 'T1 > Sports & Outdoors > Exercise & Fitness' },
+            { id: 't1_4_2', nombre: 'Outdoor Recreation', path: 'T1 > Sports & Outdoors > Outdoor Recreation' },
+            { id: 't1_4_3', nombre: 'Team Sports', path: 'T1 > Sports & Outdoors > Team Sports' }
+          ]
+        },
+        {
+          id: 't1_5',
+          nombre: 'Health & Beauty',
+          path: 'T1 > Health & Beauty',
+          subcategorias: [
+            { id: 't1_5_1', nombre: 'Personal Care', path: 'T1 > Health & Beauty > Personal Care' },
+            { id: 't1_5_2', nombre: 'Makeup', path: 'T1 > Health & Beauty > Makeup' },
+            { id: 't1_5_3', nombre: 'Health Supplements', path: 'T1 > Health & Beauty > Health Supplements' }
           ]
         }
       ];
       
       setCategorias(mockCategorias);
       setT1Categories(mockT1Categories);
+      console.log('T1 Categories loaded:', mockT1Categories); // Debug
       setLoading(false);
+      resolve();
     }, 1000);
+    });
+  };
+
+  const downloadLayoutTemplate = () => {
+    // Crear un CSV template con las columnas sugeridas
+    const headers = [
+      'id_categoria',
+      'nombre_categoria',
+      'id_padre',
+      'ruta_completa',
+      'activa',
+    ];
+    
+    // Datos de ejemplo
+    const exampleData = [
+      ['ELEC001', 'Electrónicos', '', 'Electrónicos', 'S'],
+      ['ELEC001001', 'Smartphones', 'ELEC001', 'Electrónicos > Smartphones', 'S'],
+      ['ELEC001001001', 'iPhone', 'ELEC001001', 'Electrónicos > Smartphones > iPhone', 'S'],
+      ['ELEC001001002', 'Samsung Galaxy', 'ELEC001001', 'Electrónicos > Smartphones > Samsung Galaxy', 'S'],
+      ['ELEC001002', 'Laptops', 'ELEC001', 'Electrónicos > Laptops', 'S']
+    ];
+    
+    // Crear el contenido CSV
+    const csvContent = [headers, ...exampleData]
+      .map(row => row.join(','))
+      .join('\n');
+    
+    // Crear y descargar el archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'layout_categorias_template.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    if (file && file.type === 'text/csv') {
+    if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
       setSelectedFile(file);
       procesarCSV(file);
     } else {
@@ -174,27 +232,120 @@ const Categorias = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target.result;
-      const lines = text.split('\n');
-      const headers = lines[0].split(',');
+      const lines = text.split('\n').filter(line => line.trim());
+      const headers = lines[0].split(',').map(h => h.trim());
       
-      const preview = lines.slice(1, 6).map((line, index) => {
-        const values = line.split(',');
-        return {
-          id: index + 1,
-          codigo: values[0]?.trim() || '',
-          nombre: values[1]?.trim() || '',
-          nivel: parseInt(values[2]?.trim()) || 1,
-          padre: values[3]?.trim() || null,
-          comision: parseFloat(values[4]?.trim()) || 0,
-          marketplace: values[5]?.trim() || '',
-          taxonomiaUniversal: values[6]?.trim() || ''
-        };
+      const data = lines.slice(1).map((line, index) => {
+        const values = line.split(',').map(v => v.trim());
+        const row = {};
+        headers.forEach((header, i) => {
+          row[header] = values[i] || '';
+        });
+        row._index = index;
+        return row;
       });
       
-      setMappingPreview(preview);
-      setShowMappingModal(true);
+      setParsedData(data);
+      setColumnMappings({});
+      
+      // Asegurar que las categorías T1 estén cargadas antes de abrir el modal
+      console.log('T1 Categories length:', t1Categories.length); // Debug
+      if (t1Categories.length === 0) {
+        // Forzar carga de categorías T1 si no están disponibles
+        console.log('Loading T1 categories...'); // Debug
+        loadCategorias().then(() => {
+          console.log('T1 categories loaded, opening modal'); // Debug
+          setShowColumnMatchingModal(true);
+        });
+      } else {
+        console.log('T1 categories already loaded, opening modal'); // Debug
+        setShowColumnMatchingModal(true);
+      }
     };
     reader.readAsText(file);
+  };
+
+  const handleColumnMapping = (importColumn, systemColumn) => {
+    setColumnMappings(prev => ({
+      ...prev,
+      [systemColumn]: importColumn
+    }));
+  };
+
+  const confirmColumnMapping = () => {
+    // Detectar automáticamente las columnas del CSV
+    const firstRow = parsedData[0] || {};
+    const availableColumns = Object.keys(firstRow).filter(key => key !== '_index');
+    
+    // Mapeo automático basado en las columnas disponibles
+    const autoColumnMapping = {};
+    availableColumns.forEach(col => {
+      const colLower = col.toLowerCase();
+      if (colLower.includes('id') && colLower.includes('categoria') && !colLower.includes('padre')) {
+        autoColumnMapping.id_categoria = col;
+      } else if (colLower.includes('nombre')) {
+        autoColumnMapping.nombre_categoria = col;
+      } else if (colLower.includes('padre')) {
+        autoColumnMapping.id_padre = col;
+      } else if (colLower.includes('ruta') || colLower.includes('completa')) {
+        autoColumnMapping.ruta_completa = col;
+      } else if (colLower.includes('activa') || colLower.includes('estado')) {
+        autoColumnMapping.activa = col;
+      }
+    });
+    
+    console.log('Available columns:', availableColumns); // Debug
+    console.log('First row sample:', firstRow); // Debug
+    console.log('Auto-detected column mapping:', autoColumnMapping); // Debug
+    
+    // Mapear los datos según las columnas detectadas
+    const mappedData = (parsedData || []).slice(0, 5).map((row, index) => ({
+      id: index + 1,
+      codigo: row[autoColumnMapping.id_categoria] || '',
+      nombre: row[autoColumnMapping.nombre_categoria] || '',
+      padre: row[autoColumnMapping.id_padre] || null,
+      ruta: row[autoColumnMapping.ruta_completa] || '',
+      activa: row[autoColumnMapping.activa] === 'S' || row[autoColumnMapping.activa] === '1' || row[autoColumnMapping.activa] === 'true',
+    }));
+
+    // Auto-calcular niveles basado en jerarquía de padres
+    const calculateLevels = (data) => {
+      const dataWithLevels = [...data];
+      
+      // Función recursiva para calcular el nivel de una categoría
+      const getNivel = (categoriaId, visitedIds = new Set()) => {
+        // Evitar ciclos infinitos
+        if (visitedIds.has(categoriaId)) {
+          return 1; // Si hay ciclo, asignar nivel 1
+        }
+        
+        const categoria = dataWithLevels.find(item => item.codigo === categoriaId);
+        if (!categoria || !categoria.padre) {
+          return 1; // Si no tiene padre o no se encuentra, es nivel 1
+        }
+        
+        visitedIds.add(categoriaId);
+        return getNivel(categoria.padre, visitedIds) + 1;
+      };
+      
+      // Asignar niveles a todas las categorías
+      dataWithLevels.forEach(item => {
+        item.nivel = getNivel(item.codigo);
+      });
+      
+      return dataWithLevels;
+    };
+
+    const dataWithLevels = calculateLevels(mappedData);
+    console.log('Final mapped data with levels:', dataWithLevels); // Debug
+    setMappingPreview(dataWithLevels);
+    setShowColumnMatchingModal(false);
+    setShowMappingModal(true);
+  };
+
+  const skipColumnMapping = () => {
+    setShowColumnMatchingModal(false);
+    alert('Archivo cargado. Puedes proceder a hacer el matching manual uno por uno desde el árbol de categorías.');
   };
 
   const confirmarCarga = () => {
@@ -219,11 +370,6 @@ const Categorias = () => {
     ));
   };
 
-  const editarComision = (id, nuevaComision) => {
-    setCategorias(prev => prev.map(cat => 
-      cat.id === id ? { ...cat, comision: nuevaComision } : cat
-    ));
-  };
 
   const handleMatchT1 = (categoria) => {
     setSelectedCategory(categoria);
@@ -231,50 +377,80 @@ const Categorias = () => {
   };
 
   const renderCategoryTree = (categoria, nivel = 0) => {
-    const indentStyle = { marginLeft: `${nivel * 20}px` };
+    const hasChildren = categoria.subcategorias && categoria.subcategorias.length > 0;
     
     return (
-      <div key={categoria.id}>
-        <div className={`categoria-tree-item ${!categoria.activa ? 'inactiva' : ''}`} style={indentStyle}>
-          <div className="tree-item-content">
-            <div className="tree-item-info">
-              <div className="tree-item-header">
-                <span className="tree-toggle">
-                  {categoria.subcategorias.length > 0 ? '📁' : '📄'}
-                </span>
-                <span className="tree-item-name">{categoria.nombre}</span>
-                <span className="tree-item-codigo">{categoria.codigo}</span>
-                <span className={`matching-status ${categoria.taxonomiaT1Matched ? 'matched' : 'unmatched'}`}>
-                  {categoria.taxonomiaT1Matched ? '✅' : '❌'}
-                </span>
+      <div key={categoria.id} className={`categoria-tree-item level-${nivel} ${hasChildren ? 'has-children' : 'leaf-node'} ${!categoria.activa ? 'inactiva' : ''}`}>
+        <div className="category-row">
+          <div className="category-content">
+            {/* Indentación visual basada en nivel */}
+            <div className="category-indent" style={{ width: `${nivel * 20}px` }}></div>
+            
+            {/* Indicador de tipo */}
+            <div className="category-type-icon">
+              {hasChildren ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M1.75 2A1.75 1.75 0 000 3.75v8.5C0 13.216.784 14 1.75 14h12.5A1.75 1.75 0 0016 12.25v-8.5A1.75 1.75 0 0014.25 2H9.586a.25.25 0 01-.177-.073L7.97 0.488A1.75 1.75 0 006.544 0H1.75z" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.414 2.414c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75z" />
+                </svg>
+              )}
+            </div>
+            
+            {/* Información de la categoría */}
+            <div className="category-info">
+              <div className="category-main-info">
+                <span className="category-name">{categoria.nombre}</span>
+                <span className="category-code">{categoria.codigo}</span>
+                <div className={`matching-status ${categoria.taxonomiaT1Matched ? 'matched' : 'unmatched'}`}>
+                  {categoria.taxonomiaT1Matched ? (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/>
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M11.383 13.644A1.03 1.03 0 0112.5 15h1A1.03 1.03 0 0115 13.644L8 6.644 1 13.644A1.03 1.03 0 012.5 15h1a1.03 1.03 0 001.117-1.356L8 10.356l3.383 3.288z"/>
+                    </svg>
+                  )}
+                </div>
               </div>
               {categoria.taxonomiaT1 && (
-                <div className="tree-item-t1-taxonomy">
+                <div className="category-taxonomy">
                   {categoria.taxonomiaT1}
                 </div>
               )}
             </div>
-            <div className="tree-item-controls">
-            
-              <div className="tree-item-actions">
-                <Button 
-                  variant="outline" 
-                  size="small"
-                  onClick={() => handleMatchT1(categoria)}
-                >
-                  {categoria.taxonomiaT1Matched ? 'Editar Match' : 'Match T1'}
-                </Button>
-                <button
-                  className={`estado-toggle ${categoria.activa ? 'activo' : 'inactivo'}`}
-                  onClick={() => toggleCategoriaEstado(categoria.id)}
-                >
-                  {categoria.activa ? 'Activa' : 'Inactiva'}
-                </button>
-              </div>
-            </div>
+          </div>
+          
+          {/* Controles */}
+          <div className="category-controls">
+            {/* Solo mostrar Match T1 en categorías de último nivel (sin hijos) */}
+            {!hasChildren && (
+              <Button 
+                variant="outline" 
+                size="small"
+                onClick={() => handleMatchT1(categoria)}
+              >
+                {categoria.taxonomiaT1Matched ? 'Editar Match' : 'Match T1'}
+              </Button>
+            )}
+            <button
+              className={`estado-toggle ${categoria.activa ? 'activo' : 'inactivo'}`}
+              onClick={() => toggleCategoriaEstado(categoria.id)}
+            >
+              {categoria.activa ? 'Activa' : 'Inactiva'}
+            </button>
           </div>
         </div>
-        {categoria.subcategorias.map(sub => renderCategoryTree(sub, nivel + 1))}
+        
+        {/* Subcategorías */}
+        {hasChildren && (
+          <div className="category-children">
+            {categoria.subcategorias.map(sub => renderCategoryTree(sub, nivel + 1))}
+          </div>
+        )}
       </div>
     );
   };
@@ -296,7 +472,7 @@ const Categorias = () => {
         <div className="module-title-section">
           <h1 className="module-title">Gestión de Árbol de Categorías</h1>
           <p className="module-subtitle">
-            Configuración del árbol de categorías del marketplace con mapeo y gestión de comisiones
+            Configuración del árbol de categorías del marketplace con mapeo de taxonomías
           </p>
         </div>
         
@@ -310,15 +486,15 @@ const Categorias = () => {
           />
           <Button 
             variant="outline"
-            onClick={() => document.getElementById('csv-upload').click()}
+            onClick={downloadLayoutTemplate}
           >
-            📄 Cargar CSV
+            📥 Descargar Layout
           </Button>
           <Button 
-            variant="secondary"
-            onClick={() => setShowT1MatchingModal(true)}
+            variant="outline"
+            onClick={() => document.getElementById('csv-upload').click()}
           >
-            🔗 Matching T1
+            📤 Cargar CSV
           </Button>
           <Button 
             variant="primary"
@@ -339,10 +515,6 @@ const Categorias = () => {
           <div className="stat-card">
             <h3>{categorias.filter(cat => cat.activa).length}</h3>
             <p>Categorías Activas</p>
-          </div>
-          <div className="stat-card">
-            <h3>{(categorias.reduce((acc, cat) => acc + cat.comision, 0) / categorias.length).toFixed(1)}%</h3>
-            <p>Comisión Promedio</p>
           </div>
         </div>
 
@@ -382,9 +554,8 @@ const Categorias = () => {
                       <th>Código</th>
                       <th>Nombre</th>
                       <th>Nivel</th>
-                      <th>Comisión %</th>
-                      <th>Marketplace</th>
-                      <th>Taxonomía Universal</th>
+                      <th>Ruta Completa</th>
+                      <th>Estado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -393,9 +564,8 @@ const Categorias = () => {
                         <td>{item.codigo}</td>
                         <td>{item.nombre}</td>
                         <td>{item.nivel}</td>
-                        <td>{item.comision}%</td>
-                        <td>{item.marketplace}</td>
-                        <td>{item.taxonomiaUniversal}</td>
+                        <td>{item.ruta}</td>
+                        <td>{item.activa ? 'Activa' : 'Inactiva'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -449,7 +619,7 @@ const Categorias = () => {
             <div className="modal-body">
               <div className="form-grid">
                 <div className="form-group">
-                  <label>Código de Categoría</label>
+                  <label>ID Categoría</label>
                   <input type="text" placeholder="Ej: ELEC001" />
                 </div>
                 <div className="form-group">
@@ -457,37 +627,11 @@ const Categorias = () => {
                   <input type="text" placeholder="Nombre de la categoría" />
                 </div>
                 <div className="form-group">
-                  <label>Nivel</label>
-                  <select>
-                    <option value="1">Nivel 1 - Principal</option>
-                    <option value="2">Nivel 2 - Subcategoría</option>
-                    <option value="3">Nivel 3 - Sub-subcategoría</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Categoría Padre</label>
-                  <select>
-                    <option value="">-- Ninguna (Categoría Principal) --</option>
-                    {categorias.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Comisión (%)</label>
-                  <input type="number" step="0.1" placeholder="8.5" />
-                </div>
-                <div className="form-group">
-                  <label>Marketplace</label>
-                  <select>
-                    <option value="Sears">Sears</option>
-                    <option value="Liverpool">Liverpool</option>
-                    <option value="Sanborns">Sanborns</option>
-                    <option value="Palacio de Hierro">Palacio de Hierro</option>
-                  </select>
+                  <label>ID Categoría Padre (vacio si es padre)</label>
+                  <input type="text" placeholder="Ej: ELEC001 - Dejar vacío si es categoría principal" />
                 </div>
                 <div className="form-group full-width">
-                  <label>Taxonomía Universal</label>
+                  <label>Breadcrumb</label>
                   <input type="text" placeholder="Ej: Electronics > Consumer Electronics" />
                 </div>
               </div>
@@ -518,7 +662,7 @@ const Categorias = () => {
         <div className="modal-overlay">
           <div className="modal-content t1-matching-modal">
             <div className="modal-header">
-              <h2>Matching con Taxonomía T1</h2>
+              <h2>Match con T1</h2>
               <button 
                 className="close-button" 
                 onClick={() => setShowT1MatchingModal(false)}
@@ -530,37 +674,33 @@ const Categorias = () => {
               {selectedCategory && (
                 <div className="matching-section">
                   <div className="current-category">
-                    <h3>Categoría Actual:</h3>
+                    <h3>Categoría de Marketplace Actual:</h3>
                     <div className="category-info">
                       <span className="category-name">{selectedCategory.nombre}</span>
                       <span className="category-code">{selectedCategory.codigo}</span>
                     </div>
                     {selectedCategory.taxonomiaT1 && (
                       <div className="current-matching">
-                        <strong>Matching actual:</strong>
+                        <strong>Match actual:</strong>
                         <span className="matched-taxonomy">{selectedCategory.taxonomiaT1}</span>
                       </div>
                     )}
                   </div>
                   
                   <div className="t1-taxonomy-selector">
-                    <h3>Selecciona Taxonomía T1:</h3>
+                    <h3>Selecciona la categoría T1:</h3>
                     <div className="t1-tree">
                       {t1Categories.map(parent => (
                         <div key={parent.id} className="t1-parent">
                           <div 
-                            className="t1-category-item"
-                            onClick={() => {
-                              // Actualizar matching
-                              const updatedCategory = { ...selectedCategory, taxonomiaT1: parent.path, taxonomiaT1Matched: true };
-                              setSelectedCategory(updatedCategory);
-                            }}
+                            className="t1-category-item t1-parent-disabled"
+                            title="Solo puedes seleccionar categorías de último nivel"
                           >
                             <span className="t1-toggle">📁</span>
-                            <span className="t1-name">{parent.path}</span>
+                            <span className="t1-name">{parent.nombre}</span>
                           </div>
                           <div className="t1-children">
-                            {parent.children.map(child => (
+                            {parent.subcategorias.map(child => (
                               <div 
                                 key={child.id} 
                                 className="t1-category-item t1-child"
@@ -570,7 +710,7 @@ const Categorias = () => {
                                 }}
                               >
                                 <span className="t1-toggle">📄</span>
-                                <span className="t1-name">{child.path}</span>
+                                <span className="t1-name">{child.nombre}</span>
                               </div>
                             ))}
                           </div>
@@ -633,6 +773,99 @@ const Categorias = () => {
                 }}
               >
                 Guardar Matching
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Configuración de Columnas */}
+      {showColumnMatchingModal && (
+        <div className="modal-overlay">
+          <div className="modal-content column-matching-modal">
+            <div className="modal-header">
+              <h2>Mapear categorías con T1</h2>
+              <button 
+                className="close-button" 
+                onClick={() => setShowColumnMatchingModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="matching-instructions">
+                <p>Mapea las categorías de tu archivo con las categorías T1 correspondientes. Puedes omitir categorías que no quieras importar.</p>
+              </div>
+              
+              <div className="category-matching-container">
+                <div className="matching-header">
+                  <div className="header-section">Categoría a importar</div>
+                  <div className="header-section">Categoria T1</div>
+                  <div className="header-section">Estado</div>
+                </div>
+                
+                <div className="category-matching-rows">
+                  {(parsedData || []).slice(0, 10).map((category, index) => (
+                    <div key={index} className="category-matching-row">
+                      <div className="import-category">
+                        <span className="category-icon">📁</span>
+                        <div className="category-details">
+                          <span className="category-name">{category.nombre_categoria || category[Object.keys(category)[1]] || 'Sin nombre'}</span>
+                          <span className="category-path">{category.ruta_completa || category[Object.keys(category)[3]] || 'Sin ruta'}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="t1-category-selector">
+                        <select 
+                          value={columnMappings[`category_${index}`] || ''}
+                          onChange={(e) => handleColumnMapping(e.target.value, `category_${index}`)}
+                        >
+                          <option value="">Selecciona categoría T1</option>
+                          {(t1Categories || []).map(t1Cat => (
+                            <optgroup key={t1Cat.id} label={t1Cat.nombre}>
+                              {/* Solo mostrar subcategorías (último nivel) - no la categoría padre */}
+                              {(t1Cat.subcategorias || []).map(subCat => (
+                                <option key={subCat.id} value={subCat.id}>
+                                  {subCat.nombre}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div className="matching-status">
+                        {columnMappings[`category_${index}`] ? (
+                          <span className="status-matched">&nbsp;&nbsp;&nbsp;✅ Mapeado</span>
+                        ) : (
+                          <span className="status-unmapped">&nbsp;&nbsp;&nbsp;⚪ Sin mapear</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <Button 
+                variant="outline" 
+                onClick={skipColumnMapping}
+              >
+                Omitir Matching
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={() => setShowColumnMatchingModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={confirmColumnMapping}
+                disabled={Object.keys(columnMappings).length === 0}
+              >
+                Importar
               </Button>
             </div>
           </div>

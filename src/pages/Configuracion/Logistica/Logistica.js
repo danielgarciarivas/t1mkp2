@@ -607,18 +607,7 @@ const Logistica = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="rule-row">
-                            <div className="rule-field">
-                              <label>Tipo de empaque recomendado:</label>
-                              <input
-                                type="text"
-                                value={currentRule.packageType}
-                                onChange={(e) => updateCurrentRule('packageType', e.target.value)}
-                                className="rule-input-text"
-                                placeholder="Ej: Caja con protección, Sobre flexible, Caja resistente..."
-                              />
-                            </div>
-                          </div>
+                       
                           <div className="rule-row">
                             <label className="checkbox-label">
                               <input

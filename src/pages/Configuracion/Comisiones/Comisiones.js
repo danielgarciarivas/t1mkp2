@@ -6,14 +6,24 @@ const Comisiones = () => {
   const [loading, setLoading] = useState(true);
   const [categorias, setCategorias] = useState([]);
   const [showEditor, setShowEditor] = useState(false);
-  const [showSimulator, setShowSimulator] = useState(false);
   const [selectedCategoria, setSelectedCategoria] = useState(null);
-  const [simulatorData, setSimulatorData] = useState({
-    categoria: '',
-    precio: ''
-  });
-  const [useGeneralCommission, setUseGeneralCommission] = useState(false);
+  
+  // Estados para la configuración de comisiones
+  const [commissionMode, setCommissionMode] = useState('categoria'); // 'categoria' | 'general'
   const [generalCommission, setGeneralCommission] = useState(8.0);
+  const [defaultCommission, setDefaultCommission] = useState(5.0);
+  
+  // Estados para paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  
+  // Estados para precedencia
+  const [precedenceOrder, setPrecedenceOrder] = useState([
+    { id: 'producto', name: 'Por Producto', active: true },
+    { id: 'seller', name: 'Por Seller Individual', active: true },
+    { id: 'categoria', name: 'Por Categoría Padre', active: true },
+    { id: 'default', name: 'Comisión por Defecto', active: true }
+  ]);
 
   useEffect(() => {
     loadComisiones();
@@ -23,6 +33,7 @@ const Comisiones = () => {
     setLoading(true);
     
     setTimeout(() => {
+      // Solo categorías padre para configurar comisiones
       const mockCategorias = [
         {
           id: 1,
@@ -31,35 +42,11 @@ const Comisiones = () => {
           nivel: 1,
           padre: null,
           comisionBase: 8.5,
-          comisionMinima: 5.0,
-          comisionMaxima: 12.0,
-          fechaInicio: '2024-01-01T00:00:00Z',
+          fechaInicio: '2024-01-01',
           fechaFin: null,
           activa: true,
-          subcategorias: [
-            {
-              id: 11,
-              codigo: 'ELEC001001',
-              nombre: 'Smartphones',
-              nivel: 2,
-              padre: 1,
-              comisionBase: 7.0,
-              comisionMinima: 5.0,
-              comisionMaxima: 10.0,
-              activa: true
-            },
-            {
-              id: 12,
-              codigo: 'ELEC001002',
-              nombre: 'Laptops',
-              nivel: 2,
-              padre: 1,
-              comisionBase: 9.0,
-              comisionMinima: 6.0,
-              comisionMaxima: 12.0,
-              activa: true
-            }
-          ]
+          totalSubcategorias: 5,
+          productosAsignados: 1250
         },
         {
           id: 2,
@@ -68,35 +55,11 @@ const Comisiones = () => {
           nivel: 1,
           padre: null,
           comisionBase: 12.0,
-          comisionMinima: 8.0,
-          comisionMaxima: 15.0,
-          fechaInicio: '2024-01-15T00:00:00Z',
+          fechaInicio: '2024-01-15',
           fechaFin: null,
           activa: true,
-          subcategorias: [
-            {
-              id: 21,
-              codigo: 'ROPA001001',
-              nombre: 'Ropa Masculina',
-              nivel: 2,
-              padre: 2,
-              comisionBase: 11.5,
-              comisionMinima: 8.0,
-              comisionMaxima: 14.0,
-              activa: true
-            },
-            {
-              id: 22,
-              codigo: 'ROPA001002',
-              nombre: 'Ropa Femenina',
-              nivel: 2,
-              padre: 2,
-              comisionBase: 13.0,
-              comisionMinima: 9.0,
-              comisionMaxima: 16.0,
-              activa: true
-            }
-          ]
+          totalSubcategorias: 8,
+          productosAsignados: 2100
         },
         {
           id: 3,
@@ -105,12 +68,297 @@ const Comisiones = () => {
           nivel: 1,
           padre: null,
           comisionBase: 10.0,
-          comisionMinima: 7.0,
-          comisionMaxima: 13.0,
-          fechaInicio: '2024-02-01T00:00:00Z',
+          fechaInicio: '2024-02-01',
           fechaFin: null,
           activa: true,
-          subcategorias: []
+          totalSubcategorias: 3,
+          productosAsignados: 850
+        },
+        {
+          id: 4,
+          codigo: 'DEPO001',
+          nombre: 'Deportes y Recreación',
+          nivel: 1,
+          padre: null,
+          comisionBase: 9.5,
+          fechaInicio: '2024-03-01',
+          fechaFin: null,
+          activa: false,
+          totalSubcategorias: 6,
+          productosAsignados: 420
+        },
+        {
+          id: 5,
+          codigo: 'SALUD001',
+          nombre: 'Salud y Belleza',
+          nivel: 1,
+          padre: null,
+          comisionBase: 15.0,
+          fechaInicio: '2024-01-01',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 4,
+          productosAsignados: 680
+        },
+        {
+          id: 6,
+          codigo: 'AUTO001',
+          nombre: 'Automotriz',
+          nivel: 1,
+          padre: null,
+          comisionBase: 7.5,
+          fechaInicio: '2024-01-10',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 12,
+          productosAsignados: 3200
+        },
+        {
+          id: 7,
+          codigo: 'LIBRO001',
+          nombre: 'Libros y Medios',
+          nivel: 1,
+          padre: null,
+          comisionBase: 6.0,
+          fechaInicio: '2024-02-15',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 7,
+          productosAsignados: 1800
+        },
+        {
+          id: 8,
+          codigo: 'JUGUETE001',
+          nombre: 'Juguetes y Juegos',
+          nivel: 1,
+          padre: null,
+          comisionBase: 11.0,
+          fechaInicio: '2024-01-20',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 9,
+          productosAsignados: 1500
+        },
+        {
+          id: 9,
+          codigo: 'MASCOTA001',
+          nombre: 'Mascotas',
+          nivel: 1,
+          padre: null,
+          comisionBase: 8.0,
+          fechaInicio: '2024-03-05',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 6,
+          productosAsignados: 920
+        },
+        {
+          id: 10,
+          codigo: 'ARTE001',
+          nombre: 'Arte y Manualidades',
+          nivel: 1,
+          padre: null,
+          comisionBase: 13.5,
+          fechaInicio: '2024-02-28',
+          fechaFin: null,
+          activa: false,
+          totalSubcategorias: 5,
+          productosAsignados: 650
+        },
+        {
+          id: 11,
+          codigo: 'MUSIC001',
+          nombre: 'Instrumentos Musicales',
+          nivel: 1,
+          padre: null,
+          comisionBase: 9.0,
+          fechaInicio: '2024-01-05',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 8,
+          productosAsignados: 480
+        },
+        {
+          id: 12,
+          codigo: 'INDUS001',
+          nombre: 'Industrial y Científico',
+          nivel: 1,
+          padre: null,
+          comisionBase: 5.5,
+          fechaInicio: '2024-03-10',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 15,
+          productosAsignados: 2800
+        },
+        {
+          id: 13,
+          codigo: 'JOYA001',
+          nombre: 'Joyería y Relojes',
+          nivel: 1,
+          padre: null,
+          comisionBase: 16.0,
+          fechaInicio: '2024-01-12',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 4,
+          productosAsignados: 340
+        },
+        {
+          id: 14,
+          codigo: 'COMIDA001',
+          nombre: 'Alimentos y Bebidas',
+          nivel: 1,
+          padre: null,
+          comisionBase: 4.5,
+          fechaInicio: '2024-02-20',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 11,
+          productosAsignados: 5200
+        },
+        {
+          id: 15,
+          codigo: 'BEBE001',
+          nombre: 'Bebés y Niños',
+          nivel: 1,
+          padre: null,
+          comisionBase: 10.5,
+          fechaInicio: '2024-01-25',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 7,
+          productosAsignados: 1200
+        },
+        {
+          id: 16,
+          codigo: 'OFICINA001',
+          nombre: 'Oficina y Papelería',
+          nivel: 1,
+          padre: null,
+          comisionBase: 7.0,
+          fechaInicio: '2024-03-01',
+          fechaFin: null,
+          activa: false,
+          totalSubcategorias: 6,
+          productosAsignados: 890
+        },
+        {
+          id: 17,
+          codigo: 'HERRAM001',
+          nombre: 'Herramientas y Mejoras del Hogar',
+          nivel: 1,
+          padre: null,
+          comisionBase: 8.8,
+          fechaInicio: '2024-01-30',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 10,
+          productosAsignados: 2400
+        },
+        {
+          id: 18,
+          codigo: 'VIAJE001',
+          nombre: 'Equipaje y Viajes',
+          nivel: 1,
+          padre: null,
+          comisionBase: 12.5,
+          fechaInicio: '2024-02-10',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 5,
+          productosAsignados: 720
+        },
+        {
+          id: 19,
+          codigo: 'CAMARA001',
+          nombre: 'Cámaras y Fotografía',
+          nivel: 1,
+          padre: null,
+          comisionBase: 6.5,
+          fechaInicio: '2024-02-25',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 8,
+          productosAsignados: 560
+        },
+        {
+          id: 20,
+          codigo: 'CELULAR001',
+          nombre: 'Celulares y Accesorios',
+          nivel: 1,
+          padre: null,
+          comisionBase: 5.0,
+          fechaInicio: '2024-01-08',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 12,
+          productosAsignados: 4500
+        },
+        {
+          id: 21,
+          codigo: 'COMPUTO001',
+          nombre: 'Computadoras y Tablets',
+          nivel: 1,
+          padre: null,
+          comisionBase: 4.0,
+          fechaInicio: '2024-01-15',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 9,
+          productosAsignados: 1800
+        },
+        {
+          id: 22,
+          codigo: 'SMART001',
+          nombre: 'Smart Home y Domótica',
+          nivel: 1,
+          padre: null,
+          comisionBase: 9.5,
+          fechaInicio: '2024-03-12',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 6,
+          productosAsignados: 680
+        },
+        {
+          id: 23,
+          codigo: 'CLIMA001',
+          nombre: 'Climatización',
+          nivel: 1,
+          padre: null,
+          comisionBase: 6.8,
+          fechaInicio: '2024-02-05',
+          fechaFin: null,
+          activa: false,
+          totalSubcategorias: 4,
+          productosAsignados: 320
+        },
+        {
+          id: 24,
+          codigo: 'LAVA001',
+          nombre: 'Electrodomésticos',
+          nivel: 1,
+          padre: null,
+          comisionBase: 7.2,
+          fechaInicio: '2024-01-18',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 8,
+          productosAsignados: 1100
+        },
+        {
+          id: 25,
+          codigo: 'COCINA001',
+          nombre: 'Cocina y Comedor',
+          nivel: 1,
+          padre: null,
+          comisionBase: 11.5,
+          fechaInicio: '2024-02-12',
+          fechaFin: null,
+          activa: true,
+          totalSubcategorias: 7,
+          productosAsignados: 960
         }
       ];
       
@@ -136,35 +384,25 @@ const Comisiones = () => {
     ));
   };
 
-  const handleSimular = () => {
-    if (!simulatorData.precio || !simulatorData.categoria) {
-      alert('Por favor completa los campos requeridos');
-      return;
+  // Lógica de paginación para categorías
+  const totalPages = Math.ceil(categorias.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCategorias = categorias.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
+  };
 
-    // Encontrar la categoría aplicable
-    let categoriaAplicable = null;
-    categorias.forEach(categoria => {
-      if (categoria.nombre === simulatorData.categoria && categoria.activa) {
-        categoriaAplicable = categoria;
-      }
-      // Buscar también en subcategorías
-      categoria.subcategorias.forEach(sub => {
-        if (sub.nombre === simulatorData.categoria && sub.activa) {
-          categoriaAplicable = sub;
-        }
-      });
-    });
-
-    if (categoriaAplicable) {
-      const precio = parseFloat(simulatorData.precio);
-      const comisionFinal = categoriaAplicable.comisionBase;
-      const montoComision = (precio * comisionFinal) / 100;
-      const gananciaVendedor = precio - montoComision;
-
-      alert(`Simulación de Comisión:\n\nCategoría: ${categoriaAplicable.nombre}\nPrecio: $${precio.toLocaleString()}\nComisión aplicada: ${comisionFinal}%\nMonto comisión: $${montoComision.toLocaleString()}\nGanancia vendedor: $${gananciaVendedor.toLocaleString()}`);
-    } else {
-      alert('No se encontró configuración de comisión para la categoría seleccionada');
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -185,362 +423,378 @@ const Comisiones = () => {
         <div className="module-title-section">
           <h1 className="module-title">Configuración de Comisiones</h1>
           <p className="module-subtitle">
-            Configuración de comisiones por categoría del marketplace
+            Gestiona las comisiones del marketplace con precedencia y configuración profesional
           </p>
-        </div>
-        
-        <div className="module-actions">
-          <Button 
-            variant="outline"
-            onClick={() => setShowSimulator(true)}
-          >
-            🧮 Simulador
-          </Button>
-          <Button 
-            variant="primary"
-            onClick={() => setShowEditor(true)}
-          >
-            + Nueva Categoría
-          </Button>
         </div>
       </div>
 
       <div className="comisiones-section">
+        {/* Estadísticas */}
         <div className="comisiones-stats">
           <div className="stat-card">
             <h3>{categorias.length}</h3>
-            <p>Categorías Configuradas</p>
+            <p>Categorías Padre</p>
           </div>
           <div className="stat-card">
             <h3>{categorias.filter(c => c.activa).length}</h3>
-            <p>Categorías Activas1</p>
+            <p>Categorías Activas</p>
           </div>
           <div className="stat-card">
             <h3>{(categorias.reduce((acc, c) => acc + c.comisionBase, 0) / categorias.length).toFixed(1)}%</h3>
             <p>Comisión Promedio</p>
           </div>
-         
+          <div className="stat-card">
+            <h3>{defaultCommission}%</h3>
+            <p>Comisión por Defecto</p>
+          </div>
         </div>
 
-        {/* Configuración de Tipo de Comisión */}
-        <div className="commission-section">
+        {/* Configuración de Precedencia y Comisión por Defecto */}
+        <div className="precedence-section">          
           <div className="section-header">
-            <h3>Configuración de Comisiones</h3>
+            <h3>🎯 Precedencia y Configuración General</h3>
             <p className="section-description">
-              Configure cómo se aplicarán las comisiones en su marketplace
+              Define el orden de prioridad y comisión por defecto para aplicar las comisiones.
             </p>
           </div>
+                                
+          <div className="precedence-config">
+                <div className="izq">
+                                      <div className="default-commission-compact">
+                                        <h4> Comisión por Defecto</h4>
+                                        <p className="section-description">Si no se configuran comisiones, esta será la comision que se usará para todos las transacciones</p>
+                                        <div className="compact-form">
+                                          <div className="commission-input">
+                                            <input
+                                              type="number"
+                                              step="0.1"
+                                              min="0"
+                                              max="100"
+                                              value={defaultCommission}
+                                              onChange={(e) => setDefaultCommission(parseFloat(e.target.value) || 0)}
+                                            />
+                                            <span className="currency-symbol">%</span>
+                                          </div>
+                                          <Button 
+                                            variant="primary" 
+                                            size="small"
+                                            onClick={() => alert(`✅ Comisión por defecto guardada: ${defaultCommission}%`)}
+                                          >
+                                            Guardar
+                                          </Button>
+                                        </div>
+                                        
+                                      </div>
 
-          <div className="commission-config-form">
-            {/* Selector de modalidad principal */}
-            <div className="mode-selector">
-              <div className="mode-tabs">
-                <button 
-                  className={`mode-tab ${!useGeneralCommission ? 'active' : ''}`}
-                  onClick={() => setUseGeneralCommission(false)}
+
+                                 <div className="default-commission-compact">
+                                    <h4> Comisión adicional por promoción actvia</h4>
+                                    <div className="compact-form">
+                                      <div className="commission-input">
+                                        <input
+                                          type="number"
+                                          step="0.1"
+                                          min="0"
+                                          max="100"
+                                          value={defaultCommission}
+                                          onChange={(e) => setDefaultCommission(parseFloat(e.target.value) || 0)}
+                                        />
+                                        <span className="currency-symbol">%</span>
+                                      </div>
+                                      <Button 
+                                        variant="primary" 
+                                        size="small"
+                                        onClick={() => alert(`✅ Comisión por defecto guardada: ${defaultCommission}%`)}
+                                      >
+                                        Guardar
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                </div>                      
+                <div className="der">                 
+
+                                      <div className="precedence-list-compact">
+                                        <h4>📋 Orden de Precedencia</h4>
+                                        <div className="precedence-items">
+                                          {precedenceOrder.map((item, index) => (
+                                            <div key={item.id} className="precedence-item-compact">
+                                              <div className="precedence-order">{index + 1}</div>
+                                              <div className="precedence-content">
+                                                <span className="precedence-name">{item.name}</span>
+                                              </div>
+                                              <div className="precedence-controls">
+                                                <button
+                                                  className={`precedence-toggle ${item.active ? 'active' : 'inactive'}`}
+                                                  onClick={() => {
+                                                    setPrecedenceOrder(prev => prev.map(p => 
+                                                      p.id === item.id ? { ...p, active: !p.active } : p
+                                                    ));
+                                                  }}
+                                                >
+                                                  {item.active ? 'Activa' : 'Inactiva'}
+                                                </button>
+                                                <div className="precedence-arrows">
+                                                  {index > 0 && (
+                                                    <button 
+                                                      className="arrow-btn"
+                                                      onClick={() => {
+                                                        const newOrder = [...precedenceOrder];
+                                                        [newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]];
+                                                        setPrecedenceOrder(newOrder);
+                                                      }}
+                                                    >
+                                                      ↑
+                                                    </button>
+                                                  )}
+                                                  {index < precedenceOrder.length - 1 && (
+                                                    <button 
+                                                      className="arrow-btn"
+                                                      onClick={() => {
+                                                        const newOrder = [...precedenceOrder];
+                                                        [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+                                                        setPrecedenceOrder(newOrder);
+                                                      }}
+                                                    >
+                                                      ↓
+                                                    </button>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                </div>                       
+         </div> 
+        </div>
+
+        {/* Contenido según modo seleccionado */}
+        {commissionMode === 'categoria' && (
+          <div className="categories-list-section">
+            <div className="section-header-with-selector">
+              <div className="section-info">
+                <h3>📂 Comisiones por Categoría Padre</h3>
+                <p className="section-description">
+                  Solo las categorías padre pueden tener comisiones configuradas. Las subcategorías heredan la comisión de su categoría padre.
+                </p>
+              </div>
+              <div className="mode-selector-compact">
+                <label>Tipo:</label>
+                <select 
+                  value={commissionMode} 
+                  onChange={(e) => setCommissionMode(e.target.value)}
+                  className="mode-dropdown-compact"
                 >
-                  <span className="tab-icon">📊</span>
-                  <span className="tab-text">Por Categoría</span>
-                  <span className="tab-description">Comisiones específicas por categoría</span>
-                </button>
-                <button 
-                  className={`mode-tab ${useGeneralCommission ? 'active' : ''}`}
-                  onClick={() => setUseGeneralCommission(true)}
-                >
-                  <span className="tab-icon">🌐</span>
-                  <span className="tab-text">Comisión General</span>
-                  <span className="tab-description">Una comisión para todo el marketplace</span>
-                </button>
+                  <option value="categoria">Por Categoría</option>
+                  <option value="general">Comisión General</option>
+                </select>
               </div>
             </div>
-
-            {/* Contenido según modo seleccionado */}
-            <div className="mode-content">
-              {!useGeneralCommission && (
-                <div className="category-mode">
-                  <div className="category-mode-info">
-                    <h4>🎯 Comisiones por Categoría</h4>
-                    <p>Configure comisiones específicas para cada categoría del marketplace, permitiendo optimizar márgenes según el tipo de producto.</p>
-                    
-                    <div className="category-benefits">
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Control granular por categoría</span>
-                      </div>
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Optimización de márgenes</span>
-                      </div>
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Estrategias diferenciadas</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {useGeneralCommission && (
-                <div className="general-mode">
-                  <div className="general-mode-info">
-                    <h4>🌐 Comisión General</h4>
-                    <p>Aplique una comisión uniforme a todas las categorías del marketplace, simplificando la gestión y manteniendo consistencia.</p>
-                    
-                    <div className="general-benefits">
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Configuración simple y rápida</span>
-                      </div>
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Gestión unificada</span>
-                      </div>
-                      <div className="benefit-item">
-                        <span className="benefit-icon">✅</span>
-                        <span>Consistencia total</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Configuración de comisión general */}
-                  <div className="general-commission-config">
-                    <div className="form-grid">
-                      <div className="form-group">
-                        <label>Porcentaje de Comisión General</label>
-                        <div className="commission-input">
-                          <span className="currency-symbol">%</span>
+            
+            <div className="categories-table">
+              <table className="professional-table">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Subcategorías</th>
+                    <th>Productos</th>
+                    <th>Comisión (%)</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentCategorias.map((categoria) => (
+                    <tr key={categoria.id} className={!categoria.activa ? 'inactive-row' : ''}>
+                      <td>
+                        <span className="category-code">{categoria.codigo}</span>
+                      </td>
+                      <td>
+                        <div className="category-name-cell">
+                          <span className="category-name">{categoria.nombre}</span>
+                          <span className="category-level">Nivel {categoria.nivel}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="subcategory-count">{categoria.totalSubcategorias}</span>
+                      </td>
+                      <td>
+                        <span className="product-count">{categoria.productosAsignados.toLocaleString()}</span>
+                      </td>
+                      <td>
+                        <div className="commission-input-cell">
                           <input
                             type="number"
                             step="0.1"
                             min="0"
                             max="100"
-                            value={generalCommission}
-                            onChange={(e) => setGeneralCommission(parseFloat(e.target.value) || 0)}
-                          />
-                        </div>
-                        <span className="field-help">
-                          Este porcentaje se aplicará a todos los productos del marketplace
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Simulador de comisión */}
-                    <div className="commission-simulator">
-                      <h5>💡 Simulador de Comisión</h5>
-                      <div className="simulator-example">
-                        <div className="example-row">
-                          <span className="example-label">Precio del producto:</span>
-                          <span className="example-value">$1,000</span>
-                        </div>
-                        <div className="example-row">
-                          <span className="example-label">Comisión ({generalCommission}%):</span>
-                          <span className="example-value commission">-${(1000 * generalCommission / 100).toFixed(0)}</span>
-                        </div>
-                        <div className="example-row total">
-                          <span className="example-label">Ganancia del seller:</span>
-                          <span className="example-value">${(1000 - (1000 * generalCommission / 100)).toFixed(0)}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="form-actions">
-                      <Button 
-                        variant="primary"
-                        onClick={() => {
-                          console.log(`Guardando comisión general: ${generalCommission}%`);
-                          alert(`✅ Comisión general configurada: ${generalCommission}%`);
-                        }}
-                      >
-                        Guardar Comisión General
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {!useGeneralCommission && (
-          <div className="categorias-grid">
-          {categorias.map((categoria) => (
-            <div key={categoria.id} className={`categoria-card ${!categoria.activa ? 'inactiva' : ''}`}>
-              <div className="categoria-header">
-                <div className="categoria-info">
-                  <h3>{categoria.nombre}</h3>
-                  <span className="categoria-codigo">{categoria.codigo}</span>
-                </div>
-                <div className="categoria-controls">
-                  <button
-                    className={`estado-toggle ${categoria.activa ? 'activo' : 'inactivo'}`}
-                    onClick={() => toggleCategoriaEstado(categoria.id)}
-                  >
-                    {categoria.activa ? 'Activa' : 'Inactiva'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="comision-rates">
-                <div className="rate-main">
-                  <span className="rate-label">Comisión Base</span>
-                  <div className="rate-control">
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={categoria.comisionBase}
-                      onChange={(e) => actualizarComisionCategoria(categoria.id, parseFloat(e.target.value))}
-                      className="rate-input"
-                    />
-                    <span>%</span>
-                  </div>
-                </div>
-                <div className="rate-range">
-                  <div className="rate-item">
-                    <span className="rate-label">Mínima</span>
-                    <span className="rate-value">{categoria.comisionMinima}%</span>
-                  </div>
-                  <div className="rate-item">
-                    <span className="rate-label">Máxima</span>
-                    <span className="rate-value">{categoria.comisionMaxima}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {categoria.subcategorias.length > 0 && (
-                <div className="subcategorias-comisiones">
-                  <h4>Subcategorías:</h4>
-                  <div className="subcategorias-list">
-                    {categoria.subcategorias.map((sub) => (
-                      <div key={sub.id} className="subcategoria-item">
-                        <div className="sub-info">
-                          <span className="sub-nombre">{sub.nombre}</span>
-                          <span className="sub-codigo">{sub.codigo}</span>
-                        </div>
-                        <div className="sub-comision">
-                          <input
-                            type="number"
-                            step="0.1"
-                            value={sub.comisionBase}
-                            className="sub-rate-input"
-                            readOnly
+                            value={categoria.comisionBase}
+                            onChange={(e) => actualizarComisionCategoria(categoria.id, parseFloat(e.target.value))}
+                            className="commission-input-table"
                           />
                           <span>%</span>
                         </div>
-                      </div>
-                    ))}
+                      </td>
+                      <td>
+                        <button
+                          className={`status-badge ${categoria.activa ? 'active' : 'inactive'}`}
+                          onClick={() => toggleCategoriaEstado(categoria.id)}
+                        >
+                          {categoria.activa ? 'Activa' : 'Inactiva'}
+                        </button>
+                      </td>
+                      <td>
+                        <Button 
+                          variant="outline" 
+                          size="small"
+                          onClick={() => handleEditarCategoria(categoria)}
+                        >
+                          Editar
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="pagination-container">
+                <div className="pagination-info">
+                  <span className="pagination-text">
+                    Mostrando {startIndex + 1}-{Math.min(endIndex, categorias.length)} de {categorias.length} categorías
+                  </span>
+                </div>
+                <div className="pagination-controls">
+                  <button 
+                    className="pagination-btn prev" 
+                    onClick={goToPrevious}
+                    disabled={currentPage === 1}
+                  >
+                    ← Anterior
+                  </button>
+                  
+                  <div className="pagination-numbers">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => {
+                        const isFirstLast = page === 1 || page === totalPages;
+                        const isNearCurrent = Math.abs(page - currentPage) <= 1;
+                        return isFirstLast || isNearCurrent;
+                      })
+                      .map((page, index, arr) => {
+                        const prevPage = arr[index - 1];
+                        const showDots = prevPage && page - prevPage > 1;
+                        
+                        return (
+                          <React.Fragment key={page}>
+                            {showDots && <span className="pagination-dots">...</span>}
+                            <button
+                              className={`pagination-btn number ${page === currentPage ? 'active' : ''}`}
+                              onClick={() => goToPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        );
+                      })}
+                  </div>
+                  
+                  <button 
+                    className="pagination-btn next" 
+                    onClick={goToNext}
+                    disabled={currentPage === totalPages}
+                  >
+                    Siguiente →
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {commissionMode === 'general' && (
+          <div className="general-commission-section">
+            <div className="section-header-with-selector">
+              <div className="section-info">
+                <h3>🌐 Comisión General</h3>
+                <p className="section-description">
+                  Aplica una comisión uniforme a todo el marketplace, sobrescribiendo las configuraciones individuales.
+                </p>
+              </div>
+              <div className="mode-selector-compact">
+                <label>Tipo:</label>
+                <select 
+                  value={commissionMode} 
+                  onChange={(e) => setCommissionMode(e.target.value)}
+                  className="mode-dropdown-compact"
+                >
+                  <option value="categoria">Por Categoría</option>
+                  <option value="general">Comisión General</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="general-config-compact">
+              <div className="general-form-row">
+                <div className="form-group-compact">
+                  <label>Porcentaje de Comisión General</label>
+                  <div className="commission-input-compact">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="100"
+                      value={generalCommission}
+                      onChange={(e) => setGeneralCommission(parseFloat(e.target.value) || 0)}
+                    />
+                    <span className="currency-symbol">%</span>
+                  </div>
+                  <span className="field-help">
+                    Este porcentaje se aplicará a todos los productos del marketplace
+                  </span>
+                </div>
+                
+                <div className="commission-simulator-compact">
+                  <h5>💡 Simulador</h5>
+                  <div className="simulator-example-compact">
+                    <div className="example-row">
+                      <span className="example-label">Producto $1,000:&nbsp;&nbsp; </span>
+                      <span className="example-value commission">-${(1000 * generalCommission / 100).toFixed(0)} de comisión</span>
+                    </div>
+                    <div className="example-row total">
+                      <span className="example-label">Ganancia al Seller:</span>
+                      <span className="example-value">${(1000 - (1000 * generalCommission / 100)).toFixed(0)}</span>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
 
-              <div className="categoria-actions">
+              <div className="form-actions-compact">
                 <Button 
-                  variant="outline" 
-                  size="small"
-                  onClick={() => handleEditarCategoria(categoria)}
-                >
-                  Configurar
-                </Button>
-                <Button 
-                  variant="secondary" 
+                  variant="primary"
                   size="small"
                   onClick={() => {
-                    const precio = prompt('Ingresa un precio para simular:');
-                    if (precio) {
-                      const comisionCalculada = (parseFloat(precio) * categoria.comisionBase) / 100;
-                      alert(`Simulación:\nCategoría: ${categoria.nombre}\nPrecio: $${parseFloat(precio).toLocaleString()}\nComisión: ${categoria.comisionBase}%\nMonto: $${comisionCalculada.toLocaleString()}`);
-                    }
+                    alert(`✅ Comisión general configurada: ${generalCommission}%`);
                   }}
                 >
-                  Simular
+                  Guardar Comisión General
                 </Button>
               </div>
             </div>
-          ))}
           </div>
         )}
       </div>
 
-      {/* Modal de Simulador */}
-      {showSimulator && (
-        <div className="modal-overlay">
-          <div className="modal-content simulator-modal">
-            <div className="modal-header">
-              <h2>Simulador de Comisiones</h2>
-              <button 
-                className="close-button" 
-                onClick={() => setShowSimulator(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="simulator-form">
-                <div className="form-group">
-                  <label>Categoría *</label>
-                  <select 
-                    value={simulatorData.categoria}
-                    onChange={(e) => setSimulatorData(prev => ({...prev, categoria: e.target.value}))}
-                  >
-                    <option value="">Selecciona categoría</option>
-                    {categorias.map(categoria => (
-                      <optgroup key={categoria.id} label={categoria.nombre}>
-                        <option value={categoria.nombre}>{categoria.nombre} ({categoria.comisionBase}%)</option>
-                        {categoria.subcategorias.map(sub => (
-                          <option key={sub.id} value={sub.nombre}>
-                            └─ {sub.nombre} ({sub.comisionBase}%)
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label>Precio del Producto *</label>
-                  <input 
-                    type="number"
-                    placeholder="Ej: 15000"
-                    step="0.01"
-                    value={simulatorData.precio}
-                    onChange={(e) => setSimulatorData(prev => ({...prev, precio: e.target.value}))}
-                  />
-                </div>
-              </div>
-              
-              <div className="simulator-info">
-                <h4>Información:</h4>
-                <ul>
-                  <li>El simulador calculará la comisión según la categoría seleccionada</li>
-                  <li>Las subcategorías pueden tener comisiones diferentes a su categoría padre</li>
-                  <li>Los campos marcados con * son obligatorios</li>
-                  <li>El resultado mostrará el desglose completo de la comisión</li>
-                </ul>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <Button 
-                variant="secondary" 
-                onClick={() => setShowSimulator(false)}
-              >
-                Cancelar
-              </Button>
-              <Button 
-                variant="primary" 
-                onClick={handleSimular}
-              >
-                Calcular Comisión
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de Editor */}
       {showEditor && (
         <div className="modal-overlay">
           <div className="modal-content editor-modal">
             <div className="modal-header">
-              <h2>{selectedCategoria ? 'Editar Comisión de Categoría' : 'Nueva Configuración de Comisión'}</h2>
+              <h2>⚙️ Configuración de Comisión - {selectedCategoria?.nombre}</h2>
               <button 
                 className="close-button" 
                 onClick={() => setShowEditor(false)}
@@ -550,81 +804,88 @@ const Comisiones = () => {
             </div>
             <div className="modal-body">
               <div className="editor-form">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Categoría</label>
-                    <input 
-                      type="text" 
-                      value={selectedCategoria?.nombre || ''}
-                      disabled
-                      style={{ background: '#f8f9fa', color: '#6c757d' }}
-                    />
+                <div className="category-info-section">
+                  <h4>📂 Información de la Categoría</h4>
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <label>Código</label>
+                      <span className="info-value">{selectedCategoria?.codigo}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>Nombre</label>
+                      <span className="info-value">{selectedCategoria?.nombre}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>Nivel</label>
+                      <span className="info-value">Categoría Padre</span>
+                    </div>
+                    <div className="info-item">
+                      <label>Subcategorías</label>
+                      <span className="info-value">{selectedCategoria?.totalSubcategorias || 0}</span>
+                    </div>
+                    <div className="info-item">
+                      <label>Productos Asignados</label>
+                      <span className="info-value">{selectedCategoria?.productosAsignados?.toLocaleString() || 0}</span>
+                    </div>
                   </div>
-                  
-                  <div className="form-group">
-                    <label>Código</label>
-                    <input 
-                      type="text" 
-                      value={selectedCategoria?.codigo || ''}
-                      disabled
-                      style={{ background: '#f8f9fa', color: '#6c757d' }}
-                    />
+                </div>
+
+                <div className="commission-config-section">
+                  <h4>💰 Configuración de Comisión</h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>Comisión Base (%)</label>
+                      <div className="commission-input">
+                        <input 
+                          type="number" 
+                          step="0.1"
+                          min="0"
+                          max="100"
+                          defaultValue={selectedCategoria?.comisionBase || ''}
+                        />
+                        <span className="currency-symbol">%</span>
+                      </div>
+                      <span className="field-help">
+                        Esta comisión se aplicará a todos los productos de esta categoría y sus subcategorías
+                      </span>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Fecha de Inicio</label>
+                      <input 
+                        type="date"
+                        defaultValue={selectedCategoria?.fechaInicio || ''}
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Fecha de Fin (opcional)</label>
+                      <input 
+                        type="date"
+                        defaultValue={selectedCategoria?.fechaFin || ''}
+                      />
+                      <span className="field-help">
+                        Dejar vacío para que la configuración sea permanente
+                      </span>
+                    </div>
                   </div>
-                  
-                  <div className="form-group">
-                    <label>Marketplace</label>
-                    <input 
-                      type="text" 
-                      value="Sears"
-                      disabled
-                      style={{ background: '#f8f9fa', color: '#6c757d' }}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Comisión Base (%)</label>
-                    <input 
-                      type="number" 
-                      step="0.1"
-                      placeholder="8.5"
-                      defaultValue={selectedCategoria?.comisionBase || ''}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Comisión Mínima (%)</label>
-                    <input 
-                      type="number" 
-                      step="0.1"
-                      placeholder="5.0"
-                      defaultValue={selectedCategoria?.comisionMinima || ''}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Comisión Máxima (%)</label>
-                    <input 
-                      type="number" 
-                      step="0.1"
-                      placeholder="12.0"
-                      defaultValue={selectedCategoria?.comisionMaxima || ''}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Fecha de Inicio</label>
-                    <input 
-                      type="date"
-                      defaultValue={selectedCategoria?.fechaInicio ? selectedCategoria.fechaInicio.split('T')[0] : ''}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Fecha de Fin (opcional)</label>
-                    <input 
-                      type="date"
-                      defaultValue={selectedCategoria?.fechaFin ? selectedCategoria.fechaFin.split('T')[0] : ''}
-                    />
+
+                  <div className="commission-preview">
+                    <h5>💡 Vista Previa</h5>
+                    <div className="preview-example">
+                      <div className="example-row">
+                        <span className="example-label">Precio del producto:</span>
+                        <span className="example-value">$1,000</span>
+                      </div>
+                      <div className="example-row">
+                        <span className="example-label">Comisión ({selectedCategoria?.comisionBase || 0}%):</span>
+                        <span className="example-value commission">-${((1000 * (selectedCategoria?.comisionBase || 0)) / 100).toFixed(0)}</span>
+                      </div>
+                      <div className="example-row total">
+                        <span className="example-label">Ganancia del seller:</span>
+                        <span className="example-value">${(1000 - ((1000 * (selectedCategoria?.comisionBase || 0)) / 100)).toFixed(0)}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -640,10 +901,10 @@ const Comisiones = () => {
                 variant="primary" 
                 onClick={() => {
                   setShowEditor(false);
-                  loadComisiones();
+                  alert(`✅ Comisión actualizada para ${selectedCategoria?.nombre}`);
                 }}
               >
-                {selectedCategoria ? 'Actualizar' : 'Crear'} Configuración
+                Guardar Configuración
               </Button>
             </div>
           </div>

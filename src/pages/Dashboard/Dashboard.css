@@ -180,7 +180,7 @@
 
 .dashboard-main {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr ;
   gap: 32px;
   align-items: start;
 }
