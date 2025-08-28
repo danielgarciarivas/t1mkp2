@@ -4,8 +4,17 @@ import './Logistica.css';
 
 const Logistica = () => {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('automatica');
-  const [useT1Envios, setUseT1Envios] = useState(true); // true = T1Envios, false = Cuentas propias
+  const [guideMode, setGuideMode] = useState('automatica'); // 'automatica', 'manual', 'hibrida'
+  const [useT1Envios, setUseT1Envios] = useState(true);
+  
+  // Estados para modo híbrido
+  const [hybridVolumeThreshold, setHybridVolumeThreshold] = useState(50); // pedidos por mes
+  
+  // Estados para configuración de paquetes
+  const [packageConfig, setPackageConfig] = useState({
+    maxPackages: 5,
+    maxVolumePerPackage: 1000 // cm³
+  }); // true = T1Envios, false = Cuentas propias
   const [allowManualGuides, setAllowManualGuides] = useState(false);
   const [requireTrackingUrl, setRequireTrackingUrl] = useState(false);
   const [validateShippingData, setValidateShippingData] = useState(false);
@@ -401,31 +410,29 @@ const Logistica = () => {
         </div>
 
         <div className="logistics-config-form">
-          {/* Selector de modalidad principal */}
-          <div className="mode-selector">
-            <div className="mode-tabs">
-              <button 
-                className={`mode-tab ${activeTab === 'automatica' ? 'active' : ''}`}
-                onClick={() => setActiveTab('automatica')}
-              >
-                <span className="tab-icon">⚡</span>
-                <span className="tab-text">Guía Automática</span>
-                <span className="tab-description">Configurar guías automáticas que se generan y envian al seller al momento de enviar la Orden al Sellercenter.</span>
-              </button>
-              <button 
-                className={`mode-tab ${activeTab === 'manual' ? 'active' : ''}`}
-                onClick={() => setActiveTab('manual')}
-              >
-                <span className="tab-icon">📋</span>
-                <span className="tab-text">Guía Manual</span>
-                <span className="tab-description">Permitir guías manuales generadas por sellers</span>
-              </button>
-            </div>
+          {/* Selector de modo de guías */}
+          <div className="form-group">
+            <label htmlFor="guideMode">Modo de Gestión de Guías</label>
+            <select
+              id="guideMode"
+              value={guideMode}
+              onChange={(e) => setGuideMode(e.target.value)}
+              className="mode-selector"
+            >
+              <option value="automatica">Guía Automática</option>
+              <option value="manual">Guía Manual</option>
+              <option value="hibrida">Modo Híbrido</option>
+            </select>
+            <span className="field-help">
+              {guideMode === 'automatica' && 'Las guías se generan automáticamente al enviar la orden al seller center'}
+              {guideMode === 'manual' && 'Los sellers generan sus propias guías de envío manualmente'}
+              {guideMode === 'hibrida' && 'El marketplace permite ambos modos según la volumetría del seller'}
+            </span>
           </div>
 
           {/* Contenido según modo seleccionado */}
           <div className="mode-content">
-            {activeTab === 'automatica' && (
+            {guideMode === 'automatica' && (
               <div className="automatica-mode">
                {/* Configuración de mensajerías - Solo si es cuentas propias */}
                
@@ -514,8 +521,8 @@ const Logistica = () => {
                   <div className="section-header">
                     <div className="section-title-row">
                       <div className="section-title-content">
-                        <h5>📦 Reglas de Agrupación por Categoría</h5>
-                        <p>Configure la volumetría y cantidad máxima de productos que se pueden agrupar por categoría del marketplace</p>
+                        <h5>📦 Configuración de Paquetes para Sellers</h5>
+                        <p>Configure el número de paquetes que puede crear el seller y la volumetría máxima de cada uno</p>
                       </div>
                       <Button 
                         variant="outline"
@@ -644,61 +651,78 @@ const Logistica = () => {
                     )}
 
                     {/* Lista de reglas guardadas */}
-                    <div className="saved-rules-section">
-                      {splittingRules.savedRules.length > 0 && (
-                        <div className="saved-rules-header">
-                          <h6>📋 Reglas Configuradas ({splittingRules.savedRules.length})</h6>
+                    {/* Configuración global de paquetes */}
+                    <div className="package-config-section">
+                      <div className="package-global-config">
+                        <h6>⚙️ Configuración Global de Paquetes</h6>
+                        <div className="form-grid">
+                          <div className="form-group">
+                            <label htmlFor="maxPackages">Número máximo de paquetes por seller</label>
+                            <input
+                              type="number"
+                              id="maxPackages"
+                              min="1"
+                              max="20"
+                              value={packageConfig.maxPackages}
+                              onChange={(e) => setPackageConfig(prev => ({
+                                ...prev,
+                                maxPackages: parseInt(e.target.value) || 1
+                              }))}
+                              className="package-input"
+                            />
+                            <span className="field-help">
+                              Cantidad máxima de paquetes que puede crear cada seller al seccionar sus pedidos
+                            </span>
+                          </div>
+                          
+                          <div className="form-group">
+                            <label htmlFor="maxVolumePerPackage">Volumetría máxima por paquete (cm³)</label>
+                            <input
+                              type="number"
+                              id="maxVolumePerPackage"
+                              min="100"
+                              max="50000"
+                              step="100"
+                              value={packageConfig.maxVolumePerPackage}
+                              onChange={(e) => setPackageConfig(prev => ({
+                                ...prev,
+                                maxVolumePerPackage: parseInt(e.target.value) || 1000
+                              }))}
+                              className="package-input"
+                            />
+                            <span className="field-help">
+                              Volumen máximo permitido para cada paquete individual
+                            </span>
+                          </div>
                         </div>
-                      )}
-                      
-                      {splittingRules.savedRules.length === 0 ? (
-                        <div className="no-rules-message">
-                          <p>No hay reglas configuradas. Agregue una nueva regla para comenzar.</p>
-                        </div>
-                      ) : (
-                        <div className="saved-rules-list">
-                          {splittingRules.savedRules.map((rule) => (
-                            <div key={rule.id} className="saved-rule-item">
-                              <div className="saved-rule-info">
-                                <div className="saved-rule-category">
-                                  <strong>📂 {getCategoryName(rule.categoryId)}</strong>
-                                </div>
-                                <div className="saved-rule-details">
-                                  <span>Max {rule.maxItems} productos</span>
-                                  <span>•</span>
-                                  <span>{rule.maxDimensions.length}×{rule.maxDimensions.width}×{rule.maxDimensions.height} cm</span>
-                                  <span>•</span>
-                                  <span>{rule.packageType}</span>
-                                  {rule.allowMixing && <span className="mixing-badge">🔀 Mezcla permitida</span>}
-                                </div>
+                        
+                        <div className="package-summary">
+                          <div className="summary-card">
+                            <h6>📊 Resumen de Configuración</h6>
+                            <div className="summary-items">
+                              <div className="summary-item">
+                                <span className="label">Paquetes por seller:</span>
+                                <span className="value">{packageConfig.maxPackages} paquetes máximo</span>
                               </div>
-                              <div className="saved-rule-actions">
-                                <Button
-                                  variant="secondary"
-                                  size="small"
-                                  onClick={() => editSavedRule(rule)}
-                                >
-                                  Editar
-                                </Button>
-                                <Button
-                                  variant="secondary"
-                                  size="small"
-                                  onClick={() => deleteSavedRule(rule.id)}
-                                >
-                                  Eliminar
-                                </Button>
+                              <div className="summary-item">
+                                <span className="label">Volumen por paquete:</span>
+                                <span className="value">{packageConfig.maxVolumePerPackage.toLocaleString()} cm³ máximo</span>
+                              </div>
+                              <div className="summary-item">
+                                <span className="label">Volumen total disponible:</span>
+                                <span className="value">{(packageConfig.maxPackages * packageConfig.maxVolumePerPackage).toLocaleString()} cm³</span>
                               </div>
                             </div>
-                          ))}
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'manual' && (
+            {guideMode === 'manual' && (
               <div className="manual-mode">
                 {/* Configuración de Guías Manuales */}
                 <div className="manual-guides-section">
@@ -788,6 +812,20 @@ const Logistica = () => {
                               </span>
                             </label>
                           </div>
+                          
+                          <div className="form-group">
+                            <div className="evidence-viewer-section">
+                              <Button 
+                                variant="primary"
+                                onClick={() => window.open('/evidencias-entrega', '_blank')}
+                              >
+                                Ver Evidencias de Entrega
+                              </Button>
+                              <span className="field-help">
+                                Revisar y aprobar las evidencias de entrega cargadas por los sellers
+                              </span>
+                            </div>
+                          </div>
 
                           <div className="form-group">
                             <label className="checkbox-label">
@@ -807,6 +845,108 @@ const Logistica = () => {
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {guideMode === 'hibrida' && (
+              <div className="hibrida-mode">
+                <div className="hybrid-mode-section">
+                  <div className="section-divider">
+                    <h5>🔄 Configuración de Modo Híbrido</h5>
+                    <p>Configure las condiciones para alternar entre guías automáticas y manuales según la volumetría del seller</p>
+                  </div>
+
+                  <div className="hybrid-config">
+                    <div className="form-group">
+                      <label htmlFor="hybridVolumeThreshold">Umbral de volumetría para pasar a Manual</label>
+                      <input
+                        type="number"
+                        id="hybridVolumeThreshold"
+                        min="1"
+                        max="1000"
+                        value={hybridVolumeThreshold}
+                        onChange={(e) => setHybridVolumeThreshold(parseInt(e.target.value) || 1)}
+                        className="volume-threshold-input"
+                      />
+                      <span className="field-help">
+                        A partir de este número de pedidos mensuales, el seller deberá usar guías manuales
+                      </span>
+                    </div>
+                    
+                    <div className="hybrid-logic-explanation">
+                      <div className="logic-card">
+                        <h6>⚙️ Lógica del Modo Híbrido</h6>
+                        <div className="logic-rules">
+                          <div className="logic-rule automatic">
+                            <span className="rule-icon">⚡</span>
+                            <div className="rule-content">
+                              <strong>Guías Automáticas</strong>
+                              <p>Sellers con menos de {hybridVolumeThreshold} pedidos/mes utilizan guías generadas automáticamente</p>
+                            </div>
+                          </div>
+                          <div className="logic-rule manual">
+                            <span className="rule-icon">📋</span>
+                            <div className="rule-content">
+                              <strong>Guías Manuales</strong>
+                              <p>Sellers con {hybridVolumeThreshold} o más pedidos/mes deben generar sus propias guías</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="benefits-section">
+                          <h6>💡 Beneficios del Modo Híbrido</h6>
+                          <ul className="benefits-list">
+                            <li>Sellers pequeños tienen soporte automático completo</li>
+                            <li>Sellers grandes tienen flexibilidad para usar sus propias mensajerías</li>
+                            <li>Optimiza costos operativos según el volumen de cada seller</li>
+                            <li>Transición automática basada en el crecimiento del seller</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Configuración de paquetes también aplica para modo híbrido */}
+                    <div className="package-config-section">
+                      <div className="package-global-config">
+                        <h6>📦 Configuración de Paquetes (Aplicable a ambos modos)</h6>
+                        <div className="form-grid">
+                          <div className="form-group">
+                            <label htmlFor="maxPackagesHybrid">Número máximo de paquetes por seller</label>
+                            <input
+                              type="number"
+                              id="maxPackagesHybrid"
+                              min="1"
+                              max="20"
+                              value={packageConfig.maxPackages}
+                              onChange={(e) => setPackageConfig(prev => ({
+                                ...prev,
+                                maxPackages: parseInt(e.target.value) || 1
+                              }))}
+                              className="package-input"
+                            />
+                          </div>
+                          
+                          <div className="form-group">
+                            <label htmlFor="maxVolumePerPackageHybrid">Volumetría máxima por paquete (cm³)</label>
+                            <input
+                              type="number"
+                              id="maxVolumePerPackageHybrid"
+                              min="100"
+                              max="50000"
+                              step="100"
+                              value={packageConfig.maxVolumePerPackage}
+                              onChange={(e) => setPackageConfig(prev => ({
+                                ...prev,
+                                maxVolumePerPackage: parseInt(e.target.value) || 1000
+                              }))}
+                              className="package-input"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
