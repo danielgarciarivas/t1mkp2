@@ -21,7 +21,7 @@ const PaymentConfig = ({
   const [validationErrors, setValidationErrors] = useState({});
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [pendingBankConfig, setPendingBankConfig] = useState(null);
-  const [activeTab, setActiveTab] = useState('automatic');
+  const [liquidationMode, setLiquidationMode] = useState('t1pagos');
 
   const frequencyOptions = [
     { value: 'diario', label: 'Diario', description: 'Liquidaciones procesadas cada día' },
@@ -73,9 +73,9 @@ const PaymentConfig = ({
       [field]: value
     }));
     
-    // Cambiar el tab cuando se cambie el mode
-    if (field === 'mode') {
-      setActiveTab(value);
+    // Cambiar el modo cuando se cambie
+    if (field === 'liquidationMode') {
+      setLiquidationMode(value);
     }
   };
 
@@ -188,95 +188,31 @@ const PaymentConfig = ({
         </div>
 
         <div className="liquidation-config-form">
-          {/* Selector de modalidad principal */}
-          <div className="mode-selector">
-            <div className="mode-tabs">
-              <button 
-                className={`mode-tab ${activeTab === 'automatic' ? 'active' : ''}`}
-                onClick={() => setActiveTab('automatic')}
-              >
-                <span className="tab-icon">⚡</span>
-                <span className="tab-text">Automático</span>
-                <span className="tab-description">Procesamiento automático según frecuencia</span>
-              </button>
-              <button 
-                className={`mode-tab ${activeTab === 'manual' ? 'active' : ''}`}
-                onClick={() => setActiveTab('manual')}
-              >
-                <span className="tab-icon">👤</span>
-                <span className="tab-text">Manual</span>
-                <span className="tab-description">Revisión y aprobación manual</span>
-              </button>
-            </div>
+          {/* Selector de modo de liquidación */}
+          <div className="form-group">
+            <label htmlFor="liquidationMode">Modo de Liquidación</label>
+            <select
+              id="liquidationMode"
+              value={liquidationMode}
+              onChange={(e) => {
+                setLiquidationMode(e.target.value);
+                handleConfigChange('liquidationMode', e.target.value);
+              }}
+              className="mode-selector"
+            >
+              <option value="t1pagos">Por medio de Cuenta fondeadora T1Pagos®</option>
+              <option value="archivo">Archivo de Texto Plano</option>
+              <option value="webhook">Webhook Json</option>
+            </select>
+            <span className="field-help">
+              Seleccione el método de liquidación que desea utilizar para procesar los pagos a sellers
+            </span>
           </div>
 
           {/* Contenido según modo seleccionado */}
           <div className="mode-content">
-            {activeTab === 'automatic' && (
-              <div className="automatic-mode">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Frecuencia de Liquidaciones</label>
-                    <div className="frequency-compact">
-                      {frequencyOptions.map(option => (
-                        <label key={option.value} className="frequency-compact-option">
-                          <input
-                            type="radio"
-                            value={option.value}
-                            checked={config.frequency === option.value}
-                            onChange={(e) => handleConfigChange('frequency', e.target.value)}
-                          />
-                          <span className="option-label">{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                    
-                    {/* Input condicional para día específico */}
-                    {config.frequency === 'semanal' && (
-                      <div className="conditional-input">
-                        <label htmlFor="weekDay">Todos los días....</label>
-                        <select
-                          id="weekDay"
-                          value={config.weekDay || ''}
-                          onChange={(e) => handleConfigChange('weekDay', e.target.value)}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {weekDayOptions.map(day => (
-                            <option key={day.value} value={day.value}>{day.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-
-                    {config.frequency === 'mensual' && (
-                      <div className="conditional-input">
-                        <label htmlFor="monthDay">Día del mes</label>
-                        <select
-                          id="monthDay"
-                          value={config.monthDay || ''}
-                          onChange={(e) => handleConfigChange('monthDay', e.target.value)}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {Array.from({ length: 31 }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              Día {i + 1}
-                            </option>
-                          ))}
-                        </select>
-                        {config.monthDay >= 29 && (
-                          <div className="warning-message">
-                            <span className="warning-icon">⚠️</span>
-                            <span className="warning-text">
-                              Si selecciona día {config.monthDay}, en meses que no tengan este día (como febrero), 
-                              la liquidación se realizará el último día del mes.
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                   
-                  </div>
-                </div>
+            {liquidationMode === 't1pagos' && (
+              <div className="t1pagos-mode">
                 
                 {/* Configuración de cuenta bancaria - Solo en modo automático */}
                 <div className="bank-config-section">
@@ -418,190 +354,162 @@ const PaymentConfig = ({
               </div>
             )}
 
-            {activeTab === 'manual' && (
-              <div className="manual-mode">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Frecuencia de Liquidaciones</label>
-                    <div className="frequency-compact">
-                      {frequencyOptions.map(option => (
-                        <label key={option.value} className="frequency-compact-option">
-                          <input
-                            type="radio"
-                            value={option.value}
-                            checked={config.frequency === option.value}
-                            onChange={(e) => handleConfigChange('frequency', e.target.value)}
-                          />
-                          <span className="option-label">{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                    
-                    {/* Input condicional para día específico */}
-                    {config.frequency === 'semanal' && (
-                      <div className="conditional-input">
-                        <label htmlFor="weekDay">Día de la semana</label>
-                        <select
-                          id="weekDay"
-                          value={config.weekDay || ''}
-                          onChange={(e) => handleConfigChange('weekDay', e.target.value)}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {weekDayOptions.map(day => (
-                            <option key={day.value} value={day.value}>{day.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-
-                    {config.frequency === 'mensual' && (
-                      <div className="conditional-input">
-                        <label htmlFor="monthDay">Día del mes</label>
-                        <select
-                          id="monthDay"
-                          value={config.monthDay || ''}
-                          onChange={(e) => handleConfigChange('monthDay', e.target.value)}
-                        >
-                          <option value="">Seleccionar día</option>
-                          {Array.from({ length: 31 }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              Día {i + 1}
-                            </option>
-                          ))}
-                        </select>
-                        {config.monthDay >= 29 && (
-                          <div className="warning-message">
-                            <span className="warning-icon">⚠️</span>
-                            <span className="warning-text">
-                              Si selecciona día {config.monthDay}, en meses que no tengan este día (como febrero), 
-                              la liquidación se realizará el último día del mes.
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                   
-                  </div>
-                </div>
-                
-                {/* Sección de configuración de envío */}
-                <div className="interface-section">
-                  <h4>Configuración de Envío de Liquidaciones</h4>
-                  <p className="interface-description">
-                    Configure cómo desea recibir las liquidaciones procesadas en su sistema.
+            {liquidationMode === 'archivo' && (
+              <div className="archivo-mode">
+                {/* Configuración específica para archivo de texto */}
+                <div className="bank-config-section archivo-config-section">
+                  <h4>Configuración de Archivo de Texto Plano</h4>
+                  <p className="archivo-description">
+                    Configure el formato y ubicación donde se generarán los archivos de liquidación
                   </p>
                   
-                  <div className="delivery-methods">
-                    <div className="delivery-method">
-                      <label className="method-option">
-                        <input
-                          type="radio"
-                          name="deliveryMethod"
-                          value="file"
-                          checked={config.deliveryMethod === 'file'}
-                          onChange={(e) => handleConfigChange('deliveryMethod', e.target.value)}
-                        />
-                        <div className="method-content">
-                          <div className="method-header">
-                            <span className="method-icon">📄</span>
-                            <span className="method-title">Archivo Texto Plano</span>
-                          </div>
-                          <span className="method-description">
-                            Genera un archivo de texto con las transacciones para descarga manual
-                          </span>
-                        </div>
-                      </label>
-                      
-                      {config.deliveryMethod === 'file' && (
-                        <div className="method-config">
-                          <div className="config-group">
-                            <label htmlFor="fileFormat">Formato del archivo:</label>
-                            <select
-                              id="fileFormat"
-                              value={config.fileFormat || 'sears'}
-                              onChange={(e) => handleConfigChange('fileFormat', e.target.value)}
-                            >
-                              <option value="sears">Compatible Sears/Sanborns</option>
-                              <option value="csv">CSV Estándar</option>
-                              <option value="txt">Texto Delimitado</option>
-                            </select>
-                          </div>
-                          <div className="config-group">
-                            <label htmlFor="downloadUrl">URL de descarga:</label>
-                            <input
-                              type="url"
-                              id="downloadUrl"
-                              value={config.downloadUrl || ''}
-                              onChange={(e) => handleConfigChange('downloadUrl', e.target.value)}
-                              placeholder="https://marketplace.com/downloads/"
-                            />
-                          </div>
-                        </div>
-                      )}
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="fileFormat">Formato del archivo:</label>
+                      <select
+                        id="fileFormat"
+                        value={config.fileFormat || 'sears'}
+                        onChange={(e) => handleConfigChange('fileFormat', e.target.value)}
+                      >
+                        <option value="sears">Compatible Sears/Sanborns</option>
+                        <option value="csv">CSV Estándar</option>
+                        <option value="txt">Texto Delimitado</option>
+                      </select>
                     </div>
-                    
-                    <div className="delivery-method">
-                      <label className="method-option">
-                        <input
-                          type="radio"
-                          name="deliveryMethod"
-                          value="webhook"
-                          checked={config.deliveryMethod === 'webhook'}
-                          onChange={(e) => handleConfigChange('deliveryMethod', e.target.value)}
-                        />
-                        <div className="method-content">
-                          <div className="method-header">
-                            <span className="method-icon">🔗</span>
-                            <span className="method-title">Webhook JSON</span>
-                          </div>
-                          <span className="method-description">
-                            Envía las transacciones directamente a su sistema ERP mediante webhook
-                          </span>
-                        </div>
-                      </label>
-                      
-                      {config.deliveryMethod === 'webhook' && (
-                        <div className="method-config">
-                          <div className="config-group">
-                            <label htmlFor="webhookUrl">URL del Webhook:</label>
-                            <input
-                              type="url"
-                              id="webhookUrl"
-                              value={config.webhookUrl || ''}
-                              onChange={(e) => handleConfigChange('webhookUrl', e.target.value)}
-                              placeholder="https://erp.empresa.com/api/liquidaciones"
-                              required
-                            />
-                          </div>
-                          <div className="config-group">
-                            <label htmlFor="authToken">Token de Autenticación:</label>
-                            <input
-                              type="password"
-                              id="authToken"
-                              value={config.authToken || ''}
-                              onChange={(e) => handleConfigChange('authToken', e.target.value)}
-                              placeholder="Bearer token o API key"
-                            />
-                          </div>
-                          <div className="config-group">
-                            <label htmlFor="webhookTimeout">Timeout (segundos):</label>
-                            <input
-                              type="number"
-                              id="webhookTimeout"
-                              value={config.webhookTimeout || 30}
-                              onChange={(e) => handleConfigChange('webhookTimeout', parseInt(e.target.value))}
-                              min="5"
-                              max="300"
-                            />
-                          </div>
-                        </div>
-                      )}
+                    <div className="form-group">
+                      <label htmlFor="downloadUrl">URL de descarga:</label>
+                      <input
+                        type="url"
+                        id="downloadUrl"
+                        value={config.downloadUrl || ''}
+                        onChange={(e) => handleConfigChange('downloadUrl', e.target.value)}
+                        placeholder="https://marketplace.com/downloads/"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             )}
+
+            {liquidationMode === 'webhook' && (
+              <div className="webhook-mode">
+                {/* Configuración específica para webhook */}
+                <div className="bank-config-section webhook-config-section">
+                  <h4>Configuración de Webhook JSON</h4>
+                  <p className="webhook-description">
+                    Configure la URL y parámetros para enviar las liquidaciones directamente a su sistema
+                  </p>
+                  
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label htmlFor="webhookUrl">URL del Webhook:</label>
+                      <input
+                        type="url"
+                        id="webhookUrl"
+                        value={config.webhookUrl || ''}
+                        onChange={(e) => handleConfigChange('webhookUrl', e.target.value)}
+                        placeholder="https://erp.empresa.com/api/liquidaciones"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="authToken">Token de Autenticación:</label>
+                      <input
+                        type="password"
+                        id="authToken"
+                        value={config.authToken || ''}
+                        onChange={(e) => handleConfigChange('authToken', e.target.value)}
+                        placeholder="Bearer token o API key"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="webhookTimeout">Timeout (segundos):</label>
+                      <input
+                        type="number"
+                        id="webhookTimeout"
+                        value={config.webhookTimeout || 30}
+                        onChange={(e) => handleConfigChange('webhookTimeout', parseInt(e.target.value))}
+                        min="5"
+                        max="300"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Configuración de frecuencia común para todos los modos */}
+          <div className="frequency-config-section">
+           
+            
+            <div className="form-grid">
+              <div className="form-group"><br></br>
+                <label>Frecuencia de Liquidaciones</label>
+                 
+            <p className="frequency-description">
+              Configure cada cuándo se procesarán las liquidaciones, independientemente del modo seleccionado
+            </p>
+
+                <div className="frequency-compact">
+                  {frequencyOptions.map(option => (
+                    <label key={option.value} className="frequency-compact-option">
+                      <input
+                        type="radio"
+                        value={option.value}
+                        checked={config.frequency === option.value}
+                        onChange={(e) => handleConfigChange('frequency', e.target.value)}
+                      />
+                      <span className="option-label">{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+                
+                {/* Input condicional para día específico */}
+                {config.frequency === 'semanal' && (
+                  <div className="conditional-input">
+                    <label htmlFor="weekDay">Día de la semana</label>
+                    <select
+                      id="weekDay"
+                      value={config.weekDay || ''}
+                      onChange={(e) => handleConfigChange('weekDay', e.target.value)}
+                    >
+                      <option value="">Seleccionar día</option>
+                      {weekDayOptions.map(day => (
+                        <option key={day.value} value={day.value}>{day.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {config.frequency === 'mensual' && (
+                  <div className="conditional-input">
+                    <label htmlFor="monthDay">Día del mes</label>
+                    <select
+                      id="monthDay"
+                      value={config.monthDay || ''}
+                      onChange={(e) => handleConfigChange('monthDay', e.target.value)}
+                    >
+                      <option value="">Seleccionar día</option>
+                      {Array.from({ length: 31 }, (_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          Día {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                    {config.monthDay >= 29 && (
+                      <div className="warning-message">
+                        <span className="warning-icon">⚠️</span>
+                        <span className="warning-text">
+                          Si selecciona día {config.monthDay}, en meses que no tengan este día (como febrero), 
+                          la liquidación se realizará el último día del mes.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Configuración común para ambos modos */}
@@ -643,17 +551,33 @@ const PaymentConfig = ({
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="liquidationTrigger">Estatus para Detonar Liquidación</label>
+                  <label htmlFor="liquidationTriggerAutomatic">Estatus para Detonar Liquidación con Guía Automática</label>
                   <select
-                    id="liquidationTrigger"
-                    value={config.liquidationTrigger || 'entregado'}
-                    onChange={(e) => handleConfigChange('liquidationTrigger', e.target.value)}
+                    id="liquidationTriggerAutomatic"
+                    value={config.liquidationTriggerAutomatic || 'entregado'}
+                    onChange={(e) => handleConfigChange('liquidationTriggerAutomatic', e.target.value)}
                   >
                     <option value="en_camino">En Camino</option>
                     <option value="entregado">Entregado</option>
                   </select>
                   <span className="field-help">
-                    Seleccione en qué estatus del pedido se debe iniciar el proceso de liquidación
+                    Seleccione en qué estatus del pedido se debe iniciar el proceso de liquidación automática
+                  </span>
+                </div>
+                 <div className="form-group">
+                  <label htmlFor="liquidationTriggerManual">Estatus para Detonar Liquidación con Guía Manual</label>
+                  <select
+                    id="liquidationTriggerManual"
+                    value={config.liquidationTriggerManual || 'entregado_evidencia_aprobada'}
+                    onChange={(e) => handleConfigChange('liquidationTriggerManual', e.target.value)}
+                  >
+                    <option value="en_camino">En Camino</option>
+                    <option value="entregado">Entregado</option>
+                    <option value="entregado_evidencia">Entregado con Evidencia de Entrega</option>
+                    <option value="entregado_evidencia_aprobada">Entregado con Evidencia de Entrega aprobada</option>
+                  </select>
+                  <span className="field-help">
+                    Seleccione en qué estatus del pedido se debe iniciar el proceso de liquidación manual
                   </span>
                 </div>
               </div>
@@ -661,38 +585,49 @@ const PaymentConfig = ({
           </div>
 
           {/* Resumen de configuración */}
-          <div className="config-summary">
-            <h4>Resumen de Configuración</h4>
-            <div className="summary-grid">
+          <div className="config-summary" style={{fontSize: '14px'}}>
+            <h5 style={{fontSize: '16px', fontWeight: '600', marginBottom: '16px'}}>Resumen de Configuración</h5>
+            <div className="summary-grid" style={{gap: '12px'}}>
               <div className="summary-item">
-                <span className="summary-label">Frecuencia:</span>
-                <span className="summary-value">
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Frecuencia:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>
                   {frequencyOptions.find(opt => opt.value === config.frequency)?.label}
                 </span>
               </div>
               <div className="summary-item">
-                <span className="summary-label">Modalidad:</span>
-                <span className="summary-value">
-                  {activeTab === 'automatic' ? 'Automático' : 'Manual'}
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Modo de Liquidación:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>
+                  {liquidationMode === 't1pagos' ? 'Cuenta fondeadora T1Pagos®' : 
+                   liquidationMode === 'archivo' ? 'Archivo de Texto Plano' : 
+                   'Webhook Json'}
                 </span>
               </div>
               <div className="summary-item">
-                <span className="summary-label">Monto Mínimo:</span>
-                <span className="summary-value">${config.minimumAmount.toLocaleString()} MXN</span>
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Monto Mínimo:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>${config.minimumAmount.toLocaleString()} MXN</span>
               </div>
               <div className="summary-item">
-                <span className="summary-label">Días de Retención:</span>
-                <span className="summary-value">{config.retentionDays} días</span>
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Días de Retención:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>{config.retentionDays} días</span>
               </div>
               <div className="summary-item">
-                <span className="summary-label">Detonador:</span>
-                <span className="summary-value">
-                  {config.liquidationTrigger === 'en_camino' ? 'En Camino' : 'Entregado'}
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Detonador Automático:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>
+                  {config.liquidationTriggerAutomatic === 'en_camino' ? 'En Camino' : 'Entregado'}
                 </span>
               </div>
               <div className="summary-item">
-                <span className="summary-label">Próxima Liquidación:</span>
-                <span className="summary-value next-date">{getNextLiquidationDate()}</span>
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Detonador Manual:</span>
+                <span className="summary-value" style={{fontSize: '14px', fontWeight: '600', color: '#212529'}}>
+                  {config.liquidationTriggerManual === 'en_camino' ? 'En Camino' :
+                   config.liquidationTriggerManual === 'entregado' ? 'Entregado' :
+                   config.liquidationTriggerManual === 'entregado_evidencia' ? 'Entregado con Evidencia' :
+                   'Entregado con Evidencia Aprobada'}
+                </span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label" style={{fontSize: '12px', color: '#6c757d', textTransform: 'uppercase', fontWeight: '500'}}>Próxima Liquidación:</span>
+                <span className="summary-value next-date" style={{fontSize: '14px', fontWeight: '600', color: '#007bff'}}>{getNextLiquidationDate()}</span>
               </div>
             </div>
           </div>

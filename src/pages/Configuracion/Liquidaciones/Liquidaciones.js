@@ -64,10 +64,8 @@ const Liquidaciones = () => {
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
-          <h1 className="module-title">Configuración de Liquidaciones</h1>
-          <p className="module-subtitle">
-            Configure los parámetros de liquidación y cuentas bancarias del marketplace
-          </p>
+          <h1 className="module-title">Liquidaciones</h1>
+          
         </div>
       </div>
 

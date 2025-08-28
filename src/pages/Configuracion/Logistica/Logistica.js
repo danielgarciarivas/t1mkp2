@@ -433,7 +433,7 @@ const Logistica = () => {
                 {/* Tabulador de precios - Siempre visible */}
                 <div className="price-calculator">
                   <div className="price-calculator-header">
-                    <h5>💰 Tabulador de Precios por Peso</h5>
+                    <h5>Tabulador de Precios por Peso</h5>
                     <p>
                       {useT1Envios 
                         ? "Configure el fee que cobrará a los sellers por cada guía generada con T1 Envíos, Si configura esta opcion con cada pedido que se sincronice desde el marketplace al seller center, deberá llegar con una guia generada con T1envios.com"
