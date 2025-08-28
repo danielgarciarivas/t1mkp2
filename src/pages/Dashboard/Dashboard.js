@@ -245,7 +245,7 @@ const Dashboard = () => {
   };
 
 
-  return (
+  return ( 
     <div className="module">
       <div className="module-header">
         <div className="module-title-section">
