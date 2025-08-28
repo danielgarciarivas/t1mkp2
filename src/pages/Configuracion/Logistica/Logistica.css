@@ -51,7 +51,7 @@
 }
 
 .module-title::before {
-  content: "🚚";
+  justify-content: left;
   font-size: 32px;
 }
 
